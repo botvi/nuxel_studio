@@ -27,7 +27,7 @@ class GoogleController extends Controller
         try {
             // Socialite sudah dikonfigurasi dengan Guzzle verify => false di AppServiceProvider
             $googleUser = Socialite::driver('google')->user();
-            
+
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if ($user) {
@@ -38,28 +38,20 @@ class GoogleController extends Controller
 
                 Auth::login($user);
 
-                // Cek apakah username dan no_wa sudah ada
-                if (empty($user->username) || empty($user->no_wa)) {
-                    // Jika belum ada, redirect ke halaman lengkapi data
-                    return redirect()->route('google.complete', ['user_id' => $user->id]);
-                }
-
-                // Redirect langsung untuk user yang sudah terdaftar dan sudah lengkap datanya
-                if ($user->role == 'superadmin') {
+                // Redirect langsung untuk user yang sudah terdaftar
+                if ($user->role == 'admin' || $user->role == 'superadmin') {
                     return redirect()->route('dashboard-superadmin');
                 } else {
-                    return redirect('/editor');
+                    return redirect('/main-menu');
                 }
             }
 
             // Jika user belum terdaftar, buat user baru dengan data minimal
             $user = User::create([
-                'name' => $googleUser->getName(),
                 'email' => $googleUser->getEmail(),
                 'password' => Hash::make(uniqid()),
                 'role' => 'user',
                 'google_id' => $googleUser->getId(),
-                'foto_profile' => $googleUser->getAvatar(),
             ]);
 
             Auth::login($user);
@@ -71,21 +63,23 @@ class GoogleController extends Controller
             // Handle invalid state exception dengan redirect dan alert
             Alert::error('Sesi OAuth tidak valid', 'Silakan coba login lagi.');
             return redirect('/login');
-            
+
         } catch (\Exception $e) {
             // Handle SSL certificate errors dan error lainnya dengan redirect dan alert
             $errorMessage = $e->getMessage();
             $customMessage = 'Terjadi kesalahan saat login dengan Google.';
 
-            if (strpos($errorMessage, 'SSL certificate problem') !== false || 
-                strpos($errorMessage, 'cURL error 60') !== false) {
+            if (
+                strpos($errorMessage, 'SSL certificate problem') !== false ||
+                strpos($errorMessage, 'cURL error 60') !== false
+            ) {
                 $customMessage = 'Masalah SSL Certificate. Terjadi masalah dengan sertifikat SSL. Silakan coba lagi atau hubungi administrator.';
             } elseif (strpos($errorMessage, 'Client error') !== false) {
                 $customMessage = 'Error OAuth. Terjadi kesalahan pada OAuth. Pastikan konfigurasi Google OAuth sudah benar.';
             } else {
                 $customMessage = 'Terjadi kesalahan saat login dengan Google: ' . $errorMessage;
             }
-            
+
             Alert::error('Error Google OAuth', $customMessage);
             return redirect('/login');
         }
@@ -107,36 +101,50 @@ class GoogleController extends Controller
     public function completeRegister(Request $request)
     {
         $data = $request->validate([
-            'username' => 'required|string|max:50|unique:users,username',
-            'no_wa' => 'required|string|max:20|unique:users,no_wa',
+            'nama_jalur' => 'required|string|max:50|unique:users,nama_jalur',
+            'foto_profile' => 'required|string',
             'agree-terms' => 'required',
-            'user_id' => 'required|string|exists:users,id',
         ], [
-            'username.required' => 'Username wajib diisi',
-            'username.unique' => 'Username sudah digunakan',
-            'no_wa.required' => 'Nomor WhatsApp wajib diisi',
-            'no_wa.unique' => 'Nomor WhatsApp sudah terdaftar',
+            'nama_jalur.required' => 'Nama Jalur wajib diisi',
+            'foto_profile.required' => 'Foto Profile wajib diisi',
             'agree-terms.required' => 'Anda harus menyetujui syarat dan ketentuan',
         ]);
 
-        $user = User::where('id', $data['user_id'])->first();
-
-        if (!$user) {
-            Alert::error('Data Google tidak ditemukan.', 'Silakan login dengan Google terlebih dahulu.');
-            return redirect('/login');
-        }
+        $user = $request->user();
 
         try {
+            $avatarKey = $data['foto_profile'];
+            $finalPath = 'profiles/default.gif';
+            $sourceFile = public_path("game_pacu/assets/image/ui/{$avatarKey}.gif");
+
+            if (file_exists($sourceFile)) {
+                $destFileName = time() . '_' . $avatarKey . '.gif';
+                $destPath = public_path("profiles/{$destFileName}");
+
+                if (!file_exists(public_path('profiles'))) {
+                    mkdir(public_path('profiles'), 0755, true);
+                }
+
+                copy($sourceFile, $destPath);
+                $finalPath = 'profiles/' . $destFileName;
+            } else {
+                if (strpos($avatarKey, 'profiles/') !== false) {
+                    $finalPath = $avatarKey;
+                }
+            }
+
             $user->update([
-                'username' => $data['username'],
-                'no_wa' => $data['no_wa'],
+                'nama_jalur' => $data['nama_jalur'],
+                'foto_profile' => $finalPath,
             ]);
 
-            Auth::login($user);
-
             Alert::success('Akun berhasil dibuat lewat Google!', 'Selamat datang di Linkskuy!');
-            return redirect('/editor');
-            
+            if ($user->role == 'admin' || $user->role == 'superadmin') {
+                return redirect()->route('dashboard-superadmin');
+            } else {
+                return redirect('/main-menu');
+            }
+
         } catch (\Exception $e) {
             Alert::error('Gagal menyelesaikan pendaftaran', 'Terjadi kesalahan. Silakan coba lagi.');
             return back()->withInput();

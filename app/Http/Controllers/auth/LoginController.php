@@ -16,46 +16,25 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
-            'username' => 'required',
+        $credentials = $request->validate([
+            'email' => 'required|email',
             'password' => 'required',
         ]);
-    
-        $username = $request->username;
-        $password = $request->password;
-        
-        // Coba login dengan username atau email
-        $credentials = [
-            'password' => $password
-        ];
-        
-        // Jika input mengandung @, anggap sebagai email
-        if (strpos($username, '@') !== false) {
-            $credentials['email'] = $username;
-        } else {
-            $credentials['username'] = $username;
-        }
-    
+
         if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
             $user = Auth::user();
-            if ($user->role == 'superadmin') {
-                Alert::success('Login Successful', 'Welcome back, Superadmin!');
+            if ($user->role == 'admin' || $user->role == 'superadmin') {
                 return redirect()->route('dashboard-superadmin');
-            } else if ($user->role == 'asisten') {
-                Alert::success('Login Successful', 'Welcome back, Asisten!');
-                return redirect()->route('home');
-            } else if ($user->role == 'user') {
-                Alert::success('Login Successful', 'Welcome back, User!');
-                return redirect('/home');
             } else {
-                Auth::logout();
-                Alert::error('Login Failed', 'You are not authorized to access this area.');
-                return redirect('/login');
+                return redirect('/main-menu');
             }
         }
-    
-        Alert::error('Login Failed', 'The provided credentials do not match our records.');
-        return back();
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)

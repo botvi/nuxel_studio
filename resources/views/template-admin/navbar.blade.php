@@ -1,7 +1,7 @@
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a href="{{ asset('admin') }}/dashboard/index.html" class="b-brand text-primary">
+            <a href="{{ route('dashboard-superadmin') }}" class="b-brand text-primary">
                 <img src="{{ asset('env') }}/logo_text.png" alt="Logo" style="height: 40px;">
             </a>
         </div>
@@ -20,7 +20,7 @@
                         <i class="ti ti-dashboard"></i>
                     </li>
                     <li class="pc-item">
-                        <a href="{{ route('dataelemen.index') }}" class="pc-link">
+                        <a href="" class="pc-link">
                             <span class="pc-micon"><i class="ti ti-user"></i></span>
                             <span class="pc-mtext">Data Elemen</span>
                         </a>

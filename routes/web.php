@@ -10,16 +10,19 @@ use App\Http\Controllers\{
 use App\Http\Controllers\superadmin\{
     DashboardSuperAdminController,
 };
-use App\Http\Controllers\user\{
-    PreviewController,
-    LinkController,
-    EditorController,
-};
+
 use App\Http\Controllers\auth\{
     LoginController,
-    RegisterController,
     GoogleController,
-    ForgotPasswordController,
+};
+
+use App\Http\Controllers\pagegame\{
+    MainMenuController,
+    ArenaPacuController,
+    ProfilController,
+    RoomController,
+    TopupController,
+    TukangJaluarController,
 };
 
 /*
@@ -33,20 +36,12 @@ use App\Http\Controllers\auth\{
 |
 */
 
-Route::get('/run-superadmin', function () {
-    Artisan::call('db:seed', [
-        '--class' => 'SuperAdminSeeder'
-    ]);
-
-    return "SuperAdminSeeder has been create successfully!";
-});
 // Manual
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+
 
 // Google
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
@@ -54,36 +49,29 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/auth/google/complete', [GoogleController::class, 'showCompleteForm'])->name('google.complete');
 Route::post('/auth/google/complete-register', [GoogleController::class, 'completeRegister'])->name('google.complete.register');
 
-// Forgot Password
-Route::get('/forgot-password', [ForgotPasswordController::class, 'showRequestOtpForm'])->name('forgot-password');
-Route::get('/forgot-password/verify', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('forgot-password.verify');
-Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('forgot-password.reset');
-
-Route::post('/forgot-password/request-otp', [ForgotPasswordController::class, 'requestOtp'])->name('forgot-password.request-otp');
-Route::post('/forgot-password/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('forgot-password.verify-otp');
-Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])->name('forgot-password.reset-password');
-
-
-Route::group(['middleware' => ['role:superadmin']], function () {
+Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/dashboard-superadmin', [DashboardSuperAdminController::class, 'index'])->name('dashboard-superadmin');
 });
 
-Route::get('/preview', [PreviewController::class, 'index'])->name('preview');
-
-// Route untuk user
-Route::group(['middleware' => ['auth']], function () {
-    Route::get('/editor', [EditorController::class, 'index'])->name('editor');
-    Route::get('/get-layout', [LinkController::class, 'getLayout'])->name('get-layout');
-    Route::get('/test-profile', [LinkController::class, 'testProfile'])->name('test-profile');
-    Route::post('/store-link', [LinkController::class, 'store'])->name('store-link');
-    Route::post('/store-layout', [LinkController::class, 'storeLayout'])->name('store-layout');
-    Route::post('/update-profile', [LinkController::class, 'updateProfile'])->name('update-profile');
-    Route::post('/update-grid-produk', [LinkController::class, 'updateGridProduk'])->name('update-grid-produk');
-    Route::post('/update-tombol-link', [LinkController::class, 'updateTombolLink'])->name('update-tombol-link');
-    Route::post('/update-youtube-embed', [LinkController::class, 'updateYoutubeEmbed'])->name('update-youtube-embed');
-    Route::post('/update-sosial-media', [LinkController::class, 'updateSosialMedia'])->name('update-sosial-media');
-    Route::post('/update-portfolio-project', [LinkController::class, 'updatePortfolioProject'])->name('update-portfolio-project');
-    Route::post('/update-gambar-thumbnail', [LinkController::class, 'updateGambarThumbnail'])->name('update-gambar-thumbnail');
-    Route::post('/update-spotify-embed', [LinkController::class, 'updateSpotifyEmbed'])->name('update-spotify-embed');
-    Route::post('/update-background-custom', [LinkController::class, 'updateBackgroundCustom'])->name('update-background-custom');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/main-menu', [MainMenuController::class, 'index'])->name('main-menu');
+    Route::get('/arena-pacu', [ArenaPacuController::class, 'index'])->name('arena-pacu');
+    Route::post('/arena-pacu/add-coins', [ArenaPacuController::class, 'addCoins'])->name('arena-pacu.add-coins');
+    Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
+    Route::get('/room', [RoomController::class, 'index'])->name('room');
+    Route::get('/room/create-or-join', [RoomController::class, 'createOrJoin'])->name('room.create-or-join');
+    Route::post('/room/create', [RoomController::class, 'create'])->name('room.create');
+    Route::post('/room/join', [RoomController::class, 'join'])->name('room.join');
+    Route::post('/room/matchmake', [RoomController::class, 'matchmake'])->name('room.matchmake');
+    Route::get('/room/lobby/{id}', [RoomController::class, 'lobby'])->name('room.lobby');
+    Route::post('/room/ready', [RoomController::class, 'ready'])->name('room.ready');
+    Route::post('/room/leave', [RoomController::class, 'leave'])->name('room.leave');
+    Route::post('/room/finish', [RoomController::class, 'finish'])->name('room.finish');
+    Route::get('/room/list', [RoomController::class, 'list'])->name('room.list');
+    Route::get('/topup', [TopupController::class, 'index'])->name('topup');
+    Route::get('/tukang-jaluar', [TukangJaluarController::class, 'index'])->name('tukang-jaluar');
+    Route::post('/tukang-jaluar/save', [TukangJaluarController::class, 'save'])->name('tukang-jaluar.save');
+    Route::get('/tukang-jaluar/get', [TukangJaluarController::class, 'get'])->name('tukang-jaluar.get');
+    Route::post('/tukang-jaluar/upload-corak', [TukangJaluarController::class, 'uploadCorak'])->name('tukang-jaluar.upload-corak');
+    Route::post('/tukang-jaluar/upload-lambai', [TukangJaluarController::class, 'uploadLambai'])->name('tukang-jaluar.upload-lambai');
 });
