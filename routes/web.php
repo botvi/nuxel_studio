@@ -23,6 +23,7 @@ use App\Http\Controllers\pagegame\{
     RoomController,
     TopupController,
     TukangJaluarController,
+    SplahScreenController,
 };
 
 /*
@@ -42,6 +43,8 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
+// splash
+Route::get('/', [SplahScreenController::class, 'index'])->name('splash');
 
 // Google
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');

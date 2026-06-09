@@ -19,7 +19,7 @@ if ($winsCount >= 100) {
     <meta name="csrf-token" content="<?= csrf_token() ?>">
     <title>Franchise Game — Arena Pacu Jalur</title>
     <script>
-        window.onerror = function(message, source, lineno, colno, error) {
+        window.onerror = function (message, source, lineno, colno, error) {
             const errorDiv = document.createElement('div');
             errorDiv.style.position = 'fixed';
             errorDiv.style.top = '0';
@@ -43,6 +43,68 @@ if ($winsCount >= 100) {
         #game-container canvas {
             z-index: 1;
         }
+        
+        .sound-btn {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 36px;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 15;
+            transition: all 0.15s ease;
+            box-sizing: border-box;
+        }
+
+        .sound-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+        }
+
+        .sound-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .sound-btn:active {
+            transform: translateX(-50%) scale(0.9);
+        }
+
+        .pixel-btn {
+            background-color: #22c55e;
+            border: 3px solid #000000;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.4), 0px 4px 0px #000000;
+            color: white;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            padding: 14px;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            display: block;
+            margin-top: 10px;
+            text-shadow: 1.5px 1.5px 0px #000000;
+            transition: all 0.1s;
+        }
+
+        .pixel-btn:hover {
+            background-color: #4ade80;
+        }
+
+        .pixel-btn:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
+        }
     </style>
 </head>
 
@@ -54,7 +116,34 @@ if ($winsCount >= 100) {
                 <span id="clock">00:00</span>
                 <span>&#11044;&#11044;&#11044;</span>
             </div>
-            <div id="game-container"></div>
+            <div id="game-container">
+                <!-- Sound Toggle (Top Middle) -->
+                <button id="sound-btn" class="sound-btn" onclick="openAudioSettings()">
+                    <img id="sound-icon" src="/game_pacu/assets/image/ui/sound_on.png" alt="Sound">
+                </button>
+
+                <!-- Custom Audio Settings Modal -->
+                <div id="audio-settings-modal" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 44, 34, 0.85); backdrop-filter: blur(6px); z-index: 200; align-items: center; justify-content: center; box-sizing: border-box;">
+                    <div class="audio-modal-card" style="background: #ffffff; border: 4px solid #000000; box-shadow: 6px 6px 0px #000000; border-radius: 12px; width: 85%; max-width: 300px; padding: 22px 18px; text-align: center; box-sizing: border-box; font-family: 'Press Start 2P', monospace;">
+                        <div class="audio-modal-title" style="font-size: 10px; color: #0d9488; margin-bottom: 20px; border-bottom: 3px dashed #000000; padding-bottom: 12px; font-weight: bold; letter-spacing: 0.5px;">✦ PENGATURAN SUARA ✦</div>
+                        
+                        <!-- BGM Toggle Row -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <span style="font-size: 8px; color: #15803d; text-align: left; text-shadow: 1px 1px 0px rgba(0,0,0,0.05);">MUSIK (BGM)</span>
+                            <button id="bgm-toggle-btn" onclick="toggleBGMSetting()" style="font-family: 'Press Start 2P', monospace; font-size: 8px; width: 80px; padding: 8px 0; border: 3px solid #000000; border-radius: 6px; cursor: pointer; text-shadow: 1.5px 1.5px 0px #000000; color: white; transition: all 0.1s; box-shadow: 0px 3px 0px #000000;">ON</button>
+                        </div>
+                        
+                        <!-- SFX Toggle Row -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <span style="font-size: 8px; color: #15803d; text-align: left; text-shadow: 1px 1px 0px rgba(0,0,0,0.05);">EFEK (SFX)</span>
+                            <button id="sfx-toggle-btn" onclick="toggleSFXSetting()" style="font-family: 'Press Start 2P', monospace; font-size: 8px; width: 80px; padding: 8px 0; border: 3px solid #000000; border-radius: 6px; cursor: pointer; text-shadow: 1.5px 1.5px 0px #000000; color: white; transition: all 0.1s; box-shadow: 0px 3px 0px #000000;">ON</button>
+                        </div>
+                        
+                        <!-- Save/Close Button -->
+                        <button class="pixel-btn" onclick="closeAudioSettings()" style="margin-top: 0; background-color: #22c55e; border: 3px solid #000000; box-shadow: inset 0 2px 0px rgba(255,255,255,0.4), 0px 4px 0px #000000; color: white; padding: 12px; font-size: 9px; cursor: pointer; text-transform: uppercase; width: 100%; text-shadow: 1.5px 1.5px 0px #000000;">OKE</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -574,6 +663,9 @@ if ($winsCount >= 100) {
 
                 this.cameras.main.fadeIn(500, 240, 253, 244);
 
+                // Sync sound mute setting
+                this.sound.mute = (localStorage.getItem('sfx_muted') === 'true');
+
                 // Stop all sounds before starting a new round to prevent overlapping
                 this.sound.stopAll();
 
@@ -601,7 +693,7 @@ if ($winsCount >= 100) {
                 this.currentUserPhoto = "<?= addslashes(auth()->user()->foto_profile ?? '') ?>";
                 this.opponentId = null;
                 this.lastSyncTime = 0;
-                
+
                 if (this.isMultiplayer) {
                     this.isWaitingForOpponentToLoad = true;
                 } else {
@@ -1367,7 +1459,7 @@ if ($winsCount >= 100) {
 
                 this.ws.onopen = () => {
                     console.log('Connected to WebSocket server from Arena');
-                    
+
                     const colors = <?= json_encode($customColors) ?>;
                     const corak = <?= json_encode($corakDataUrl) ?>;
                     const lambai = <?= json_encode($lambaiDataUrl) ?>;
@@ -1406,12 +1498,12 @@ if ($winsCount >= 100) {
                         const opponent = payload.players.find(p => parseInt(p.userId) !== this.currentUserId);
                         if (opponent) {
                             this.opponentId = parseInt(opponent.userId);
-                            
+
                             if (opponent.customizations && opponent.customizations.colors && !this.opponentRecolored) {
                                 this.opponentRecolored = true;
                                 this.opponentColors = Object.assign({}, this.opponentColors, opponent.customizations.colors);
                                 this.applyRecolor(false, this.opponentColors);
-                                
+
                                 const oppBoatColInt = Phaser.Display.Color.HexStringToColor(this.opponentColors.boat).color;
                                 this.opponentBoatImg.setTint(oppBoatColInt);
 
@@ -1479,7 +1571,7 @@ if ($winsCount >= 100) {
             startCountdownSequence() {
                 const cx = this.scale.width / 2;
                 const H = this.scale.height;
-                
+
                 this.countdownText.setFontSize(28);
                 this.countdownText.setText('READY?');
                 this.countdownText.setTint(0x00ffff, 0x00ffff, 0xff00ff, 0xff00ff);
@@ -1780,7 +1872,7 @@ if ($winsCount >= 100) {
 
                 const W = this.scale.width;
                 const H = this.scale.height;
-                
+
                 const startX = Phaser.Math.Between(40, W - 40);
                 const startY = Phaser.Math.Between(H / 2 - 100, H - 250);
 
@@ -1808,7 +1900,7 @@ if ($winsCount >= 100) {
                         currentCoins += 1;
                         localStorage.setItem('coins', String(currentCoins));
                         this.coinText.setText(String(currentCoins));
-                        
+
                         this.coinsEarnedThisMatch = (this.coinsEarnedThisMatch || 0) + 1;
 
                         this.tweens.add({
@@ -1854,11 +1946,11 @@ if ($winsCount >= 100) {
                         coins: coinsReward
                     })
                 })
-                .then(res => res.json())
-                .then(data => {
-                    console.log('Coins updated in DB:', data);
-                })
-                .catch(err => console.error('Failed to update coins in DB:', err));
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Coins updated in DB:', data);
+                    })
+                    .catch(err => console.error('Failed to update coins in DB:', err));
 
                 if (this.isMultiplayer) {
                     fetch('/room/finish', {
@@ -1872,11 +1964,11 @@ if ($winsCount >= 100) {
                             winner_id: isWinner ? this.currentUserId : this.opponentId
                         })
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log('Match successfully stored in DB:', data);
-                    })
-                    .catch(err => console.error('Failed to save match to DB:', err));
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log('Match successfully stored in DB:', data);
+                        })
+                        .catch(err => console.error('Failed to save match to DB:', err));
                 }
 
                 const W = this.scale.width;
@@ -2213,6 +2305,98 @@ if ($winsCount >= 100) {
                     }
                 }
             }
+        }
+
+        // Sound & BGM Management
+        (function () {
+            // Default initialization
+            if (localStorage.getItem('bgm_muted') === null) {
+                localStorage.setItem('bgm_muted', 'false');
+            }
+            if (localStorage.getItem('sfx_muted') === null) {
+                localStorage.setItem('sfx_muted', 'false');
+            }
+
+            updateSoundIcon();
+        })();
+
+        function updateSoundIcon() {
+            const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
+            const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
+            const soundIcon = document.getElementById('sound-icon');
+            if (soundIcon) {
+                if (bgmMuted && sfxMuted) {
+                    soundIcon.src = '/game_pacu/assets/image/ui/sound_off.png';
+                } else {
+                    soundIcon.src = '/game_pacu/assets/image/ui/sound_on.png';
+                }
+            }
+        }
+
+        function openAudioSettings() {
+            const modal = document.getElementById('audio-settings-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                syncAudioModalButtons();
+            }
+        }
+
+        function closeAudioSettings() {
+            const modal = document.getElementById('audio-settings-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function syncAudioModalButtons() {
+            const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
+            const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
+            
+            const bgmBtn = document.getElementById('bgm-toggle-btn');
+            const sfxBtn = document.getElementById('sfx-toggle-btn');
+            
+            if (bgmBtn) {
+                if (bgmMuted) {
+                    bgmBtn.textContent = 'OFF';
+                    bgmBtn.style.backgroundColor = '#ef4444';
+                    bgmBtn.style.boxShadow = '0px 3px 0px #991b1b';
+                } else {
+                    bgmBtn.textContent = 'ON';
+                    bgmBtn.style.backgroundColor = '#22c55e';
+                    bgmBtn.style.boxShadow = '0px 3px 0px #15803d';
+                }
+            }
+            
+            if (sfxBtn) {
+                if (sfxMuted) {
+                    sfxBtn.textContent = 'OFF';
+                    sfxBtn.style.backgroundColor = '#ef4444';
+                    sfxBtn.style.boxShadow = '0px 3px 0px #991b1b';
+                } else {
+                    sfxBtn.textContent = 'ON';
+                    sfxBtn.style.backgroundColor = '#22c55e';
+                    sfxBtn.style.boxShadow = '0px 3px 0px #15803d';
+                }
+            }
+            
+            updateSoundIcon();
+        }
+
+        function toggleBGMSetting() {
+            const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
+            localStorage.setItem('bgm_muted', bgmMuted ? 'false' : 'true');
+            syncAudioModalButtons();
+        }
+
+        function toggleSFXSetting() {
+            const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
+            const nextMuted = !sfxMuted;
+            localStorage.setItem('sfx_muted', nextMuted ? 'true' : 'false');
+            
+            // Sync with Phaser's Sound Manager
+            if (typeof game !== 'undefined' && game.sound) {
+                game.sound.mute = nextMuted;
+            }
+            
+            syncAudioModalButtons();
         }
 
         // =====================================================

@@ -13,6 +13,9 @@
         image-rendering: pixelated;
         image-rendering: crisp-edges;
     }
+    #page-transition-overlay {
+        display: none !important;
+    }
     </style>
 </head>
 <body>
@@ -78,7 +81,7 @@ class AuthScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Subtitle
-        this.add.text(cx, cy - 105, 'Hubungkan akun untuk menyimpan skor', {
+        this.add.text(cx, cy - 105, 'Hubungkan akun', {
             fontFamily: '"Pixelify Sans", monospace',
             fontSize: '13px',
             fontStyle: 'bold',
@@ -181,6 +184,19 @@ class AuthScene extends Phaser.Scene {
             btnContainer.setScale(1.04);
             isLoggingIn = true;
 
+            // Open blank popup immediately to avoid popup blocker
+            const width = 500;
+            const height = 650;
+            const left = (window.screen.width / 2) - (width / 2);
+            const top = (window.screen.height / 2) - (height / 2);
+            const popup = window.open('about:blank', 'GoogleLoginPopup', `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes,scrollbars=yes`);
+
+            if (!popup) {
+                alert('Silakan aktifkan pop-up browser Anda untuk login.');
+                isLoggingIn = false;
+                return;
+            }
+
             // Show connecting loading overlay
             const overlay = this.add.graphics();
             overlay.fillStyle(0x000000, 0.6);
@@ -222,13 +238,23 @@ class AuthScene extends Phaser.Scene {
                 loop: true
             });
 
-            // Redirect after 1.2s delay
+            // Periodically check if popup is closed
+            const checkTimer = this.time.addEvent({
+                delay: 500,
+                callback: () => {
+                    if (popup && popup.closed) {
+                        checkTimer.destroy();
+                        window.location.reload();
+                    }
+                },
+                loop: true
+            });
+
+            // Redirect popup location after 1.2s delay
             this.time.delayedCall(1200, () => {
-                spinnerTimer.destroy();
-                this.cameras.main.fadeOut(400, 240, 253, 244);
-                this.cameras.main.once('camerafadeoutcomplete', () => {
-                    window.location.href = '{{ route('google.login') }}';
-                });
+                if (popup) {
+                    popup.location.href = '{{ route('google.login') }}';
+                }
             });
         });
 
@@ -258,6 +284,18 @@ const game = new Phaser.Game({
     scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
+    }
+});
+
+// Event listener for popup messages
+window.addEventListener('message', function (event) {
+    if (event.origin !== window.location.origin) return;
+    if (event.data && event.data.type === 'google-login-response') {
+        if (event.data.status === 'success') {
+            window.location.href = event.data.redirect;
+        } else {
+            window.location.reload();
+        }
     }
 });
 </script>

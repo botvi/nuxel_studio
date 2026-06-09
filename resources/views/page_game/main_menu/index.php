@@ -593,7 +593,7 @@
                     </div>
 
                     <!-- Sound Toggle (Top Middle) -->
-                    <div id="sound-btn" class="sound-btn" onclick="toggleSound()">
+                    <div id="sound-btn" class="sound-btn" onclick="openAudioSettings()">
                         <img id="sound-icon" src="/game_pacu/assets/image/ui/sound_on.png" alt="Sound">
                     </div>
 
@@ -610,7 +610,8 @@
 
                     <!-- JALUR PREVIEW BOX -->
                     <div id="jalur-preview-container" class="jalur-preview-box" style="margin-bottom: 15px;">
-                        <div class="canvas-container" id="jalur-preview-canvas" style="width: 250px; height: 85px; border: none; background: transparent;"></div>
+                        <div class="canvas-container" id="jalur-preview-canvas"
+                            style="width: 250px; height: 85px; border: none; background: transparent;"></div>
                         <div class="preview-name" id="jalur-preview-name">LOADING...</div>
                     </div>
 
@@ -666,6 +667,28 @@
                     <div class="loading-text">Mencari<br>Lawan...</div>
                     <button class="pixel-btn btn-cancel" onclick="batalCari()">BATAL</button>
                 </div>
+
+                <!-- Custom Audio Settings Modal -->
+                <div id="audio-settings-modal" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 44, 34, 0.85); backdrop-filter: blur(6px); z-index: 200; align-items: center; justify-content: center; box-sizing: border-box;">
+                    <div class="audio-modal-card" style="background: #ffffff; border: 4px solid #000000; box-shadow: 6px 6px 0px #000000; border-radius: 12px; width: 85%; max-width: 300px; padding: 22px 18px; text-align: center; box-sizing: border-box; font-family: 'Press Start 2P', monospace;">
+                        <div class="audio-modal-title" style="font-size: 10px; color: #0d9488; margin-bottom: 20px; border-bottom: 3px dashed #000000; padding-bottom: 12px; font-weight: bold; letter-spacing: 0.5px;">✦ PENGATURAN SUARA ✦</div>
+                        
+                        <!-- BGM Toggle Row -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <span style="font-size: 8px; color: #15803d; text-align: left; text-shadow: 1px 1px 0px rgba(0,0,0,0.05);">MUSIK (BGM)</span>
+                            <button id="bgm-toggle-btn" onclick="toggleBGMSetting()" style="font-family: 'Press Start 2P', monospace; font-size: 8px; width: 80px; padding: 8px 0; border: 3px solid #000000; border-radius: 6px; cursor: pointer; text-shadow: 1.5px 1.5px 0px #000000; color: white; transition: all 0.1s; box-shadow: 0px 3px 0px #000000;">ON</button>
+                        </div>
+                        
+                        <!-- SFX Toggle Row -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <span style="font-size: 8px; color: #15803d; text-align: left; text-shadow: 1px 1px 0px rgba(0,0,0,0.05);">EFEK (SFX)</span>
+                            <button id="sfx-toggle-btn" onclick="toggleSFXSetting()" style="font-family: 'Press Start 2P', monospace; font-size: 8px; width: 80px; padding: 8px 0; border: 3px solid #000000; border-radius: 6px; cursor: pointer; text-shadow: 1.5px 1.5px 0px #000000; color: white; transition: all 0.1s; box-shadow: 0px 3px 0px #000000;">ON</button>
+                        </div>
+                        
+                        <!-- Save/Close Button -->
+                        <button class="pixel-btn" onclick="closeAudioSettings()" style="margin-top: 0; background-color: #22c55e; border: 3px solid #000000; box-shadow: inset 0 2px 0px rgba(255,255,255,0.4), 0px 4px 0px #000000; color: white; padding: 12px; font-size: 9px; cursor: pointer; text-transform: uppercase; width: 100%; text-shadow: 1.5px 1.5px 0px #000000;">OKE</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -711,28 +734,100 @@
                 .catch(err => console.error('Failed to sync customizations from server:', err));
         })();
 
-        // Load Sound Setting from LocalStorage
+        // Sound & BGM Management
         (function () {
-            const isMuted = localStorage.getItem('sound_muted') === 'true';
-            const soundIcon = document.getElementById('sound-icon');
-            if (soundIcon) {
-                soundIcon.src = isMuted
-                    ? '/game_pacu/assets/image/ui/sound_off.png'
-                    : '/game_pacu/assets/image/ui/sound_on.png';
+            // Migration from old sound_muted key if exists
+            if (localStorage.getItem('sound_muted') === 'true') {
+                localStorage.setItem('bgm_muted', 'true');
+                localStorage.setItem('sfx_muted', 'true');
+                localStorage.removeItem('sound_muted');
+            } else if (localStorage.getItem('sound_muted') === 'false') {
+                localStorage.setItem('bgm_muted', 'false');
+                localStorage.setItem('sfx_muted', 'false');
+                localStorage.removeItem('sound_muted');
             }
+
+            // Default initialization
+            if (localStorage.getItem('bgm_muted') === null) {
+                localStorage.setItem('bgm_muted', 'false');
+            }
+            if (localStorage.getItem('sfx_muted') === null) {
+                localStorage.setItem('sfx_muted', 'false');
+            }
+
+            updateSoundIcon();
         })();
 
-        function toggleSound() {
-            const isMuted = localStorage.getItem('sound_muted') === 'true';
-            const nextMuted = !isMuted;
-            localStorage.setItem('sound_muted', nextMuted ? 'true' : 'false');
-
+        function updateSoundIcon() {
+            const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
+            const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
             const soundIcon = document.getElementById('sound-icon');
             if (soundIcon) {
-                soundIcon.src = nextMuted
-                    ? '/game_pacu/assets/image/ui/sound_off.png'
-                    : '/game_pacu/assets/image/ui/sound_on.png';
+                if (bgmMuted && sfxMuted) {
+                    soundIcon.src = '/game_pacu/assets/image/ui/sound_off.png';
+                } else {
+                    soundIcon.src = '/game_pacu/assets/image/ui/sound_on.png';
+                }
             }
+        }
+
+        function openAudioSettings() {
+            const modal = document.getElementById('audio-settings-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                syncAudioModalButtons();
+            }
+        }
+
+        function closeAudioSettings() {
+            const modal = document.getElementById('audio-settings-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function syncAudioModalButtons() {
+            const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
+            const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
+            
+            const bgmBtn = document.getElementById('bgm-toggle-btn');
+            const sfxBtn = document.getElementById('sfx-toggle-btn');
+            
+            if (bgmBtn) {
+                if (bgmMuted) {
+                    bgmBtn.textContent = 'OFF';
+                    bgmBtn.style.backgroundColor = '#ef4444';
+                    bgmBtn.style.boxShadow = '0px 3px 0px #991b1b';
+                } else {
+                    bgmBtn.textContent = 'ON';
+                    bgmBtn.style.backgroundColor = '#22c55e';
+                    bgmBtn.style.boxShadow = '0px 3px 0px #15803d';
+                }
+            }
+            
+            if (sfxBtn) {
+                if (sfxMuted) {
+                    sfxBtn.textContent = 'OFF';
+                    sfxBtn.style.backgroundColor = '#ef4444';
+                    sfxBtn.style.boxShadow = '0px 3px 0px #991b1b';
+                } else {
+                    sfxBtn.textContent = 'ON';
+                    sfxBtn.style.backgroundColor = '#22c55e';
+                    sfxBtn.style.boxShadow = '0px 3px 0px #15803d';
+                }
+            }
+            
+            updateSoundIcon();
+        }
+
+        function toggleBGMSetting() {
+            const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
+            localStorage.setItem('bgm_muted', bgmMuted ? 'false' : 'true');
+            syncAudioModalButtons();
+        }
+
+        function toggleSFXSetting() {
+            const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
+            localStorage.setItem('sfx_muted', sfxMuted ? 'false' : 'true');
+            syncAudioModalButtons();
         }
 
         function cariLawan() {

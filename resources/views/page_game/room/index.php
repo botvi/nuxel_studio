@@ -41,16 +41,15 @@
             left: 18px;
             width: 44px;
             height: 44px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 3px solid #22c55e;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 15;
             transition: all 0.15s ease;
-            box-shadow: 3px 3px 0px #15803d;
             box-sizing: border-box;
         }
 
@@ -61,14 +60,13 @@
         }
 
         .back-btn:hover {
-            background: #ffffff;
-            transform: translate(-2px, -2px);
-            box-shadow: 5px 5px 0px #15803d;
+            background: rgba(255, 255, 255, 0.35);
+            border: 2.5px solid rgba(255, 255, 255, 0.7);
+            transform: scale(1.05);
         }
 
         .back-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px #15803d;
+            transform: scale(0.95);
         }
 
         .title-banner {
@@ -95,7 +93,7 @@
             border-radius: 20px;
             width: 85%;
             padding: 30px 24px;
-            box-shadow: 
+            box-shadow:
                 0 10px 25px rgba(21, 128, 61, 0.25),
                 6px 6px 0px #15803d;
             display: flex;
@@ -154,105 +152,242 @@
             transform: translateY(5px);
         }
 
-        /* Loading Overlay with nicer Magnifying Glass */
+        /* Loading Overlay Styling */
         .loading-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(6, 78, 59, 0.9);
+            background: radial-gradient(circle, rgba(6, 78, 59, 0.95) 0%, rgba(2, 44, 34, 0.98) 100%);
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 30;
+            z-index: 100;
             backdrop-filter: blur(8px);
+            box-sizing: border-box;
+            padding: 30px 20px;
         }
 
-        .search-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-bottom: 40px;
-        }
-
-
-        .pixel-magnifier {
+        /* Scanline Overlay for retro vibe */
+        .loading-overlay::before {
+            content: " ";
+            display: block;
             position: absolute;
-            top: 22px;
-            left: 22px;
-            width: 76px;
-            height: 76px;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-            animation: searchHover 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            background-size: 100% 4px;
+            z-index: 101;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* Radar Search Container */
+        .radar-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            border: 4px solid #14b8a6;
+            border-radius: 50%;
+            background: #022c22;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0px 0px 20px rgba(20, 184, 166, 0.3),
+                inset 0px 0px 15px rgba(20, 184, 166, 0.2);
+            overflow: hidden;
+            z-index: 102;
+        }
+
+        /* Radar sweep line rotating */
+        .radar-sweep {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            background: linear-gradient(45deg, rgba(20, 184, 166, 0.6) 0%, transparent 100%);
+            transform-origin: bottom right;
+            bottom: 50%;
+            right: 50%;
+            animation: sweep 2.5s linear infinite;
+            border-right: 1px solid rgba(20, 184, 166, 0.8);
             z-index: 2;
         }
 
-        @keyframes searchHover {
+        @keyframes sweep {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Radar concentric grid circles */
+        .radar-circle-1,
+        .radar-circle-2 {
+            position: absolute;
+            border: 1.5px dashed rgba(20, 184, 166, 0.35);
+            border-radius: 50%;
+        }
+
+        .radar-circle-1 {
+            width: 90px;
+            height: 90px;
+        }
+
+        .radar-circle-2 {
+            width: 45px;
+            height: 45px;
+        }
+
+        /* Radar crosshairs */
+        .radar-cross-h,
+        .radar-cross-v {
+            position: absolute;
+            background: rgba(20, 184, 166, 0.2);
+        }
+
+        .radar-cross-h {
+            width: 100%;
+            height: 1.5px;
+        }
+
+        .radar-cross-v {
+            width: 1.5px;
+            height: 100%;
+        }
+
+        /* Pulsing blips (targets found) */
+        .radar-blip {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #4ade80;
+            z-index: 3;
+            opacity: 0;
+        }
+
+        .blip-1 {
+            top: 25%;
+            left: 30%;
+            animation: blip-flash 3.5s ease-in-out infinite;
+        }
+
+        .blip-2 {
+            bottom: 30%;
+            right: 25%;
+            animation: blip-flash 3.5s ease-in-out infinite 1.2s;
+        }
+
+        @keyframes blip-flash {
             0% {
-                transform: translate(0px, 0px) scale(1) rotate(0deg);
+                opacity: 0;
+                transform: scale(0.6);
             }
 
-            33% {
-                transform: translate(15px, -10px) scale(1.05) rotate(10deg);
+            20% {
+                opacity: 1;
+                transform: scale(1.1);
             }
 
-            66% {
-                transform: translate(-10px, 12px) scale(0.95) rotate(-5deg);
+            40% {
+                opacity: 0.2;
             }
 
+            55% {
+                opacity: 0.8;
+            }
+
+            70%,
             100% {
-                transform: translate(0px, 0px) scale(1) rotate(0deg);
+                opacity: 0;
+                transform: scale(0.8);
             }
         }
 
-        .loading-text {
-            font-family: 'Press Start 2P', monospace;
-            font-size: 13px;
-            color: #22c55e;
-            -webkit-text-stroke: 1px #ffffff;
-            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
-            animation: pulseText 1.5s infinite;
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 10px;
+        /* Magnifier hovering in the center */
+        .pixel-magnifier {
+            width: 44px;
+            height: 44px;
+            image-rendering: pixelated;
+            z-index: 5;
+            animation: floatMagnifier 3s ease-in-out infinite;
         }
 
-        @keyframes pulseText {
+        @keyframes floatMagnifier {
 
             0%,
             100% {
-                transform: scale(1);
-                opacity: 1;
+                transform: translateY(0px) rotate(0deg);
             }
 
             50% {
-                transform: scale(1.05);
-                opacity: 0.8;
+                transform: translateY(-6px) rotate(5deg);
             }
         }
 
+        /* Highly readable Matchmaking text */
+        .loading-text {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 11px;
+            color: #4ade80;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #022c22;
+            z-index: 102;
+        }
+
+        /* Search timer indicator */
+        .search-timer {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            color: #a7f3d0;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+            text-shadow: 2px 2px 0px #022c22;
+            background: rgba(2, 44, 34, 0.6);
+            padding: 6px 12px;
+            border: 2px solid #0d9488;
+            border-radius: 4px;
+            z-index: 102;
+        }
+
+        /* Cancel Button Styling */
         .btn-cancel {
             background-color: #ef4444;
-            border-color: #991b1b;
-            box-shadow: 0px 5px 0px #991b1b;
-            width: auto;
+            border: 3px solid #991b1b;
+            box-shadow: 0px 4px 0px #7f1d1d;
+            font-family: 'Press Start 2P', monospace;
             font-size: 9px;
-            padding: 12px 25px;
-            margin-top: 30px;
+            padding: 12px 24px;
+            width: auto;
             text-shadow: 1px 1px 0px #7f1d1d;
+            transition: all 0.1s ease;
+            color: #ffffff;
+            cursor: pointer;
+            z-index: 102;
         }
 
         .btn-cancel:hover {
             background-color: #f87171;
-            box-shadow: 0px 7px 0px #991b1b;
+            transform: translateY(-2px);
+            box-shadow: 0px 6px 0px #7f1d1d;
         }
 
         .btn-cancel:active {
-            transform: translateY(5px);
-            box-shadow: 0px 0px 0px #991b1b;
+            transform: translateY(2px);
+            box-shadow: 0px 2px 0px #7f1d1d;
         }
     </style>
 </head>
@@ -288,10 +423,21 @@
                 </div>
 
                 <div class="loading-overlay" id="loading-overlay">
-                    <div class="search-container">
+                    <!-- Radar Search Animation -->
+                    <div class="radar-container">
+                        <div class="radar-sweep"></div>
+                        <div class="radar-circle-1"></div>
+                        <div class="radar-circle-2"></div>
+                        <div class="radar-cross-h"></div>
+                        <div class="radar-cross-v"></div>
+                        <div class="radar-blip blip-1"></div>
+                        <div class="radar-blip blip-2"></div>
                         <img class="pixel-magnifier" src="/game_pacu/assets/image/ui/magnifer.png" alt="Mencari">
                     </div>
-                    <div class="loading-text">Mencari<br>Lawan...</div>
+
+                    <div class="loading-text">MENCARI LAWAN<span class="loading-dots">...</span></div>
+                    <div class="search-timer">WAKTU MENCARI: <span id="search-timer-val">00:00</span></div>
+
                     <button class="pixel-btn btn-cancel" onclick="batalCari()">BATAL</button>
                 </div>
             </div>
@@ -365,9 +511,30 @@
             });
         }
 
+        let searchTimerInterval = null;
+        let searchSeconds = 0;
+
+        function updateSearchTimer() {
+            searchSeconds++;
+            const minutes = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+            const seconds = String(searchSeconds % 60).padStart(2, '0');
+            const timerEl = document.getElementById('search-timer-val');
+            if (timerEl) {
+                timerEl.textContent = `${minutes}:${seconds}`;
+            }
+        }
+
         function cariLawan() {
             document.getElementById('loading-overlay').style.display = 'flex';
-            
+
+            // Reset and start timer
+            searchSeconds = 0;
+            const timerVal = document.getElementById('search-timer-val');
+            if (timerVal) timerVal.textContent = '00:00';
+
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            searchTimerInterval = setInterval(updateSearchTimer, 1000);
+
             fetch('/room/matchmake', {
                 method: 'POST',
                 headers: {
@@ -375,26 +542,30 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success && data.redirect_url) {
-                    window.location.href = data.redirect_url;
-                } else {
-                    showHTMLAlert(data.message || 'Gagal mencari lawan.').then(() => {
-                        document.getElementById('loading-overlay').style.display = 'none';
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        showHTMLAlert(data.message || 'Gagal mencari lawan.').then(() => {
+                            batalCari();
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showHTMLAlert('Terjadi kesalahan koneksi.').then(() => {
+                        batalCari();
                     });
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                showHTMLAlert('Terjadi kesalahan koneksi.').then(() => {
-                    document.getElementById('loading-overlay').style.display = 'none';
                 });
-            });
         }
 
         function batalCari() {
             document.getElementById('loading-overlay').style.display = 'none';
+            if (searchTimerInterval) {
+                clearInterval(searchTimerInterval);
+                searchTimerInterval = null;
+            }
             if (window.searchTimeout) {
                 clearTimeout(window.searchTimeout);
             }

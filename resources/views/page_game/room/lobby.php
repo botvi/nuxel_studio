@@ -61,7 +61,7 @@
             width: 90%;
             padding: 22px 20px;
             margin-bottom: 15px;
-            box-shadow: 
+            box-shadow:
                 0 8px 20px rgba(21, 128, 61, 0.2),
                 6px 6px 0px #15803d;
             box-sizing: border-box;
@@ -74,14 +74,13 @@
         .panel-title {
             font-family: 'Press Start 2P', monospace;
             font-size: 10px;
-            color: #22c55e;
-            -webkit-text-stroke: 1px #ffffff;
+            color: #15803d;
             margin-bottom: 15px;
             border-bottom: 2px dashed #bbf7d0;
             padding-bottom: 12px;
             text-align: center;
             line-height: 1.5;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+            text-shadow: 1px 1px 0px #dcfce7;
             width: 100%;
         }
 
@@ -199,10 +198,12 @@
                 transform: scale(0.9);
                 opacity: 0.5;
             }
+
             50% {
                 transform: scale(1.1);
                 opacity: 1;
             }
+
             100% {
                 transform: scale(0.9);
                 opacity: 0.5;
@@ -324,7 +325,7 @@
                         <!-- Action Buttons -->
                         <button class="pixel-btn" id="ready-btn" onclick="toggleReady()">READY UP</button>
                         <button class="pixel-btn btn-red" onclick="leaveRoom()">KELUAR LOBBY</button>
-                        
+
                         <div class="connection-status" id="ws-status">Menghubungkan ke server...</div>
                     </div>
 
@@ -403,7 +404,7 @@
         const currentUserId = <?= auth()->id() ?>;
         const currentUserName = "<?= addslashes(auth()->user()->nama_jalur ?? auth()->user()->email) ?>";
         const currentUserPhoto = "<?= addslashes(auth()->user()->foto_profile ?? '') ?>";
-        
+
         let ws;
         let isReady = false;
         let hostId = <?= $room->host_id ?>;
@@ -424,7 +425,7 @@
         function initWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.hostname}:8080`;
-            
+
             ws = new WebSocket(wsUrl);
 
             ws.onopen = () => {
@@ -476,7 +477,7 @@
         function updateLobbyUI(players) {
             // Reset cards
             const guestCard = document.getElementById('guest-card');
-            
+
             // Find host and guest from players list
             const hostPlayer = players.find(p => parseInt(p.userId) === hostId);
             const guestPlayer = players.find(p => parseInt(p.userId) !== hostId);
@@ -494,7 +495,7 @@
             // Guest status update
             if (guestPlayer) {
                 guestId = parseInt(guestPlayer.userId);
-                
+
                 // Construct profile image
                 let guestImgSrc = '/game_pacu/assets/image/ui/profil.gif';
                 const guestPhoto = guestPlayer.customizations.photo;
@@ -532,7 +533,7 @@
 
         function toggleReady() {
             isReady = !isReady;
-            
+
             const btn = document.getElementById('ready-btn');
             if (isReady) {
                 btn.innerText = 'BATAL READY';
@@ -573,16 +574,16 @@
                         },
                         body: JSON.stringify({ room_id: roomId })
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success && data.redirect_url) {
-                            window.location.href = data.redirect_url;
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        window.location.href = '/room';
-                    });
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success && data.redirect_url) {
+                                window.location.href = data.redirect_url;
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            window.location.href = '/room';
+                        });
                 }
             });
         }

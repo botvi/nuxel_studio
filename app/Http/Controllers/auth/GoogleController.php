@@ -39,11 +39,10 @@ class GoogleController extends Controller
                 Auth::login($user);
 
                 // Redirect langsung untuk user yang sudah terdaftar
-                if ($user->role == 'admin' || $user->role == 'superadmin') {
-                    return redirect()->route('dashboard-superadmin');
-                } else {
-                    return redirect('/main-menu');
-                }
+                $redirectUrl = ($user->role == 'admin' || $user->role == 'superadmin')
+                    ? route('dashboard-superadmin')
+                    : '/main-menu';
+                return $this->respondWithPopupScript('success', $redirectUrl);
             }
 
             // Jika user belum terdaftar, buat user baru dengan data minimal
@@ -57,12 +56,12 @@ class GoogleController extends Controller
             Auth::login($user);
 
             // Redirect langsung ke halaman lengkapi data untuk user baru
-            return redirect()->route('google.complete', ['user_id' => $user->id]);
+            return $this->respondWithPopupScript('success', route('google.complete', ['user_id' => $user->id]));
 
         } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
             // Handle invalid state exception dengan redirect dan alert
             Alert::error('Sesi OAuth tidak valid', 'Silakan coba login lagi.');
-            return redirect('/login');
+            return $this->respondWithPopupScript('error', '/login', 'Sesi OAuth tidak valid. Silakan coba login lagi.');
 
         } catch (\Exception $e) {
             // Handle SSL certificate errors dan error lainnya dengan redirect dan alert
@@ -81,7 +80,7 @@ class GoogleController extends Controller
             }
 
             Alert::error('Error Google OAuth', $customMessage);
-            return redirect('/login');
+            return $this->respondWithPopupScript('error', '/login', $customMessage);
         }
     }
 
@@ -149,5 +148,43 @@ class GoogleController extends Controller
             Alert::error('Gagal menyelesaikan pendaftaran', 'Terjadi kesalahan. Silakan coba lagi.');
             return back()->withInput();
         }
+    }
+
+    private function respondWithPopupScript($status, $redirectUrl = null, $errorMessage = null)
+    {
+        $redirectUrlJson = json_encode($redirectUrl);
+        $errorMessageJson = json_encode($errorMessage);
+        $statusJson = json_encode($status);
+        return response()->make("
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Authenticating...</title>
+            </head>
+            <body>
+                <script>
+                    const status = {$statusJson};
+                    const redirectUrl = {$redirectUrlJson};
+                    const errorMessage = {$errorMessageJson};
+
+                    if (window.opener) {
+                        window.opener.postMessage({
+                            type: 'google-login-response',
+                            status: status,
+                            redirect: redirectUrl,
+                            message: errorMessage
+                        }, window.location.origin);
+                        window.close();
+                    } else {
+                        if (status === 'success') {
+                            window.location.href = redirectUrl;
+                        } else {
+                            window.location.href = '/login';
+                        }
+                    }
+                </script>
+            </body>
+            </html>
+        ");
     }
 }

@@ -271,11 +271,11 @@ if ($winsCount >= 100) {
                 const cardContainer = this.add.container(cx, H / 2);
                 const cW = W - 44;
                 const cH = 420;
- 
+
                 const cardBg = this.add.graphics();
                 const radius = 20;
                 const shadowOffset = 5;
- 
+
                 // Shadow
                 cardBg.fillStyle(0x15803d, 0.3);
                 cardBg.fillRoundedRect(-cW / 2 + shadowOffset, -cH / 2 + shadowOffset, cW, cH, radius);
@@ -284,29 +284,29 @@ if ($winsCount >= 100) {
                 cardBg.lineStyle(4, 0x22c55e, 1);
                 cardBg.fillRoundedRect(-cW / 2, -cH / 2, cW, cH, radius);
                 cardBg.strokeRoundedRect(-cW / 2, -cH / 2, cW, cH, radius);
- 
+
                 // Slot foto profil frame (100x100)
                 cardBg.fillStyle(0xf0fdf4, 1);
                 cardBg.fillRoundedRect(-50, -180, 100, 100, 14);
                 cardBg.lineStyle(3, 0x86efac, 1);
                 cardBg.strokeRoundedRect(-50, -180, 100, 100, 14);
- 
+
                 // Judul Badge "PAMACU INTI"
                 cardBg.fillStyle(0xd97706, 1);
                 cardBg.lineStyle(2, 0xfef3c7, 1);
                 cardBg.fillRoundedRect(-80, -42, 160, 24, 6);
                 cardBg.strokeRoundedRect(-80, -42, 160, 24, 6);
- 
+
                 // Garis Pembatas
                 cardBg.lineStyle(2, 0xe2e8f0, 1);
                 cardBg.lineBetween(-cW / 2 + 24, 5, cW / 2 - 24, 5);
 
                 cardContainer.add(cardBg);
- 
+
                 // Render track preview natively inside card
                 const previewGroup = createJalurPreview(this, 0, 75, 0.8);
                 cardContainer.add(previewGroup);
- 
+
                 // Add Card text elements
                 const customName = localStorage.getItem('jalurName') || 'Sanak Kuansing';
                 const nameTxt = this.add.text(0, -60, customName, {
@@ -315,14 +315,14 @@ if ($winsCount >= 100) {
                     color: '#15803d'
                 }).setOrigin(0.5);
                 cardContainer.add(nameTxt);
- 
+
                 const badgeTxt = this.add.text(0, -30, '⚡ <?= $statusText ?> ⚡', {
                     fontFamily: '"Press Start 2P", monospace',
                     fontSize: '8px',
                     color: '#ffffff'
                 }).setOrigin(0.5);
                 cardContainer.add(badgeTxt);
- 
+
                 // Extra stats at bottom (shifted slightly up)
                 const bottomStats = this.add.text(0, 160, '🏆 MENANG: <?= auth()->user()->wins()->count() ?>  |  ❌ KALAH: <?= auth()->user()->losses()->count() ?>', {
                     fontFamily: '"Pixelify Sans", monospace',
@@ -361,7 +361,7 @@ if ($winsCount >= 100) {
                     // Left offset of frame slot is cx - 50. Top offset is cardContainer.y - 130 - 50. Width=100, Height=100.
                     const cardCenterY = cardContainer.y;
                     const gifCenterY = cardCenterY - 130;
- 
+
                     gif.style.left = (rect.left + (cx - 50) * scaleX) + 'px';
                     gif.style.top = (rect.top + (gifCenterY - 50) * scaleY) + 'px';
                     gif.style.width = (100 * scaleX) + 'px';

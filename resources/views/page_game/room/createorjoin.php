@@ -42,16 +42,15 @@
             left: 18px;
             width: 44px;
             height: 44px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 3px solid #22c55e;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 15;
             transition: all 0.15s ease;
-            box-shadow: 3px 3px 0px #15803d;
             box-sizing: border-box;
         }
 
@@ -62,14 +61,13 @@
         }
 
         .back-btn:hover {
-            background: #ffffff;
-            transform: translate(-2px, -2px);
-            box-shadow: 5px 5px 0px #15803d;
+            background: rgba(255, 255, 255, 0.35);
+            border: 2.5px solid rgba(255, 255, 255, 0.7);
+            transform: scale(1.05);
         }
 
         .back-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px #15803d;
+            transform: scale(0.95);
         }
 
         .title-banner {
