@@ -15,8 +15,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #f0fdf4;
-            color: #15803d;
+            background-color: #060d18;
+            color: #e2e8f0;
             font-family: 'Pixelify Sans', monospace;
             overflow: hidden;
         }
@@ -339,29 +339,50 @@
         }
 
         .menu-panel {
-            background: rgba(15, 23, 42, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(10, 18, 36, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             width: 85%;
             padding: 30px 24px;
             box-shadow:
-                0 8px 32px 0 rgba(0, 0, 0, 0.4),
-                0 0 15px rgba(34, 197, 94, 0.3);
+                0 12px 40px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.04),
+                0 0 20px rgba(34, 197, 94, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 18px;
             z-index: 11;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 3px,
+                rgba(0,0,0,0.025) 3px, rgba(0,0,0,0.025) 4px
+            );
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 20px;
         }
 
         .pixel-btn {
-            background-color: #22c55e;
-            border: 3px solid #000000;
-            border-radius: 8px;
-            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.4), 0px 4px 0px #000000;
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            border: 2px solid #15803d;
+            border-radius: 10px;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                0 5px 0 #14532d,
+                0 6px 14px rgba(34, 197, 94, 0.35);
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 9px;
@@ -372,30 +393,45 @@
             text-transform: uppercase;
             box-sizing: border-box;
             display: block;
-            text-shadow: 1.5px 1.5px 0px #000000;
-            transition: all 0.1s;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .pixel-btn:hover {
-            background-color: #4ade80;
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                0 5px 0 #14532d,
+                0 8px 20px rgba(34, 197, 94, 0.45);
+            transform: translateY(-1px);
         }
 
         .pixel-btn:active {
             transform: translateY(4px);
-            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
+            box-shadow: 0 1px 0 #14532d;
         }
 
         .btn-blue {
-            background-color: #3b82f6;
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+            border-color: #1d4ed8;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                0 5px 0 #1e3a8a,
+                0 6px 14px rgba(59, 130, 246, 0.35);
         }
 
         .btn-blue:hover {
-            background-color: #60a5fa;
+            background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                0 5px 0 #1e3a8a,
+                0 8px 20px rgba(59, 130, 246, 0.45);
+            transform: translateY(-1px);
         }
 
         .btn-blue:active {
             transform: translateY(4px);
-            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
+            box-shadow: 0 1px 0 #1e3a8a;
         }
 
         /* Loading Overlay Styling */
@@ -896,7 +932,7 @@
         const slidesData = [
             { title: 'CARI LAWAN', desc: 'Cari musuh secara online sekarang', url: '#', glow: 'rgba(34, 197, 94, 0.6)', action: 'search' },
             { title: 'CUSTOM ROOM', desc: 'Buat atau masuk room kustom', url: '/room/create-or-join', glow: 'rgba(59, 130, 246, 0.6)', action: 'link' },
-            { title: 'VS AI', desc: 'Latihan balapan melawan bot AI', url: '#', glow: 'rgba(249, 115, 22, 0.6)', action: 'coming_soon' },
+            { title: 'VS AI', desc: 'Latihan balapan melawan bot AI', url: '/vsai/level', glow: 'rgba(249, 115, 22, 0.6)', action: 'link' },
             { title: 'TOURNAMENT', desc: 'Ikuti turnamen balapan pacu jalur', url: '#', glow: 'rgba(168, 85, 247, 0.6)', action: 'coming_soon' }
         ];
         let currentSlide = 0;

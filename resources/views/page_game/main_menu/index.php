@@ -14,8 +14,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #f0fdf4;
-            color: #15803d;
+            background-color: #060d18;
+            color: #e2e8f0;
             font-family: 'Pixelify Sans', monospace;
             overflow: hidden;
         }
@@ -565,10 +565,13 @@
         }
 
         .pixel-btn {
-            background-color: #22c55e;
-            border: 3px solid #000000;
-            border-radius: 8px;
-            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.4), 0px 4px 0px #000000;
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            border: 2px solid #15803d;
+            border-radius: 10px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                0 5px 0 #14532d,
+                0 6px 14px rgba(34, 197, 94, 0.35);
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 9px;
@@ -580,17 +583,26 @@
             box-sizing: border-box;
             display: block;
             margin-top: 10px;
-            text-shadow: 1.5px 1.5px 0px #000000;
-            transition: all 0.1s;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
+            letter-spacing: 0.5px;
         }
 
         .pixel-btn:hover {
-            background-color: #4ade80;
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 5px 0 #14532d,
+                0 8px 20px rgba(34, 197, 94, 0.45);
+            transform: translateY(-1px);
         }
 
         .pixel-btn:active {
             transform: translateY(4px);
-            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 1px 0 #14532d,
+                0 2px 6px rgba(34, 197, 94, 0.2);
         }
 
         /* Loading Overlay with nicer Magnifying Glass */
@@ -735,24 +747,247 @@
         }
 
         .btn-cancel {
-            background-color: #ef4444;
+            background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
             border-color: #991b1b;
-            box-shadow: 0px 4px 0px #991b1b;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                0 5px 0 #7f1d1d,
+                0 6px 14px rgba(239, 68, 68, 0.35);
             width: auto;
             font-size: 10px;
             padding: 12px 25px;
             margin-top: 30px;
-            text-shadow: 1px 1px 0px #7f1d1d;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
         .btn-cancel:hover {
-            background-color: #f87171;
+            background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                0 5px 0 #7f1d1d,
+                0 8px 20px rgba(239, 68, 68, 0.45);
+            transform: translateY(-1px);
         }
 
         .btn-cancel:active {
             transform: translateY(4px);
-            box-shadow: 0px 0px 0px #991b1b;
+            box-shadow: 0 1px 0 #7f1d1d;
         }
+
+        /* ========= GLOBAL CHAT SIDEBAR ========= */
+        #chat-toggle-btn {
+            position: absolute;
+            bottom: 90px;
+            left: 0;
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.2s ease;
+            box-shadow: 3px 0 12px rgba(0,0,0,0.4);
+        }
+        #chat-toggle-btn:hover {
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            width: 40px;
+        }
+        #chat-toggle-btn .chat-icon { font-size: 16px; }
+        #chat-unread-dot {
+            position: absolute;
+            top: 4px; right: 4px;
+            width: 8px; height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: none;
+            animation: dotPulse 1s infinite ease-in-out;
+        }
+        @keyframes dotPulse {
+            0%,100% { transform: scale(1); opacity: 1; }
+            50%      { transform: scale(1.4); opacity: 0.7; }
+        }
+
+        #chat-sidebar {
+            position: absolute;
+            top: 0; left: -260px;
+            width: 260px;
+            height: 100%;
+            background: rgba(8, 15, 30, 0.92);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            z-index: 49;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.6);
+            transition: left 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+        }
+        #chat-sidebar.open { left: 0; }
+
+        /* Scanline overlay inside chat */
+        #chat-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 3px,
+                rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .chat-header {
+            padding: 12px 14px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+        .chat-header-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: #22c55e;
+            text-shadow: 0 0 8px rgba(34,197,94,0.5);
+            letter-spacing: 0.5px;
+        }
+        .chat-online-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+        }
+        .chat-online-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 5px rgba(34,197,94,0.7);
+            animation: dotPulse 2s infinite;
+        }
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(34,197,94,0.3) rgba(255,255,255,0.02);
+        }
+        #chat-messages::-webkit-scrollbar { width: 3px; }
+        #chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(34,197,94,0.3);
+            border-radius: 3px;
+        }
+
+        .chat-msg {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            animation: msgSlideIn 0.2s ease;
+        }
+        @keyframes msgSlideIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .chat-msg.is-me { align-items: flex-end; }
+        .chat-msg-name {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 5.5px;
+            color: rgba(255,255,255,0.45);
+            padding: 0 6px;
+        }
+        .chat-msg.is-me .chat-msg-name { color: rgba(34,197,94,0.7); }
+        .chat-msg-bubble {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px 10px 10px 2px;
+            padding: 7px 10px;
+            font-size: 12px;
+            color: #e2e8f0;
+            max-width: 86%;
+            word-break: break-word;
+            line-height: 1.4;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .chat-msg.is-me .chat-msg-bubble {
+            background: rgba(34,197,94,0.12);
+            border-color: rgba(34,197,94,0.25);
+            border-radius: 10px 10px 2px 10px;
+            color: #d1fae5;
+        }
+        .chat-msg-time {
+            font-size: 9px;
+            color: rgba(255,255,255,0.2);
+            padding: 0 6px;
+        }
+
+        .chat-system-msg {
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 5.5px;
+            color: rgba(255,255,255,0.25);
+            padding: 4px 0;
+        }
+
+        .chat-input-area {
+            padding: 10px 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            gap: 7px;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+        #chat-input {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1.5px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-family: 'Pixelify Sans', monospace;
+            font-size: 13px;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.2s;
+        }
+        #chat-input:focus {
+            border-color: rgba(34,197,94,0.5);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 8px rgba(34,197,94,0.15);
+        }
+        #chat-input::placeholder { color: rgba(255,255,255,0.2); }
+        #chat-send-btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+            box-shadow: 0 3px 8px rgba(34,197,94,0.3);
+        }
+        #chat-send-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 12px rgba(34,197,94,0.4);
+        }
+        #chat-send-btn:active { transform: translateY(1px); }
+        /* ======================================= */
     </style>
 </head>
 
@@ -943,7 +1178,43 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ===== GLOBAL CHAT SIDEBAR ===== -->
+            <!-- Toggle Button -->
+            <div id="chat-toggle-btn" onclick="toggleChat()">
+                <span class="chat-icon">💬</span>
+                <span id="chat-unread-dot"></span>
+            </div>
+
+            <!-- Sidebar -->
+            <div id="chat-sidebar">
+                <div class="chat-header">
+                    <div class="chat-header-title">💬 GLOBAL CHAT</div>
+                    <div class="chat-online-badge">
+                        <span class="chat-online-dot"></span>
+                        <span id="chat-online-count">0</span> online
+                    </div>
+                </div>
+
+                <div id="chat-messages">
+                    <div class="chat-system-msg">— Selamat datang di Global Chat —</div>
+                </div>
+
+                <div class="chat-input-area">
+                    <input
+                        type="text"
+                        id="chat-input"
+                        placeholder="Ketik pesan..."
+                        maxlength="200"
+                        onkeydown="if(event.key==='Enter') sendChat()"
+                    >
+                    <button id="chat-send-btn" onclick="sendChat()" title="Kirim">➤</button>
+                </div>
+            </div>
+            <!-- ================================= -->
+
         </div>
+    </div>
 
         <script src="/game_pacu/assets/js/jalur-preview-phaser.js?v=<?= time() ?>"></script>
         <script src="/game_pacu/assets/js/game-layout.js?v=<?= time() ?>"></script>
@@ -1157,7 +1428,7 @@
                 { title: 'SHOP', desc: 'Beli koin KP & unduh template item', url: '/shop', glow: 'rgba(168, 85, 247, 0.6)', action: 'link' },
                 { title: 'TUKANG JALUAR', desc: 'Kustomisasi perahu & pendayung', url: '/tukang-jaluar', glow: 'rgba(249, 115, 22, 0.6)', action: 'link' },
                 { title: 'CARI PEMAIN', desc: 'Cari profil pemain lain', url: '/cari-pemain', glow: 'rgba(239, 68, 68, 0.6)', action: 'link' },
-                { title: 'LEADERBOARD', desc: 'Lihat peringkat pemain terbaik', url: '/leaderboard', glow: 'rgba(234, 179, 8, 0.6)', action: 'link_dummy' },
+                { title: 'LEADERBOARD', desc: 'Lihat peringkat pemain terbaik', url: '/leaderboard', glow: 'rgba(234, 179, 8, 0.6)', action: 'link' },
             ];
             let currentSlide = 0;
 
@@ -1304,7 +1575,167 @@
             });
 
             // Initial positioning call
-            setTimeout(updateCarousel, 100);</script>
+            setTimeout(updateCarousel, 100);
+
+            // ============= GLOBAL CHAT =============
+            const chatCurrentUserId  = <?= auth()->id() ?>;
+            const chatCurrentUser    = "<?= addslashes(auth()->user()->nama_jalur ?? auth()->user()->email) ?>";
+            let chatWs               = null;
+            let chatOpen             = false;
+            let chatUnread           = 0;
+            const MAX_MESSAGES       = 80;
+
+            function initGlobalChat() {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl    = `${protocol}//${window.location.hostname}:8080`;
+                chatWs = new WebSocket(wsUrl);
+
+                chatWs.onopen = () => {
+                    // Join global_chat room
+                    chatWs.send(JSON.stringify({
+                        type: 'join',
+                        roomId: 'global_chat',
+                        payload: {
+                            userId: chatCurrentUserId,
+                            userName: chatCurrentUser,
+                            customizations: {}
+                        }
+                    }));
+                };
+
+                chatWs.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'global_chat') {
+                            appendChatMessage(data.payload);
+                        } else if (data.type === 'chat_history') {
+                            // Render riwayat chat saat pertama join
+                            const container = document.getElementById('chat-messages');
+                            if (container && Array.isArray(data.payload) && data.payload.length > 0) {
+                                // Hapus pesan selamat datang jika ada history
+                                container.innerHTML = '';
+                                data.payload.forEach(msg => appendChatMessage(msg));
+                            }
+                        } else if (data.type === 'room_update') {
+                            // Update online count
+                            const count = data.payload && data.payload.players ? data.payload.players.length : 0;
+                            const el = document.getElementById('chat-online-count');
+                            if (el) el.textContent = count;
+                        }
+                    } catch(e) {}
+                };
+
+                chatWs.onclose = () => {
+                    setTimeout(initGlobalChat, 3000);
+                };
+
+                chatWs.onerror = () => {};
+            }
+
+            function appendChatMessage(payload) {
+                const container = document.getElementById('chat-messages');
+                if (!container) return;
+
+                const isMe = parseInt(payload.userId) === chatCurrentUserId;
+
+                // Timestamp
+                const d = new Date(payload.timestamp);
+                const hh = String(d.getHours()).padStart(2,'0');
+                const mm = String(d.getMinutes()).padStart(2,'0');
+
+                const msgEl = document.createElement('div');
+                msgEl.className = 'chat-msg' + (isMe ? ' is-me' : '');
+                msgEl.innerHTML = `
+                    <div class="chat-msg-name">${escapeHTML(payload.userName)}</div>
+                    <div class="chat-msg-bubble">${escapeHTML(payload.message)}</div>
+                    <div class="chat-msg-time">${hh}:${mm}</div>
+                `;
+                container.appendChild(msgEl);
+
+                // Limit messages
+                while (container.children.length > MAX_MESSAGES) {
+                    container.removeChild(container.firstChild);
+                }
+
+                // Auto-scroll
+                container.scrollTop = container.scrollHeight;
+
+                // Unread dot if closed & not mine
+                if (!chatOpen && !isMe) {
+                    chatUnread++;
+                    const dot = document.getElementById('chat-unread-dot');
+                    if (dot) dot.style.display = 'block';
+                }
+            }
+
+            function sendChat() {
+                const input = document.getElementById('chat-input');
+                if (!input) return;
+                const msg = input.value.trim();
+                if (!msg) return;
+                if (!chatWs || chatWs.readyState !== WebSocket.OPEN) {
+                    return;
+                }
+                chatWs.send(JSON.stringify({
+                    type: 'global_chat',
+                    roomId: 'global_chat',
+                    payload: {
+                        userId: chatCurrentUserId,
+                        userName: chatCurrentUser,
+                        message: msg
+                    }
+                }));
+                input.value = '';
+                input.focus();
+            }
+
+            function toggleChat() {
+                chatOpen = !chatOpen;
+                const sidebar = document.getElementById('chat-sidebar');
+                if (sidebar) {
+                    if (chatOpen) {
+                        sidebar.classList.add('open');
+                        chatUnread = 0;
+                        const dot = document.getElementById('chat-unread-dot');
+                        if (dot) dot.style.display = 'none';
+                        // Focus input
+                        setTimeout(() => {
+                            const inp = document.getElementById('chat-input');
+                            if (inp) inp.focus();
+                        }, 350);
+                        // Scroll to bottom
+                        const msgs = document.getElementById('chat-messages');
+                        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+                    } else {
+                        sidebar.classList.remove('open');
+                    }
+                }
+            }
+
+            function escapeHTML(str) {
+                return String(str)
+                    .replace(/&/g,'&amp;')
+                    .replace(/</g,'&lt;')
+                    .replace(/>/g,'&gt;')
+                    .replace(/"/g,'&quot;')
+                    .replace(/'/g,'&#39;');
+            }
+
+            // Close chat when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!chatOpen) return;
+                const sidebar = document.getElementById('chat-sidebar');
+                const toggleBtn = document.getElementById('chat-toggle-btn');
+                if (sidebar && !sidebar.contains(e.target) && toggleBtn && !toggleBtn.contains(e.target)) {
+                    chatOpen = false;
+                    sidebar.classList.remove('open');
+                }
+            });
+
+            // Init global chat — langsung dipanggil karena script di akhir body
+            initGlobalChat();
+            // ======================================
+        </script>
 </body>
 
 </html>

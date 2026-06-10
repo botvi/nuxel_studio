@@ -105,6 +105,23 @@ $user = auth()->user();
             height: 100%;
             image-rendering: pixelated;
         }
+        .coin-icon-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.6) 50%,
+                rgba(255,255,255,0) 100%);
+            transform: translateX(-150%) skewX(-25deg);
+            animation: coinShimmer 3s infinite ease-in-out;
+            pointer-events: none;
+        }
+        @keyframes coinShimmer {
+            0%   { transform: translateX(-150%) skewX(-25deg); }
+            100% { transform: translateX(150%) skewX(-25deg); }
+        }
 
         .coin-amount {
             font-family: 'Pixelify Sans', monospace;
@@ -144,17 +161,37 @@ $user = auth()->user();
 
         /* Premium PS5 Search Bar Card */
         .search-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1.5px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 20px;
-            padding: 16px;
-            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5);
+            padding: 18px;
+            box-shadow:
+                0 10px 32px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
             gap: 12px;
             margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Pixel scanline on search card */
+        .search-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 3px,
+                rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 20px;
         }
 
         .search-title {
@@ -237,22 +274,24 @@ $user = auth()->user();
         }
 
         .player-row {
-            background: #0f172a;
-            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             padding: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .player-row:hover {
-            border-color: #ef4444;
-            background: #1e293b;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 16px rgba(239, 68, 68, 0.12);
         }
 
         .player-info {
@@ -300,22 +339,32 @@ $user = auth()->user();
         }
 
         .detail-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
             border-radius: 10px;
             padding: 8px 12px;
             font-family: 'Press Start 2P', monospace;
             font-size: 7px;
-            color: #ffffff;
+            color: #f87171;
             cursor: pointer;
             transition: all 0.2s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
         .detail-btn:hover {
-            background: #ef4444;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             border-color: #ef4444;
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
-            transform: scale(1.05);
+            color: #ffffff;
+            box-shadow:
+                0 4px 0 #7f1d1d,
+                0 6px 16px rgba(239, 68, 68, 0.35);
+            transform: translateY(-2px);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .detail-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #7f1d1d;
         }
 
         /* Empty State */

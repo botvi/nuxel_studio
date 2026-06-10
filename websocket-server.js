@@ -7,6 +7,10 @@ const wss = new WebSocketServer({ server });
 // Store room connections: room_id => { players: Map(userId => ws), readyStates: Map(userId => readyBool), customizations: Map(userId => customObj), names: Map(userId => nameStr) }
 const rooms = new Map();
 
+// Global chat history — simpan 50 pesan terakhir, bertahan selama server running
+const CHAT_HISTORY_MAX = 50;
+const chatHistory = [];
+
 wss.on('connection', (ws) => {
     let currentRoomId = null;
     let userId = null;
@@ -38,6 +42,16 @@ wss.on('connection', (ws) => {
                 room.names.set(userId, payload.userName);
 
                 console.log(`User ${payload.userName} (ID: ${userId}) joined room ${roomId}`);
+
+                // Kirim riwayat chat ke user baru yang join global_chat
+                if (roomId === 'global_chat' && chatHistory.length > 0) {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({
+                            type: 'chat_history',
+                            payload: chatHistory
+                        }));
+                    }
+                }
 
                 // Notify all players in room about the current players list
                 broadcastToRoom(roomId, {
@@ -130,6 +144,27 @@ wss.on('connection', (ws) => {
                     });
                 }
             }
+
+            else if (type === 'global_chat') {
+                // Broadcast chat ke semua user yang join global_chat room
+                const msg = (payload.message || '').toString().trim().slice(0, 200);
+                if (!msg) return;
+                const chatMsg = {
+                    userId: userId,
+                    userName: payload.userName || 'Anonim',
+                    message: msg,
+                    timestamp: Date.now()
+                };
+                // Simpan ke history
+                chatHistory.push(chatMsg);
+                if (chatHistory.length > CHAT_HISTORY_MAX) chatHistory.shift();
+
+                broadcastToRoom('global_chat', {
+                    type: 'global_chat',
+                    payload: chatMsg
+                });
+                console.log(`[GLOBAL CHAT] ${chatMsg.userName}: ${msg}`);
+            }
         } catch (e) {
             console.error('Error handling message:', e);
         }
@@ -147,8 +182,11 @@ wss.on('connection', (ws) => {
             console.log(`User (ID: ${userId}) disconnected from room ${currentRoomId}`);
 
             if (room.players.size === 0) {
-                rooms.delete(currentRoomId);
-                console.log(`Room ${currentRoomId} is empty. Deleting room.`);
+                // Jangan hapus global_chat agar history tetap bertahan
+                if (currentRoomId !== 'global_chat') {
+                    rooms.delete(currentRoomId);
+                    console.log(`Room ${currentRoomId} is empty. Deleting room.`);
+                }
             } else {
                 broadcastToRoom(currentRoomId, {
                     type: 'room_update',

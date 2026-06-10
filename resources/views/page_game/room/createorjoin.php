@@ -15,8 +15,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #f0fdf4;
-            color: #15803d;
+            background-color: #060d18;
+            color: #e2e8f0;
             font-family: 'Pixelify Sans', monospace;
             overflow: hidden;
         }
@@ -102,21 +102,39 @@
         }
 
         .panel {
-            background: rgba(15, 23, 42, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(10, 18, 36, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             width: 88%;
             padding: 22px 20px;
             margin-bottom: 20px;
-            box-shadow: 
-                0 8px 32px 0 rgba(0, 0, 0, 0.4),
-                0 0 15px rgba(168, 85, 247, 0.3);
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.04),
+                0 0 20px rgba(168, 85, 247, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             z-index: 11;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 3px,
+                rgba(0,0,0,0.025) 3px, rgba(0,0,0,0.025) 4px
+            );
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 20px;
         }
 
         .panel-title {
@@ -156,22 +174,25 @@
         }
 
         .room-item {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             padding: 14px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 2px solid rgba(255, 255, 255, 0.12);
-            transition: all 0.15s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.18s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+            position: relative;
+            z-index: 1;
         }
 
         .room-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.3);
             transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35), 0 0 12px rgba(168, 85, 247, 0.12);
         }
 
         .room-info {
@@ -204,10 +225,13 @@
 
         /* Buttons */
         .pixel-btn {
-            background-color: #22c55e;
-            border: 3px solid #000000;
-            border-radius: 8px;
-            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.4), 0px 4px 0px #000000;
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            border: 2px solid #15803d;
+            border-radius: 10px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                0 5px 0 #14532d,
+                0 6px 14px rgba(34, 197, 94, 0.35);
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 9px;
@@ -219,67 +243,104 @@
             box-sizing: border-box;
             display: block;
             margin-top: 10px;
-            text-shadow: 1.5px 1.5px 0px #000000;
-            transition: all 0.1s;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .pixel-btn:hover {
-            background-color: #4ade80;
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 5px 0 #14532d,
+                0 8px 20px rgba(34, 197, 94, 0.45);
+            transform: translateY(-1px);
         }
 
         .pixel-btn:active {
             transform: translateY(4px);
-            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
+            box-shadow:
+                inset 0 1px 0 rgba(0,0,0,0.1),
+                0 1px 0 #14532d;
         }
 
         .btn-small {
-            background-color: #22c55e;
-            border: 2px solid #000000;
-            border-radius: 6px;
-            box-shadow: inset 0 1.5px 0px rgba(255, 255, 255, 0.4), 0px 3px 0px #000000;
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            border: 2px solid #15803d;
+            border-radius: 8px;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                0 4px 0 #14532d,
+                0 5px 12px rgba(34, 197, 94, 0.3);
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 8px;
             padding: 10px 14px;
             cursor: pointer;
             text-align: center;
-            text-shadow: 1px 1px 0px #000000;
-            transition: all 0.1s;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .btn-small:hover {
-            background-color: #4ade80;
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                0 4px 0 #14532d,
+                0 6px 16px rgba(34, 197, 94, 0.4);
+            transform: translateY(-1px);
         }
 
         .btn-small:active {
             transform: translateY(3px);
-            box-shadow: inset 0 1.5px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
+            box-shadow:
+                inset 0 1px 0 rgba(0,0,0,0.1),
+                0 1px 0 #14532d;
         }
 
         .btn-orange {
-            background-color: #f59e0b;
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+            border-color: #92400e;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                0 4px 0 #78350f,
+                0 5px 12px rgba(245, 158, 11, 0.3);
         }
 
         .btn-orange:hover {
-            background-color: #fbbf24;
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                0 4px 0 #78350f,
+                0 6px 16px rgba(245, 158, 11, 0.4);
+            transform: translateY(-1px);
         }
 
         .btn-orange:active {
             transform: translateY(3px);
-            box-shadow: inset 0 1.5px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
+            box-shadow: 0 1px 0 #78350f;
         }
 
         .btn-red {
-            background-color: #ef4444;
+            background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+            border-color: #991b1b;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                0 4px 0 #7f1d1d,
+                0 5px 12px rgba(239, 68, 68, 0.3);
         }
 
         .btn-red:hover {
-            background-color: #f87171;
+            background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                0 4px 0 #7f1d1d,
+                0 6px 16px rgba(239, 68, 68, 0.4);
+            transform: translateY(-1px);
         }
 
         .btn-red:active {
             transform: translateY(4px);
-            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
+            box-shadow: 0 1px 0 #7f1d1d;
         }
 
         /* Form Buat Room */
@@ -403,6 +464,21 @@
                     <!-- Panel Room Tersedia -->
                     <div class="panel" style="flex: 1; max-height: 45%;">
                         <div class="panel-title">✦ ROOM TERSEDIA ✦</div>
+
+                        <!-- Cari Kode Room -->
+                        <div style="display:flex; gap:8px; margin-bottom:12px; position:relative; z-index:1;">
+                            <input
+                                type="text"
+                                id="room-code-input"
+                                class="pixel-input"
+                                placeholder="Masukkan kode room..."
+                                maxlength="6"
+                                style="flex:1; font-size:14px; letter-spacing:3px; text-transform:uppercase; padding:10px 12px;"
+                                oninput="this.value=this.value.toUpperCase()"
+                                onkeydown="if(event.key==='Enter') joinByCode()"
+                            >
+                            <button class="btn-small btn-orange" onclick="joinByCode()" style="white-space:nowrap; padding:10px 14px;">MASUK</button>
+                        </div>
 
                         <div class="room-list-container scrollable" id="room-list-container">
                             <div style="text-align: center; color: #ffaa00; font-size: 8px; padding: 20px; font-family: 'Press Start 2P', monospace; text-shadow: 0 1.5px 2px rgba(0,0,0,0.6);">MENCARI ROOM...</div>
@@ -533,6 +609,37 @@
                     window.location.href = data.redirect_url;
                 } else {
                     showHTMLAlert(data.message || 'Gagal membuat room.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showHTMLAlert('Terjadi kesalahan koneksi.');
+            });
+        }
+
+        function joinByCode() {
+            const code = document.getElementById('room-code-input').value.trim().toUpperCase();
+            if (!code || code.length < 4) {
+                showHTMLAlert('Masukkan kode room yang valid!');
+                return;
+            }
+
+            fetch('/room/join-by-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ room_code: code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else if (data.requires_password) {
+                    showPasswordModal(data.room_id, data.room_name);
+                } else {
+                    showHTMLAlert(data.message || 'Kode room tidak ditemukan.');
                 }
             })
             .catch(err => {

@@ -24,6 +24,8 @@ use App\Http\Controllers\pagegame\{
     ShopController,
     TukangJaluarController,
     SplahScreenController,
+    VsAiController,
+    LeaderboardController,
 };
 
 /*
@@ -65,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/room/create-or-join', [RoomController::class, 'createOrJoin'])->name('room.create-or-join');
     Route::post('/room/create', [RoomController::class, 'create'])->name('room.create');
     Route::post('/room/join', [RoomController::class, 'join'])->name('room.join');
+    Route::post('/room/join-by-code', [RoomController::class, 'joinByCode'])->name('room.join-by-code');
     Route::post('/room/matchmake', [RoomController::class, 'matchmake'])->name('room.matchmake');
     Route::get('/room/lobby/{id}', [RoomController::class, 'lobby'])->name('room.lobby');
     Route::post('/room/ready', [RoomController::class, 'ready'])->name('room.ready');
@@ -80,4 +83,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tukang-jaluar/upload-lambai', [TukangJaluarController::class, 'uploadLambai'])->name('tukang-jaluar.upload-lambai');
     Route::get('/cari-pemain', [\App\Http\Controllers\pagegame\CariPemainController::class, 'index'])->name('cari-pemain');
     Route::get('/cari-pemain/detail/{id}', [\App\Http\Controllers\pagegame\CariPemainController::class, 'detail'])->name('cari-pemain.detail');
+    // VS AI
+    Route::get('/vsai/level', [VsAiController::class, 'level'])->name('vsai.level');
+    Route::get('/vsai/arena', [VsAiController::class, 'arena'])->name('vsai.arena');
+    Route::post('/vsai/add-coins', [VsAiController::class, 'addCoins'])->name('vsai.add-coins');
+    // Leaderboard
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
 });

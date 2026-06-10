@@ -103,6 +103,59 @@ class RoomController extends Controller
         ]);
     }
 
+    public function joinByCode(Request $request)
+    {
+        $request->validate([
+            'room_code' => 'required|string|max:10',
+        ]);
+
+        $room = Room::where('room_code', strtoupper($request->room_code))
+            ->where('status', 'waiting')
+            ->first();
+
+        if (!$room) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode room tidak ditemukan atau sudah tidak aktif.'
+            ], 404);
+        }
+
+        // Host sudah ada di dalam, langsung redirect
+        if ($room->host_id === auth()->id()) {
+            return response()->json([
+                'success' => true,
+                'redirect_url' => route('room.lobby', ['id' => $room->id])
+            ]);
+        }
+
+        // Room sudah penuh
+        if (!empty($room->guest_id) && $room->guest_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Room sudah penuh!'
+            ], 422);
+        }
+
+        // Room private — minta password
+        if (!empty($room->password)) {
+            return response()->json([
+                'success' => false,
+                'requires_password' => true,
+                'room_id' => $room->id,
+                'room_name' => $room->name,
+            ]);
+        }
+
+        // Langsung masuk
+        $room->guest_id = auth()->id();
+        $room->save();
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('room.lobby', ['id' => $room->id])
+        ]);
+    }
+
     public function matchmake(Request $request)
     {
         // Find an active Quick Match room waiting for a guest, created by someone else

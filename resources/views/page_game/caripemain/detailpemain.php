@@ -227,19 +227,38 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
 
         /* Premium PS5 Glass Card */
         .ps5-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1.5px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 24px;
             width: calc(100% - 28px);
             margin: 0 auto 12px;
-            padding: 14px;
-            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            box-shadow:
+                0 10px 32px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
             align-items: center;
             box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ps5-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 3px,
+                rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 24px;
         }
 
         /* Profile Avatar wrapper container */
@@ -347,18 +366,21 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
         }
 
         .stat-card-gold {
-            border-color: rgba(245, 158, 11, 0.25);
-            background: linear-gradient(180deg, rgba(245, 158, 11, 0.06) 0%, rgba(0, 0, 0, 0) 100%);
+            border-color: rgba(245, 158, 11, 0.3);
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+            box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.1), 0 0 12px rgba(245, 158, 11, 0.06);
         }
 
         .stat-card-silver {
-            border-color: rgba(148, 163, 184, 0.25);
-            background: linear-gradient(180deg, rgba(148, 163, 184, 0.06) 0%, rgba(0, 0, 0, 0) 100%);
+            border-color: rgba(148, 163, 184, 0.3);
+            background: linear-gradient(180deg, rgba(148, 163, 184, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+            box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.1);
         }
 
         .stat-card-bronze {
-            border-color: rgba(6, 182, 212, 0.25);
-            background: linear-gradient(180deg, rgba(6, 182, 212, 0.06) 0%, rgba(0, 0, 0, 0) 100%);
+            border-color: rgba(6, 182, 212, 0.3);
+            background: linear-gradient(180deg, rgba(6, 182, 212, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+            box-shadow: inset 0 1px 0 rgba(6, 182, 212, 0.1), 0 0 12px rgba(6, 182, 212, 0.06);
         }
 
         .stat-icon {

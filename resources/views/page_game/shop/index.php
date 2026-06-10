@@ -284,18 +284,18 @@
             // Icon container
             const iconContainer = scene.add.container(0, -32);
             const iconGfx = scene.add.graphics();
-            
+
             // Draw a document outline
             const docW = 28;
             const docH = 36;
             iconGfx.fillStyle(0xdbeafe, 1);
             iconGfx.lineStyle(2, 0x3b82f6, 1);
             iconGfx.beginPath();
-            iconGfx.moveTo(-docW/2, -docH/2);
-            iconGfx.lineTo(docW/2 - 8, -docH/2);
-            iconGfx.lineTo(docW/2, -docH/2 + 8);
-            iconGfx.lineTo(docW/2, docH/2);
-            iconGfx.lineTo(-docW/2, docH/2);
+            iconGfx.moveTo(-docW / 2, -docH / 2);
+            iconGfx.lineTo(docW / 2 - 8, -docH / 2);
+            iconGfx.lineTo(docW / 2, -docH / 2 + 8);
+            iconGfx.lineTo(docW / 2, docH / 2);
+            iconGfx.lineTo(-docW / 2, docH / 2);
             iconGfx.closePath();
             iconGfx.fillPath();
             iconGfx.strokePath();
@@ -303,9 +303,9 @@
             // Fold corner
             iconGfx.fillStyle(0x93c5fd, 1);
             iconGfx.beginPath();
-            iconGfx.moveTo(docW/2 - 8, -docH/2);
-            iconGfx.lineTo(docW/2 - 8, -docH/2 + 8);
-            iconGfx.lineTo(docW/2, -docH/2 + 8);
+            iconGfx.moveTo(docW / 2 - 8, -docH / 2);
+            iconGfx.lineTo(docW / 2 - 8, -docH / 2 + 8);
+            iconGfx.lineTo(docW / 2, -docH / 2 + 8);
             iconGfx.closePath();
             iconGfx.fillPath();
             iconGfx.strokePath();
@@ -376,23 +376,23 @@
                     // Blue theme for Download
                     btnBg.fillStyle(0x0284c7, 0.4);
                     btnBg.fillRoundedRect(-btnW / 2 + 2, -btnH / 2 + 2, btnW, btnH, 8);
-                    
+
                     btnBg.fillStyle(0x0ea5e9, 1);
                     btnBg.lineStyle(2, 0x0284c7, 1);
                     btnBg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
                     btnBg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
-                    
+
                     btnTxt.setText("DOWNLOAD");
                 } else {
                     // Green theme for purchase
                     btnBg.fillStyle(0x15803d, 0.4);
                     btnBg.fillRoundedRect(-btnW / 2 + 2, -btnH / 2 + 2, btnW, btnH, 8);
-                    
+
                     btnBg.fillStyle(0x22c55e, 1);
                     btnBg.lineStyle(2, 0x15803d, 1);
                     btnBg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
                     btnBg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
-                    
+
                     btnTxt.setText(`🔒 ${priceKP} KP`);
                 }
             };
@@ -583,7 +583,7 @@
                 gradient.addColorStop(1, 'rgba(15, 23, 42, 0.45)');    // Gentle vignette (much brighter)
                 glowCtx.fillStyle = gradient;
                 glowCtx.fillRect(0, 0, 360, 760);
-                
+
                 if (this.textures.exists('bg_glow')) {
                     this.textures.remove('bg_glow');
                 }
@@ -668,7 +668,7 @@
                         yoyo: true
                     });
                 });
-                        let coinCount = <?= auth()->user()->kuansing_poin ?>;
+                let coinCount = <?= auth()->user()->kuansing_poin ?>;
                 this.coinCount = coinCount;
 
                 const coinText = this.add.text(COIN_ICON_X + 22, BAR_Y + 1, String(this.coinCount), {
@@ -809,109 +809,109 @@
                             },
                             body: JSON.stringify({ points: kpAmount })
                         })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                const nextCoins = data.kuansing_poin;
-                                this.coinCount = nextCoins;
-                                localStorage.setItem('coins', String(nextCoins));
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    const nextCoins = data.kuansing_poin;
+                                    this.coinCount = nextCoins;
+                                    localStorage.setItem('coins', String(nextCoins));
 
-                                // Sync data customization coins locally
-                                if (this.customizationData) {
-                                    this.customizationData.coins = nextCoins;
-                                }
+                                    // Sync data customization coins locally
+                                    if (this.customizationData) {
+                                        this.customizationData.coins = nextCoins;
+                                    }
 
-                                // Floating coin particles animation (flying to the coin indicator)
-                                const startX = cardSource.x;
-                                const startY = cardSource.y;
+                                    // Floating coin particles animation (flying to the coin indicator)
+                                    const startX = cardSource.x;
+                                    const startY = cardSource.y;
 
-                                for (let i = 0; i < 12; i++) {
-                                    this.time.delayedCall(i * 60, () => {
-                                        const particle = this.add.image(startX, startY, 'koin')
-                                            .setDisplaySize(20, 20)
-                                            .setDepth(10);
+                                    for (let i = 0; i < 12; i++) {
+                                        this.time.delayedCall(i * 60, () => {
+                                            const particle = this.add.image(startX, startY, 'koin')
+                                                .setDisplaySize(20, 20)
+                                                .setDepth(10);
 
-                                        // Random arc starting coordinates
-                                        const randX = startX + Phaser.Math.Between(-30, 30);
-                                        const randY = startY + Phaser.Math.Between(-30, 30);
+                                            // Random arc starting coordinates
+                                            const randX = startX + Phaser.Math.Between(-30, 30);
+                                            const randY = startY + Phaser.Math.Between(-30, 30);
 
-                                        this.tweens.add({
-                                            targets: particle,
-                                            x: randX,
-                                            y: randY,
-                                            duration: 180,
-                                            ease: 'Quad.easeOut',
-                                            onComplete: () => {
-                                                // Fly to destination top-right indicator
-                                                this.tweens.add({
-                                                    targets: particle,
-                                                    x: COIN_ICON_X,
-                                                    y: BAR_Y,
-                                                    duration: 550,
-                                                    ease: 'Cubic.easeIn',
-                                                    onComplete: () => {
-                                                        particle.destroy();
-
-                                                        // Dynamic count tick
-                                                        const displayedCoins = parseInt(coinText.text);
-                                                        const difference = nextCoins - displayedCoins;
-                                                        // Smooth count ticking towards final value
-                                                        coinText.setText(String(displayedCoins + Math.ceil(difference * 0.22)));
-
-                                                        // Pop scale on coin bar icon
-                                                        this.tweens.add({
-                                                            targets: [coinImgGlobal, coinText],
-                                                            scaleX: 1.25, scaleY: 1.25,
-                                                            duration: 70, yoyo: true,
-                                                            onComplete: () => {
-                                                                // Make sure exact end value is shown at the end
-                                                                if (i === 11) {
-                                                                    coinText.setText(String(nextCoins));
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    });
-                                }
-
-                                // Show dynamic success floating label
-                                const successLabel = this.add.text(cx, H - 100, 'TOPUP BERHASIL! + ' + kpAmount + ' KP', {
-                                    fontFamily: '"Press Start 2P", monospace',
-                                    fontSize: '9px',
-                                    color: '#ffffff',
-                                    stroke: '#16a34a',
-                                    strokeThickness: 4,
-                                    align: 'center'
-                                }).setOrigin(0.5).setDepth(20).setScale(0);
-
-                                this.tweens.add({
-                                    targets: successLabel,
-                                    scaleX: 1, scaleY: 1,
-                                    y: `-=40`,
-                                    duration: 350,
-                                    ease: 'Back.easeOut',
-                                    onComplete: () => {
-                                        this.time.delayedCall(1500, () => {
                                             this.tweens.add({
-                                                targets: successLabel,
-                                                alpha: 0,
-                                                duration: 400,
-                                                onComplete: () => successLabel.destroy()
+                                                targets: particle,
+                                                x: randX,
+                                                y: randY,
+                                                duration: 180,
+                                                ease: 'Quad.easeOut',
+                                                onComplete: () => {
+                                                    // Fly to destination top-right indicator
+                                                    this.tweens.add({
+                                                        targets: particle,
+                                                        x: COIN_ICON_X,
+                                                        y: BAR_Y,
+                                                        duration: 550,
+                                                        ease: 'Cubic.easeIn',
+                                                        onComplete: () => {
+                                                            particle.destroy();
+
+                                                            // Dynamic count tick
+                                                            const displayedCoins = parseInt(coinText.text);
+                                                            const difference = nextCoins - displayedCoins;
+                                                            // Smooth count ticking towards final value
+                                                            coinText.setText(String(displayedCoins + Math.ceil(difference * 0.22)));
+
+                                                            // Pop scale on coin bar icon
+                                                            this.tweens.add({
+                                                                targets: [coinImgGlobal, coinText],
+                                                                scaleX: 1.25, scaleY: 1.25,
+                                                                duration: 70, yoyo: true,
+                                                                onComplete: () => {
+                                                                    // Make sure exact end value is shown at the end
+                                                                    if (i === 11) {
+                                                                        coinText.setText(String(nextCoins));
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                }
                                             });
                                         });
                                     }
-                                });
-                            } else {
-                                alert('Topup gagal.');
-                            }
-                        })
-                        .catch(err => {
-                            console.error('Error topup:', err);
-                            alert('Gagal memproses topup.');
-                        });
+
+                                    // Show dynamic success floating label
+                                    const successLabel = this.add.text(cx, H - 100, 'TOPUP BERHASIL! + ' + kpAmount + ' KP', {
+                                        fontFamily: '"Press Start 2P", monospace',
+                                        fontSize: '9px',
+                                        color: '#ffffff',
+                                        stroke: '#16a34a',
+                                        strokeThickness: 4,
+                                        align: 'center'
+                                    }).setOrigin(0.5).setDepth(20).setScale(0);
+
+                                    this.tweens.add({
+                                        targets: successLabel,
+                                        scaleX: 1, scaleY: 1,
+                                        y: `-=40`,
+                                        duration: 350,
+                                        ease: 'Back.easeOut',
+                                        onComplete: () => {
+                                            this.time.delayedCall(1500, () => {
+                                                this.tweens.add({
+                                                    targets: successLabel,
+                                                    alpha: 0,
+                                                    duration: 400,
+                                                    onComplete: () => successLabel.destroy()
+                                                });
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    alert('Topup gagal.');
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error topup:', err);
+                                alert('Gagal memproses topup.');
+                            });
                     });
                 };
 
@@ -980,13 +980,13 @@
                                         },
                                         body: JSON.stringify(this.customizationData)
                                     })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        console.log('Purchase saved:', data);
-                                    })
-                                    .catch(err => {
-                                        console.error('Error saving purchase:', err);
-                                    });
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            console.log('Purchase saved:', data);
+                                        })
+                                        .catch(err => {
+                                            console.error('Error saving purchase:', err);
+                                        });
                                 }
 
                                 // Show purchase success popup
@@ -1137,7 +1137,7 @@
 
                     // Button 1 (Corak Template)
                     const btn1X = cx - 80;
-                    if (x >= btn1X - btnW/2 && x <= btn1X + btnW/2 && y >= btnY - btnH/2 && y <= btnY + btnH/2) {
+                    if (x >= btn1X - btnW / 2 && x <= btn1X + btnW / 2 && y >= btnY - btnH / 2 && y <= btnY + btnH / 2) {
                         if (this.unlocked_template_corak) {
                             const filename = 'template_corak.png';
                             const link = document.createElement('a');
@@ -1150,7 +1150,7 @@
 
                     // Button 2 (Lambai Template)
                     const btn2X = cx + 80;
-                    if (x >= btn2X - btnW/2 && x <= btn2X + btnW/2 && y >= btnY - btnH/2 && y <= btnY + btnH/2) {
+                    if (x >= btn2X - btnW / 2 && x <= btn2X + btnW / 2 && y >= btnY - btnH / 2 && y <= btnY + btnH / 2) {
                         if (this.unlocked_template_lambai) {
                             const filename = 'template_lambai.png';
                             const link = document.createElement('a');

@@ -43,7 +43,7 @@ if ($winsCount >= 100) {
         #game-container canvas {
             z-index: 1;
         }
-
+        
         .sound-btn {
             position: absolute;
             top: 16px;
@@ -105,163 +105,6 @@ if ($winsCount >= 100) {
             transform: translateY(4px);
             box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
         }
-
-        /* ===== READY OVERLAY ===== */
-        #ready-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(6, 13, 24, 0.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 500;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 18px;
-            font-family: 'Press Start 2P', monospace;
-        }
-
-        .ready-title {
-            font-size: 11px;
-            color: #22c55e;
-            text-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.4);
-            letter-spacing: 2px;
-            text-align: center;
-            animation: readyGlow 1.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes readyGlow {
-            from {
-                text-shadow: 0 0 10px rgba(34, 197, 94, 0.6), 0 0 20px rgba(34, 197, 94, 0.3);
-            }
-
-            to {
-                text-shadow: 0 0 25px rgba(34, 197, 94, 1), 0 0 50px rgba(34, 197, 94, 0.6);
-            }
-        }
-
-        .vs-badge {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 14px 22px;
-        }
-
-        .vs-player {
-            text-align: center;
-            min-width: 80px;
-        }
-
-        .vs-player-name {
-            font-size: 7px;
-            color: #ffffff;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-            max-width: 90px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .vs-player-name.is-me {
-            color: #4ade80;
-        }
-
-        .vs-label {
-            font-size: 18px;
-            color: #f59e0b;
-            text-shadow: 2px 2px 0 #78350f;
-        }
-
-        #ready-status-text {
-            font-size: 7px;
-            color: rgba(255, 255, 255, 0.5);
-            text-align: center;
-            letter-spacing: 0.5px;
-            line-height: 1.8;
-            min-height: 26px;
-        }
-
-        #ready-btn-container {
-            position: relative;
-        }
-
-        #arena-ready-btn {
-            background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
-            border: 4px solid #14532d;
-            border-radius: 14px;
-            box-shadow: 0 8px 0 #14532d, 0 12px 30px rgba(34, 197, 94, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.35);
-            color: #fff;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 16px;
-            padding: 18px 40px;
-            cursor: pointer;
-            text-shadow: 2px 2px 0 #14532d;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.1s;
-            animation: readyBtnPulse 1.2s ease-in-out infinite;
-        }
-
-        @keyframes readyBtnPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                box-shadow: 0 8px 0 #14532d, 0 12px 30px rgba(34, 197, 94, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.35);
-            }
-
-            50% {
-                transform: scale(1.03);
-                box-shadow: 0 8px 0 #14532d, 0 16px 40px rgba(34, 197, 94, 0.7), inset 0 2px 0 rgba(255, 255, 255, 0.35);
-            }
-        }
-
-        #arena-ready-btn:active {
-            transform: translateY(8px) !important;
-            box-shadow: 0 0 0 #14532d, 0 4px 12px rgba(34, 197, 94, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.2) !important;
-            animation: none !important;
-        }
-
-        #arena-ready-btn.pressed {
-            background: linear-gradient(180deg, #86efac 0%, #4ade80 100%);
-            animation: none;
-            cursor: default;
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .ready-waiting-dots::after {
-            content: '';
-            animation: dots 1.5s steps(3, end) infinite;
-        }
-
-        @keyframes dots {
-            0% {
-                content: '';
-            }
-
-            33% {
-                content: '.';
-            }
-
-            66% {
-                content: '..';
-            }
-
-            100% {
-                content: '...';
-            }
-        }
-
-        /* ========================= */
     </style>
 </head>
 
@@ -280,65 +123,26 @@ if ($winsCount >= 100) {
                 </button>
 
                 <!-- Custom Audio Settings Modal -->
-                <div id="audio-settings-modal"
-                    style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 44, 34, 0.85); backdrop-filter: blur(6px); z-index: 200; align-items: center; justify-content: center; box-sizing: border-box;">
-                    <div class="audio-modal-card"
-                        style="background: #ffffff; border: 4px solid #000000; box-shadow: 6px 6px 0px #000000; border-radius: 12px; width: 85%; max-width: 300px; padding: 22px 18px; text-align: center; box-sizing: border-box; font-family: 'Press Start 2P', monospace;">
-                        <div class="audio-modal-title"
-                            style="font-size: 10px; color: #0d9488; margin-bottom: 20px; border-bottom: 3px dashed #000000; padding-bottom: 12px; font-weight: bold; letter-spacing: 0.5px;">
-                            ✦ PENGATURAN SUARA ✦</div>
-
+                <div id="audio-settings-modal" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 44, 34, 0.85); backdrop-filter: blur(6px); z-index: 200; align-items: center; justify-content: center; box-sizing: border-box;">
+                    <div class="audio-modal-card" style="background: #ffffff; border: 4px solid #000000; box-shadow: 6px 6px 0px #000000; border-radius: 12px; width: 85%; max-width: 300px; padding: 22px 18px; text-align: center; box-sizing: border-box; font-family: 'Press Start 2P', monospace;">
+                        <div class="audio-modal-title" style="font-size: 10px; color: #0d9488; margin-bottom: 20px; border-bottom: 3px dashed #000000; padding-bottom: 12px; font-weight: bold; letter-spacing: 0.5px;">✦ PENGATURAN SUARA ✦</div>
+                        
                         <!-- BGM Toggle Row -->
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <span
-                                style="font-size: 8px; color: #15803d; text-align: left; text-shadow: 1px 1px 0px rgba(0,0,0,0.05);">MUSIK
-                                (BGM)</span>
-                            <button id="bgm-toggle-btn" onclick="toggleBGMSetting()"
-                                style="font-family: 'Press Start 2P', monospace; font-size: 8px; width: 80px; padding: 8px 0; border: 3px solid #000000; border-radius: 6px; cursor: pointer; text-shadow: 1.5px 1.5px 0px #000000; color: white; transition: all 0.1s; box-shadow: 0px 3px 0px #000000;">ON</button>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <span style="font-size: 8px; color: #15803d; text-align: left; text-shadow: 1px 1px 0px rgba(0,0,0,0.05);">MUSIK (BGM)</span>
+                            <button id="bgm-toggle-btn" onclick="toggleBGMSetting()" style="font-family: 'Press Start 2P', monospace; font-size: 8px; width: 80px; padding: 8px 0; border: 3px solid #000000; border-radius: 6px; cursor: pointer; text-shadow: 1.5px 1.5px 0px #000000; color: white; transition: all 0.1s; box-shadow: 0px 3px 0px #000000;">ON</button>
                         </div>
-
+                        
                         <!-- SFX Toggle Row -->
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                            <span
-                                style="font-size: 8px; color: #15803d; text-align: left; text-shadow: 1px 1px 0px rgba(0,0,0,0.05);">EFEK
-                                (SFX)</span>
-                            <button id="sfx-toggle-btn" onclick="toggleSFXSetting()"
-                                style="font-family: 'Press Start 2P', monospace; font-size: 8px; width: 80px; padding: 8px 0; border: 3px solid #000000; border-radius: 6px; cursor: pointer; text-shadow: 1.5px 1.5px 0px #000000; color: white; transition: all 0.1s; box-shadow: 0px 3px 0px #000000;">ON</button>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <span style="font-size: 8px; color: #15803d; text-align: left; text-shadow: 1px 1px 0px rgba(0,0,0,0.05);">EFEK (SFX)</span>
+                            <button id="sfx-toggle-btn" onclick="toggleSFXSetting()" style="font-family: 'Press Start 2P', monospace; font-size: 8px; width: 80px; padding: 8px 0; border: 3px solid #000000; border-radius: 6px; cursor: pointer; text-shadow: 1.5px 1.5px 0px #000000; color: white; transition: all 0.1s; box-shadow: 0px 3px 0px #000000;">ON</button>
                         </div>
-
+                        
                         <!-- Save/Close Button -->
-                        <button class="pixel-btn" onclick="closeAudioSettings()"
-                            style="margin-top: 0; background-color: #22c55e; border: 3px solid #000000; box-shadow: inset 0 2px 0px rgba(255,255,255,0.4), 0px 4px 0px #000000; color: white; padding: 12px; font-size: 9px; cursor: pointer; text-transform: uppercase; width: 100%; text-shadow: 1.5px 1.5px 0px #000000;">OKE</button>
+                        <button class="pixel-btn" onclick="closeAudioSettings()" style="margin-top: 0; background-color: #22c55e; border: 3px solid #000000; box-shadow: inset 0 2px 0px rgba(255,255,255,0.4), 0px 4px 0px #000000; color: white; padding: 12px; font-size: 9px; cursor: pointer; text-transform: uppercase; width: 100%; text-shadow: 1.5px 1.5px 0px #000000;">OKE</button>
                     </div>
                 </div>
-
-                <!-- ===== READY OVERLAY (Multiplayer only) ===== -->
-                <div id="ready-overlay" style="display: none;">
-                    <div class="ready-title">✦ ARENA PACU ✦</div>
-
-                    <div class="vs-badge">
-                        <div class="vs-player">
-                            <div class="vs-player-name is-me" id="ready-my-name">
-                                
-
-                                                            <?= strtoupper(auth()->user()->nama_jalur ?? auth()->user()->email) ?></div>
-                        </div>
-                        <div class="vs-label">VS</div>
-                        <div class="vs-player">
-                            <div class="vs-player-name" id="ready-opp-name">MENUNGGU...</div>
-                        </div>
-                    </div>
-
-                    <div id="ready-status-text">Tekan SIAP jika sudah siap bertanding!</div>
-
-                    <div id="ready-btn-container">
-                        <button id="arena-ready-btn" onclick="pressArenaReady()">SIAP!</button>
-                    </div>
-                </div>
-                <!-- =========================================== -->
-
             </div>
         </div>
     </div>
@@ -346,6 +150,7 @@ if ($winsCount >= 100) {
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js"></script>
 
     <script>
+        const AI_LEVEL = <?= $level ?>;
         const GAME_WIDTH = 360;
         const GAME_HEIGHT = 760;
 
@@ -905,15 +710,54 @@ if ($winsCount >= 100) {
                 const corakDataUrl = <?= json_encode($corakDataUrl) ?>;
                 const lambaiDataUrl = <?= json_encode($lambaiDataUrl) ?>;
 
-                // Warna rival/lawan (Amber, biru, orange)
-                this.opponentColors = {
-                    boat: '#d97706',
-                    hair: '#2563eb',
-                    shirt: '#ea580c',
-                    pants: '#4b5563',
-                    paddle: '#854d0e',
-                    splash: '#a5f3fc'
-                };
+                // Warna rival/lawan (deterministik berdasarkan level number jika VS AI)
+                function getLevelColors(level) {
+                    function hslToHex(h, s, l) {
+                        l /= 100;
+                        const a = s * Math.min(l, 1 - l) / 100;
+                        const f = n => {
+                            const k = (n + h / 30) % 12;
+                            const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                            return Math.round(255 * color).toString(16).padStart(2, '0');
+                        };
+                        return `#${f(0)}${f(8)}${f(4)}`;
+                    }
+
+                    const PALETTES = [];
+                    for (let i = 1; i <= 100; i++) {
+                        // Deterministik HSL untuk 100 kombinasi unik yang premium
+                        const boatHue = (i * 37) % 360;
+                        const hairHue = (i * 73 + 60) % 360;
+                        const shirtHue = (i * 109 + 120) % 360;
+                        const pantsHue = (i * 149 + 180) % 360;
+                        const paddleHue = (i * 197 + 240) % 360;
+                        const splashHue = (i * 233 + 180) % 360;
+
+                        PALETTES.push({
+                            boat: hslToHex(boatHue, 75, 40),
+                            hair: hslToHex(hairHue, 85, 50),
+                            shirt: hslToHex(shirtHue, 70, 50),
+                            pants: hslToHex(pantsHue, 65, 45),
+                            paddle: hslToHex(paddleHue, 80, 45),
+                            splash: hslToHex(splashHue, 90, 75)
+                        });
+                    }
+
+                    return PALETTES[(level - 1) % PALETTES.length];
+                }
+
+                if (!this.isMultiplayer) {
+                    this.opponentColors = getLevelColors(AI_LEVEL);
+                } else {
+                    this.opponentColors = {
+                        boat: '#d97706',
+                        hair: '#2563eb',
+                        shirt: '#ea580c',
+                        pants: '#4b5563',
+                        paddle: '#854d0e',
+                        splash: '#a5f3fc'
+                    };
+                }
 
                 // --- Game States ---
                 this.raceDistance = 1000; // 1000 meter lintasan
@@ -1188,7 +1032,27 @@ if ($winsCount >= 100) {
                 }).setOrigin(0.5);
                 this.playerBoatGroup.add(this.playerStatusText);
 
-                this.oppNameText = this.add.text(0, -60, 'LAWAN', {
+                let initialOppName = 'LAWAN';
+                let initialOppStatus = '⚡ PAMAIN SEWA ⚡';
+                if (!this.isMultiplayer) {
+                    if (AI_LEVEL > 80) {
+                        initialOppName = 'AI MASTER';
+                        initialOppStatus = '⚡ TINGKAT MASTER ⚡';
+                    } else if (AI_LEVEL > 50) {
+                        initialOppName = 'AI HANDAL';
+                        initialOppStatus = '⚡ TINGKAT HANDAL ⚡';
+                    } else if (AI_LEVEL > 20) {
+                        initialOppName = 'AI MENENGAH';
+                        initialOppStatus = '⚡ TINGKAT MENENGAH ⚡';
+                    } else {
+                        initialOppName = 'AI PEMULA';
+                        initialOppStatus = '⚡ TINGKAT PEMULA ⚡';
+                    }
+                } else {
+                    initialOppStatus = 'LOADING...';
+                }
+
+                this.oppNameText = this.add.text(0, -60, initialOppName, {
                     fontFamily: '"Press Start 2P", monospace',
                     fontSize: '11px',
                     color: '#ffffff',
@@ -1199,7 +1063,7 @@ if ($winsCount >= 100) {
                 this.opponentBoatGroup.add(this.oppNameText);
 
                 // Teks Status Badge Lawan (Di bawah nama)
-                this.oppStatusText = this.add.text(0, -42, this.isMultiplayer ? 'LOADING...' : '⚡ PAMAIN SEWA ⚡', {
+                this.oppStatusText = this.add.text(0, -42, initialOppStatus, {
                     fontFamily: '"Press Start 2P", monospace',
                     fontSize: '7px',
                     color: '#fef3c7',
@@ -1586,7 +1450,7 @@ if ($winsCount >= 100) {
                                 this.allowExit = true;
                                 this.cameras.main.fadeOut(300, 240, 253, 244);
                                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                                    window.location.href = '/main-menu';
+                                    window.location.href = this.isMultiplayer ? '/main-menu' : '/vsai/level';
                                 });
                             }
                         }
@@ -1676,9 +1540,14 @@ if ($winsCount >= 100) {
                         }
                     }));
 
-                    // Tampilkan overlay READY, jangan auto kirim arena_ready
-                    const overlay = document.getElementById('ready-overlay');
-                    if (overlay) overlay.style.display = 'flex';
+                    // Send arena_ready message immediately to indicate loading is done
+                    this.ws.send(JSON.stringify({
+                        type: 'arena_ready',
+                        roomId: this.roomId,
+                        payload: {
+                            userId: this.currentUserId
+                        }
+                    }));
                 };
 
                 this.ws.onmessage = (event) => {
@@ -1724,25 +1593,12 @@ if ($winsCount >= 100) {
                             }
                         }
 
-                        // Update nama lawan di overlay ready
-                        if (opponent && opponent.userName) {
-                            const oppNameEl = document.getElementById('ready-opp-name');
-                            if (oppNameEl) oppNameEl.textContent = opponent.userName.toUpperCase();
-                        }
-
                         // No auto-start here. Countdown will start when both clients trigger 'arena_ready' on server.
                     }
 
                     else if (type === 'start_countdown') {
                         if (this.isWaitingForOpponentToLoad) {
                             this.isWaitingForOpponentToLoad = false;
-                            // Sembunyikan overlay ready dengan animasi fade out
-                            const overlay = document.getElementById('ready-overlay');
-                            if (overlay) {
-                                overlay.style.transition = 'opacity 0.5s ease';
-                                overlay.style.opacity = '0';
-                                setTimeout(() => { overlay.style.display = 'none'; overlay.style.opacity = '1'; }, 500);
-                            }
                             this.startCountdownSequence();
                         }
                     }
@@ -2070,6 +1926,7 @@ if ($winsCount >= 100) {
             }
 
             spawnCoinRewardAnimation() {
+                if (!this.isMultiplayer) return;
                 // Maksimal 5 koin per pertandingan, dan hanya memiliki peluang 40% per tap sempurna
                 if ((this.coinsEarnedThisMatch || 0) >= 5) return;
                 if (Math.random() >= 0.4) return;
@@ -2137,26 +1994,60 @@ if ($winsCount >= 100) {
                 // Stop the looping pluit sound when the race finishes
                 this.sound.stopByKey('sound_pluit');
 
-                const coinsReward = this.coinsEarnedThisMatch || 0;
+                let coinsReward = 0;
 
-                // Simpan koin hasil match ini ke database (untuk singleplayer & multiplayer)
-                fetch('/arena-pacu/add-coins', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        coins: coinsReward
-                    })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log('Coins updated in DB:', data);
-                    })
-                    .catch(err => console.error('Failed to update coins in DB:', err));
+                if (!this.isMultiplayer) {
+                    if (isWinner) {
+                        coinsReward = AI_LEVEL * 5;
+                        
+                        // Simpan koin hasil match ini ke database untuk VS AI
+                        fetch('/vsai/add-coins', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                coins: coinsReward
+                            })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log('VS AI Coins updated in DB:', data);
+                            })
+                            .catch(err => console.error('Failed to update VS AI coins in DB:', err));
 
-                if (this.isMultiplayer) {
+                        // Update local coins
+                        let currentCoins = parseInt(localStorage.getItem('coins') || '100000');
+                        currentCoins += coinsReward;
+                        localStorage.setItem('coins', String(currentCoins));
+                        this.coinText.setText(String(currentCoins));
+
+                        // Unlock next level
+                        const currentUnlocked = parseInt(localStorage.getItem('vsai_unlocked') || '1');
+                        if (AI_LEVEL >= currentUnlocked) {
+                            localStorage.setItem('vsai_unlocked', String(AI_LEVEL + 1));
+                        }
+                    }
+                } else {
+                    coinsReward = this.coinsEarnedThisMatch || 0;
+                    // Simpan koin hasil match ini ke database (untuk multiplayer)
+                    fetch('/arena-pacu/add-coins', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            coins: coinsReward
+                        })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log('Coins updated in DB:', data);
+                        })
+                        .catch(err => console.error('Failed to update coins in DB:', err));
+
                     fetch('/room/finish', {
                         method: 'POST',
                         headers: {
@@ -2216,7 +2107,9 @@ if ($winsCount >= 100) {
                 modal.add(modalBg);
 
                 // Judul Result
-                const titleStr = isWinner ? '✦ KEMENANGAN ✦' : '✦ KEKALAHAN ✦';
+                const titleStr = !this.isMultiplayer
+                    ? (isWinner ? 'LEVEL SELESAI!' : 'COBA LAGI!')
+                    : (isWinner ? '✦ KEMENANGAN ✦' : '✦ KEKALAHAN ✦');
                 const titleCol = isWinner ? '#16a34a' : '#dc2626';
                 const strokeCol = isWinner ? '#dcfce7' : '#fee2e2';
 
@@ -2249,15 +2142,19 @@ if ($winsCount >= 100) {
                 // Ikon koin hadiah
                 const coinGroup = this.add.container(0, 32);
                 modal.add(coinGroup);
-                const coinIcon = this.add.image(-25, 0, 'koin').setDisplaySize(28, 28);
-                const rewardTxt = this.add.text(10, 0, `+${coinsReward}`, {
-                    fontFamily: '"Press Start 2P", monospace',
-                    fontSize: '12px',
-                    color: '#d97706',
-                    fontStyle: 'bold'
-                }).setOrigin(0.5);
-                coinGroup.add(coinIcon);
-                coinGroup.add(rewardTxt);
+                if (isWinner) {
+                    const coinIcon = this.add.image(-25, 0, 'koin').setDisplaySize(28, 28);
+                    const rewardTxt = this.add.text(10, 0, `+${coinsReward} KP`, {
+                        fontFamily: '"Press Start 2P", monospace',
+                        fontSize: '12px',
+                        color: '#d97706',
+                        fontStyle: 'bold'
+                    }).setOrigin(0.5);
+                    coinGroup.add(coinIcon);
+                    coinGroup.add(rewardTxt);
+                } else {
+                    coinGroup.setVisible(false);
+                }
 
                 // --- 2 Tombol Modal (Main Lagi & Kembali) ---
                 const btnW = 110;
@@ -2279,9 +2176,9 @@ if ($winsCount >= 100) {
                 drawBtnR(false);
                 btnRetry.add(btnR_gfx);
 
-                const btnR_txt = this.add.text(0, 0, 'LAGI', {
+                const btnR_txt = this.add.text(0, 0, !this.isMultiplayer ? (isWinner ? 'LANJUT' : 'COBA LAGI') : 'LAGI', {
                     fontFamily: '"Press Start 2P", monospace',
-                    fontSize: '7.5px',
+                    fontSize: !this.isMultiplayer ? '6.5px' : '7.5px',
                     color: '#ffffff',
                     stroke: '#14532d',
                     strokeThickness: 2
@@ -2302,13 +2199,21 @@ if ($winsCount >= 100) {
                             if (this.isMultiplayer) {
                                 window.location.href = '/room';
                             } else {
-                                this.scene.restart();
+                                if (isWinner) {
+                                    if (AI_LEVEL < 100) {
+                                        window.location.href = `/vsai/arena?level=${AI_LEVEL + 1}`;
+                                    } else {
+                                        window.location.href = '/vsai/level';
+                                    }
+                                } else {
+                                    this.scene.restart();
+                                }
                             }
                         }
                     });
                 });
 
-                // Tombol Kembali ke Menu Utama
+                // Tombol Kembali ke Menu Utama / Pilih Level
                 const btnMenu = this.add.container(60, btnY);
                 modal.add(btnMenu);
 
@@ -2323,9 +2228,9 @@ if ($winsCount >= 100) {
                 drawBtnM(false);
                 btnMenu.add(btnM_gfx);
 
-                const btnM_txt = this.add.text(0, 0, 'MENU', {
+                const btnM_txt = this.add.text(0, 0, !this.isMultiplayer ? 'PILIH LEVEL' : 'MENU', {
                     fontFamily: '"Press Start 2P", monospace',
-                    fontSize: '7.5px',
+                    fontSize: !this.isMultiplayer ? '6.5px' : '7.5px',
                     color: '#ffffff',
                     stroke: '#374151',
                     strokeThickness: 2
@@ -2345,7 +2250,7 @@ if ($winsCount >= 100) {
                             this.allowExit = true;
                             this.cameras.main.fadeOut(300, 240, 253, 244);
                             this.cameras.main.once('camerafadeoutcomplete', () => {
-                                window.location.href = '/main-menu';
+                                window.location.href = !this.isMultiplayer ? '/vsai/level' : '/main-menu';
                             });
                         }
                     });
@@ -2371,7 +2276,7 @@ if ($winsCount >= 100) {
                     this.pointerGfx.x = this.pointerX;
 
                     if (!this.isMultiplayer) {
-                        this.opponentSpeed = 8.5;
+                        this.opponentSpeed = Math.min(13.0, 4.0 + (AI_LEVEL - 1) * 0.09);
                     }
 
                     // Update drag player speed
@@ -2553,10 +2458,10 @@ if ($winsCount >= 100) {
         function syncAudioModalButtons() {
             const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
             const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
-
+            
             const bgmBtn = document.getElementById('bgm-toggle-btn');
             const sfxBtn = document.getElementById('sfx-toggle-btn');
-
+            
             if (bgmBtn) {
                 if (bgmMuted) {
                     bgmBtn.textContent = 'OFF';
@@ -2568,7 +2473,7 @@ if ($winsCount >= 100) {
                     bgmBtn.style.boxShadow = '0px 3px 0px #15803d';
                 }
             }
-
+            
             if (sfxBtn) {
                 if (sfxMuted) {
                     sfxBtn.textContent = 'OFF';
@@ -2580,7 +2485,7 @@ if ($winsCount >= 100) {
                     sfxBtn.style.boxShadow = '0px 3px 0px #15803d';
                 }
             }
-
+            
             updateSoundIcon();
         }
 
@@ -2594,12 +2499,12 @@ if ($winsCount >= 100) {
             const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
             const nextMuted = !sfxMuted;
             localStorage.setItem('sfx_muted', nextMuted ? 'true' : 'false');
-
+            
             // Sync with Phaser's Sound Manager
             if (typeof game !== 'undefined' && game.sound) {
                 game.sound.mute = nextMuted;
             }
-
+            
             syncAudioModalButtons();
         }
 
@@ -2619,33 +2524,6 @@ if ($winsCount >= 100) {
                 autoCenter: Phaser.Scale.CENTER_BOTH
             }
         });
-
-        // =====================================================
-        //  READY OVERLAY — Handler tombol SIAP!
-        // =====================================================
-        function pressArenaReady() {
-            const btn = document.getElementById('arena-ready-btn');
-            if (btn) {
-                btn.classList.add('pressed');
-                btn.textContent = '✅ SIAP!';
-            }
-
-            // Update status text
-            const statusEl = document.getElementById('ready-status-text');
-            if (statusEl) {
-                statusEl.innerHTML = 'Kamu sudah siap!<br><span class="ready-waiting-dots">Menunggu lawan</span>';
-            }
-
-            // Ambil scene aktif dan kirim arena_ready via WS
-            const scene = game.scene.getScene('ArenaScene');
-            if (scene && scene.ws && scene.ws.readyState === WebSocket.OPEN) {
-                scene.ws.send(JSON.stringify({
-                    type: 'arena_ready',
-                    roomId: scene.roomId,
-                    payload: { userId: scene.currentUserId }
-                }));
-            }
-        }
     </script>
 
     <script src="/game_pacu/assets/js/game-layout.js?v=<?= time() ?>"></script>
