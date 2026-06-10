@@ -8,6 +8,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Room Matchmaking — Papan Jawara</title>
     <link rel="stylesheet" href="/game_pacu/assets/css/game-layout.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/game_pacu/assets/image/ui/pwa-icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&display=swap"
         rel="stylesheet">
     <style>
@@ -988,6 +990,122 @@
         }
         #chat-send-btn:active { transform: translateY(1px); }
         /* ======================================= */
+        
+        /* PWA Install Alert Banner */
+        .pwa-install-alert {
+            position: absolute;
+            bottom: -250px;
+            left: 5%;
+            width: 90%;
+            background: rgba(15, 23, 42, 0.95);
+            border: 3px solid #22c55e;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75), 0 0 20px rgba(34, 197, 94, 0.25);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 18px 16px;
+            box-sizing: border-box;
+            z-index: 1050;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .pwa-install-alert.show {
+            bottom: 20px;
+        }
+        .pwa-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pwa-alert-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 2px solid #22c55e;
+            object-fit: cover;
+        }
+        .pwa-alert-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+        .pwa-alert-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            color: #22c55e;
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+            margin: 0;
+        }
+        .pwa-alert-desc {
+            font-family: 'Pixelify Sans', monospace;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            line-height: 1.4;
+        }
+        .pwa-alert-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+        .pwa-btn {
+            flex: 1;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            padding: 12px 0;
+            border: 3px solid #000000;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.1s;
+            box-shadow: 0px 4px 0px #000000;
+        }
+        .pwa-btn-install {
+            background-color: #22c55e;
+            color: white;
+            text-shadow: 1.5px 1.5px 0px #000000;
+        }
+        .pwa-btn-install:hover {
+            background-color: #4ade80;
+        }
+        .pwa-btn-install:active {
+            transform: translateY(4px);
+            box-shadow: 0px 0px 0px #000000;
+        }
+        .pwa-btn-cancel {
+            background-color: #475569;
+            color: #cbd5e1;
+            text-shadow: 1px 1px 0px #000000;
+        }
+        .pwa-btn-cancel:hover {
+            background-color: #64748b;
+        }
+        .pwa-btn-cancel:active {
+            transform: translateY(4px);
+            box-shadow: 0px 0px 0px #000000;
+        }
+        .pwa-ios-instructions {
+            font-family: 'Pixelify Sans', monospace;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px dashed rgba(34, 197, 94, 0.4);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.4;
+        }
+        .pwa-ios-icon {
+            font-size: 18px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
@@ -1212,6 +1330,26 @@
                 </div>
             </div>
             <!-- ================================= -->
+
+            <!-- PWA Install Alert Dialog -->
+            <div id="pwa-install-alert" class="pwa-install-alert">
+                <div class="pwa-alert-header">
+                    <img src="/game_pacu/assets/image/ui/pwa-icon-192.png" alt="Icon Game" class="pwa-alert-icon">
+                    <div class="pwa-alert-title-group">
+                        <h4 class="pwa-alert-title">✦ PASANG GAME ✦</h4>
+                        <p class="pwa-alert-desc">Pasang game Pacu Jalur di Home Screen kamu untuk bermain lebih lancar, cepat, dan layar penuh!</p>
+                    </div>
+                </div>
+                <!-- iOS specific message (hidden by default) -->
+                <div id="pwa-ios-guide" class="pwa-ios-instructions" style="display: none;">
+                    <span class="pwa-ios-icon">📤</span>
+                    <span>Ketuk tombol <strong>Bagikan (Share)</strong> di Safari lalu pilih <strong>'Tambahkan ke Layar Utama (Add to Home Screen)'</strong>.</span>
+                </div>
+                <div class="pwa-alert-buttons">
+                    <button id="pwa-btn-cancel" class="pwa-btn pwa-btn-cancel">BATAL</button>
+                    <button id="pwa-btn-install" class="pwa-btn pwa-btn-install">PASANG</button>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -1735,6 +1873,88 @@
             // Init global chat — langsung dipanggil karena script di akhir body
             initGlobalChat();
             // ======================================
+
+            // ---- PWA Service Worker & Install Prompt Logic ----
+            let deferredPrompt;
+            const pwaAlert = document.getElementById('pwa-install-alert');
+            const btnInstall = document.getElementById('pwa-btn-install');
+            const btnCancel = document.getElementById('pwa-btn-cancel');
+            const iosGuide = document.getElementById('pwa-ios-guide');
+
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
+                        .catch(err => console.error('[PWA] Service Worker registration failed:', err));
+                });
+            }
+
+            // Helper to check if already in standalone/installed mode
+            function isInstalled() {
+                return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            }
+
+            // Detect if platform is iOS
+            function isIOS() {
+                return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            }
+
+            // Show PWA install notification banner
+            function showPwaNotification() {
+                const dismissedTime = localStorage.getItem('pwa-prompt-dismissed');
+                const now = Date.now();
+                
+                // Don't show if dismissed in the last 24 hours
+                if (dismissedTime && (now - parseInt(dismissedTime)) < (24 * 60 * 60 * 1000)) {
+                    return;
+                }
+
+                if (isInstalled()) {
+                    return;
+                }
+
+                setTimeout(() => {
+                    pwaAlert.classList.add('show');
+                }, 1500);
+            }
+
+            // Capture beforeinstallprompt event for Android / Desktop
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showPwaNotification();
+            });
+
+            // Handle Install Button Click
+            btnInstall.addEventListener('click', async () => {
+                pwaAlert.classList.remove('show');
+
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`[PWA] User response to installation: ${outcome}`);
+                    deferredPrompt = null;
+                } else if (isIOS()) {
+                    pwaAlert.classList.add('show');
+                    iosGuide.style.display = 'flex';
+                    btnInstall.style.display = 'none';
+                    btnCancel.textContent = 'OKE';
+                }
+            });
+
+            // Handle Cancel Button Click
+            btnCancel.addEventListener('click', () => {
+                pwaAlert.classList.remove('show');
+                localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
+            });
+
+            // Handle iOS specific check on page load since beforeinstallprompt does not fire on iOS
+            window.addEventListener('DOMContentLoaded', () => {
+                if (isIOS() && !isInstalled()) {
+                    showPwaNotification();
+                }
+            });
         </script>
 </body>
 
