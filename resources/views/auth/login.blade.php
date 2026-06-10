@@ -459,23 +459,59 @@
     function handleGoogleLogin(e) {
         e.preventDefault();
 
+        const width = 500, height = 650;
+        const left = (window.screen.width / 2) - (width / 2);
+        const top = (window.screen.height / 2) - (height / 2);
+        const popup = window.open('about:blank', 'GoogleLoginPopup', `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes,scrollbars=yes`);
+
+        if (!popup) {
+            alert('Silakan aktifkan pop-up browser Anda untuk login.');
+            return;
+        }
+
         // Show connecting overlay
         document.getElementById('connecting-overlay').classList.add('show');
 
-        // Redirect langsung ke Google OAuth (lebih reliable di VPS vs popup)
+        // Redirect popup after slight delay
         setTimeout(() => {
-            window.location.href = '{{ route('google.login') }}';
-        }, 600);
+            if (popup) popup.location.href = '{{ route('google.login') }}';
+        }, 1200);
+
+        // Periodically check if popup closed (fallback jika postMessage tidak terkirim)
+        const checkTimer = setInterval(() => {
+            if (popup && popup.closed) {
+                clearInterval(checkTimer);
+                // Hanya reload jika belum ada redirect dari postMessage
+                if (!window._googleLoginRedirecting) {
+                    window.location.reload();
+                }
+            }
+        }, 500);
+
+        // Simpan reference timer agar bisa dihentikan dari listener
+        window._googleLoginCheckTimer = checkTimer;
     }
 
-    // ---- Tampilkan error flash dari session (jika ada) ----
-    (function () {
-        @if(session('error'))
-            setTimeout(() => {
-                alert('{{ addslashes(session('error')) }}');
-            }, 300);
-        @endif
-    })();
+    // ---- Popup message listener ----
+    window.addEventListener('message', function (event) {
+        if (event.origin !== window.location.origin) return;
+        if (event.data && event.data.type === 'google-login-response') {
+            // Hentikan checkTimer agar tidak terjadi reload() yang membatalkan redirect
+            if (window._googleLoginCheckTimer) {
+                clearInterval(window._googleLoginCheckTimer);
+                window._googleLoginCheckTimer = null;
+            }
+
+            if (event.data.status === 'success') {
+                window._googleLoginRedirecting = true;
+                document.getElementById('connecting-overlay').classList.add('show');
+                window.location.href = event.data.redirect;
+            } else {
+                window._googleLoginRedirecting = false;
+                window.location.reload();
+            }
+        }
+    });
 
     // ---- PWA Service Worker & Install Prompt Logic ----
     let deferredPrompt;
