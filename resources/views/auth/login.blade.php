@@ -456,8 +456,11 @@
     })();
 
     // ---- Google Login Handler ----
+    let redirectHandled = false; // Flag to prevent race condition between postMessage and popup closed interval
+
     function handleGoogleLogin(e) {
         e.preventDefault();
+        redirectHandled = false;
 
         const width = 500, height = 650;
         const left = (window.screen.width / 2) - (width / 2);
@@ -478,10 +481,13 @@
         }, 1200);
 
         // Periodically check if popup closed
+        // Only reload if redirect has NOT already been handled via postMessage
         const checkTimer = setInterval(() => {
             if (popup && popup.closed) {
                 clearInterval(checkTimer);
-                window.location.reload();
+                if (!redirectHandled) {
+                    window.location.reload();
+                }
             }
         }, 500);
     }
@@ -490,6 +496,7 @@
     window.addEventListener('message', function (event) {
         if (event.origin !== window.location.origin) return;
         if (event.data && event.data.type === 'google-login-response') {
+            redirectHandled = true; // Mark as handled so the interval does not override this redirect
             if (event.data.status === 'success') {
                 window.location.href = event.data.redirect;
             } else {

@@ -107,8 +107,8 @@ class GoogleController extends Controller
                 'agree-terms' => 'required',
             ], [
                 'nama_jalur.required' => 'Nama Jalur wajib diisi.',
-                'nama_jalur.unique'   => 'Nama Jalur sudah digunakan, coba nama lain.',
-                'nama_jalur.max'      => 'Nama Jalur maksimal 50 karakter.',
+                'nama_jalur.unique' => 'Nama Jalur sudah digunakan, coba nama lain.',
+                'nama_jalur.max' => 'Nama Jalur maksimal 50 karakter.',
                 'foto_profile.required' => 'Foto Profile wajib diisi.',
                 'agree-terms.required' => 'Anda harus menyetujui syarat dan ketentuan.',
             ]);
