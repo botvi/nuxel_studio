@@ -21,7 +21,7 @@ use App\Http\Controllers\pagegame\{
     ArenaPacuController,
     ProfilController,
     RoomController,
-    TopupController,
+    ShopController,
     TukangJaluarController,
     SplahScreenController,
 };
@@ -71,10 +71,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/room/leave', [RoomController::class, 'leave'])->name('room.leave');
     Route::post('/room/finish', [RoomController::class, 'finish'])->name('room.finish');
     Route::get('/room/list', [RoomController::class, 'list'])->name('room.list');
-    Route::get('/topup', [TopupController::class, 'index'])->name('topup');
+    Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+    Route::post('/shop/add-points', [ShopController::class, 'addPoints'])->name('shop.add-points');
     Route::get('/tukang-jaluar', [TukangJaluarController::class, 'index'])->name('tukang-jaluar');
     Route::post('/tukang-jaluar/save', [TukangJaluarController::class, 'save'])->name('tukang-jaluar.save');
     Route::get('/tukang-jaluar/get', [TukangJaluarController::class, 'get'])->name('tukang-jaluar.get');
     Route::post('/tukang-jaluar/upload-corak', [TukangJaluarController::class, 'uploadCorak'])->name('tukang-jaluar.upload-corak');
     Route::post('/tukang-jaluar/upload-lambai', [TukangJaluarController::class, 'uploadLambai'])->name('tukang-jaluar.upload-lambai');
+    Route::get('/cari-pemain', [\App\Http\Controllers\pagegame\CariPemainController::class, 'index'])->name('cari-pemain');
+    Route::get('/cari-pemain/detail/{id}', [\App\Http\Controllers\pagegame\CariPemainController::class, 'detail'])->name('cari-pemain.detail');
 });

@@ -18,6 +18,7 @@
             background-color: #f0fdf4;
             color: #15803d;
             font-family: 'Pixelify Sans', monospace;
+            overflow: hidden;
         }
 
         #game-ui {
@@ -34,53 +35,69 @@
             z-index: 10;
             padding-bottom: 20px;
             box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* --- Dynamic Backdrop Glow --- */
+        .ps5-backdrop-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            transition: background 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .bg-slide-1 {
+            background: radial-gradient(circle at 50% 60%, rgba(239, 68, 68, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(20, 5, 5, 0.85) 100%);
         }
 
         .title-banner {
-            font-family: 'Pixelify Sans', monospace;
-            font-weight: 700;
-            font-size: 26px;
-            color: #ffffff;
-            text-shadow:
-                2px 2px 0px #16a34a,
-                -2px -2px 0px #16a34a,
-                2px -2px 0px #16a34a,
-                -2px 2px 0px #16a34a,
-                4px 4px 0px rgba(0, 0, 0, 0.4);
-            margin-top: 80px;
-            margin-bottom: 20px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #a5f3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.8));
+            margin-top: 76px;
+            margin-bottom: 15px;
             text-align: center;
             line-height: 1.4;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            z-index: 11;
         }
 
         .panel {
-            background: rgba(255, 255, 255, 0.92);
-            border: 4px solid #22c55e;
+            background: rgba(15, 23, 42, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             width: 90%;
             padding: 22px 20px;
             margin-bottom: 15px;
             box-shadow:
-                0 8px 20px rgba(21, 128, 61, 0.2),
-                6px 6px 0px #15803d;
+                0 8px 32px 0 rgba(0, 0, 0, 0.4),
+                0 0 15px rgba(239, 68, 68, 0.3);
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
-            backdrop-filter: blur(10px);
+            z-index: 11;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .panel-title {
             font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
-            color: #15803d;
+            font-size: 8px;
+            color: #ffaa00;
             margin-bottom: 15px;
-            border-bottom: 2px dashed #bbf7d0;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
             padding-bottom: 12px;
             text-align: center;
             line-height: 1.5;
-            text-shadow: 1px 1px 0px #dcfce7;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
             width: 100%;
         }
 
@@ -95,8 +112,8 @@
 
         .player-card {
             flex: 1;
-            background: #ffffff;
-            border: 3px solid #86efac;
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.12);
             border-radius: 16px;
             padding: 16px 10px;
             display: flex;
@@ -105,14 +122,14 @@
             min-height: 170px;
             box-sizing: border-box;
             position: relative;
-            box-shadow: 4px 4px 0px rgba(21, 128, 61, 0.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
             transition: all 0.2s;
         }
 
         .player-card.empty {
             border-style: dashed;
-            border-color: #86efac;
-            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.02);
             justify-content: center;
             box-shadow: none;
         }
@@ -121,14 +138,14 @@
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            background: #ffffff;
-            border: 3px solid #22c55e;
+            background: rgba(15, 23, 42, 0.4);
+            border: 2.5px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 12px;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(21, 128, 61, 0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .player-avatar img {
@@ -138,26 +155,28 @@
         }
 
         .player-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
-            color: #15803d;
+            color: #ffffff;
             text-align: center;
             margin-bottom: 6px;
             max-width: 100px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
         }
 
         .player-role {
             font-family: 'Press Start 2P', monospace;
             font-size: 7px;
-            background: #22c55e;
+            background: #e53e3e;
             color: #ffffff;
-            padding: 3px 8px;
+            padding: 4px 8px;
             border-radius: 6px;
             margin-bottom: 8px;
             letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .ready-badge {
@@ -166,7 +185,8 @@
             padding: 6px 10px;
             border-radius: 8px;
             color: white;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+            text-shadow: 1.5px 1.5px 0px #000000;
+            border: 2px solid #000000;
             text-align: center;
             letter-spacing: 0.5px;
             margin-top: 4px;
@@ -174,12 +194,12 @@
 
         .ready-badge.ready {
             background-color: #22c55e;
-            box-shadow: 0 3px 0 #15803d;
+            box-shadow: 0 3px 0 #000000;
         }
 
         .ready-badge.not-ready {
             background-color: #ef4444;
-            box-shadow: 0 3px 0 #991b1b;
+            box-shadow: 0 3px 0 #000000;
         }
 
         /* Radar Search animation for empty slot */
@@ -187,39 +207,43 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            border: 3px solid rgba(34, 197, 94, 0.4);
+            border: 3px solid rgba(239, 68, 68, 0.4);
             margin-bottom: 10px;
             position: relative;
             animation: radarPulse 1.5s infinite ease-in-out;
+            background: rgba(239, 68, 68, 0.05);
         }
 
         @keyframes radarPulse {
             0% {
                 transform: scale(0.9);
                 opacity: 0.5;
+                box-shadow: 0 0 0 rgba(239, 68, 68, 0);
             }
 
             50% {
-                transform: scale(1.1);
+                transform: scale(1.05);
                 opacity: 1;
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
             }
 
             100% {
                 transform: scale(0.9);
                 opacity: 0.5;
+                box-shadow: 0 0 0 rgba(239, 68, 68, 0);
             }
         }
 
         /* Buttons */
         .pixel-btn {
             background-color: #22c55e;
-            border: 3px solid #15803d;
-            border-radius: 10px;
-            box-shadow: 0px 5px 0px #15803d;
+            border: 3px solid #000000;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.4), 0px 4px 0px #000000;
             color: white;
             font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
-            padding: 16px 10px;
+            font-size: 9px;
+            padding: 14px;
             width: 100%;
             text-align: center;
             cursor: pointer;
@@ -227,48 +251,43 @@
             box-sizing: border-box;
             display: block;
             margin-top: 10px;
-            text-shadow: 1px 1px 0px #15803d;
-            transition: all 0.15s ease;
+            text-shadow: 1.5px 1.5px 0px #000000;
+            transition: all 0.1s;
         }
 
         .pixel-btn:hover {
             background-color: #4ade80;
-            transform: translateY(-2px);
-            box-shadow: 0px 7px 0px #15803d;
         }
 
         .pixel-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0px 0px 0px #15803d;
+            transform: translateY(4px);
+            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
         }
 
         .btn-red {
             background-color: #ef4444;
-            border-color: #991b1b;
-            box-shadow: 0px 5px 0px #991b1b;
-            text-shadow: 1px 1px 0px #7f1d1d;
         }
 
         .btn-red:hover {
             background-color: #f87171;
-            box-shadow: 0px 7px 0px #991b1b;
         }
 
         .btn-red:active {
-            transform: translateY(5px);
-            box-shadow: 0px 0px 0px #991b1b;
+            transform: translateY(4px);
+            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
         }
 
         .connection-status {
             font-family: 'Press Start 2P', monospace;
             font-size: 7px;
-            margin-top: 12px;
-            color: #dc2626;
+            margin-top: 15px;
+            color: #ef4444;
             letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .connection-status.connected {
-            color: #16a34a;
+            color: #22c55e;
         }
     </style>
 </head>
@@ -283,6 +302,9 @@
             </div>
             <div id="game-container">
                 <div id="game-ui">
+                    <div id="ps5-backdrop" class="ps5-backdrop-glow bg-slide-1"></div>
+                    <canvas id="ps5-particles"
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.5;"></canvas>
 
                     <div class="title-banner">✦ ROOM LOBBY ✦</div>
 
@@ -318,7 +340,9 @@
                             <!-- Player 2 (Guest) -->
                             <div class="player-card empty" id="guest-card">
                                 <div class="searching-radar"></div>
-                                <div style="font-size: 11px; font-weight: bold; color: #16a34a;">MENUNGGU LAWAN...</div>
+                                <div
+                                    style="font-family: 'Pixelify Sans', monospace; font-size: 10px; font-weight: bold; color: #fca5a5; text-shadow: 0 1px 2px rgba(0,0,0,0.5); text-align: center;">
+                                    MENUNGGU LAWAN...</div>
                             </div>
                         </div>
 
@@ -525,7 +549,7 @@
                 // Revert to empty card
                 guestCard.innerHTML = `
                     <div class="searching-radar"></div>
-                    <div style="font-size: 11px; font-weight: bold; color: #16a34a;">MENUNGGU LAWAN...</div>
+                    <div style="font-family: 'Pixelify Sans', monospace; font-size: 10px; font-weight: bold; color: #fca5a5; text-shadow: 0 1px 2px rgba(0,0,0,0.5); text-align: center;">MENUNGGU LAWAN...</div>
                 `;
                 guestCard.className = 'player-card empty';
             }
@@ -592,6 +616,54 @@
         document.addEventListener('DOMContentLoaded', () => {
             initWebSocket();
         });
+
+        // Floating particles background effect
+        (function () {
+            const canvas = document.getElementById('ps5-particles');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = canvas.offsetWidth;
+            let height = canvas.height = canvas.offsetHeight;
+
+            const particles = [];
+            const particleCount = 25;
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height + height,
+                    size: Math.random() * 3 + 1,
+                    speed: Math.random() * 0.4 + 0.15,
+                    opacity: Math.random() * 0.4 + 0.2
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = '#ffffff';
+
+                particles.forEach(p => {
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                    p.y -= p.speed;
+                    if (p.y < -10) {
+                        p.y = height + 10;
+                        p.x = Math.random() * width;
+                    }
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', () => {
+                if (canvas.offsetWidth) {
+                    width = canvas.width = canvas.offsetWidth;
+                    height = canvas.height = canvas.offsetHeight;
+                }
+            });
+
+            animate();
+        })();
     </script>
 </body>
 

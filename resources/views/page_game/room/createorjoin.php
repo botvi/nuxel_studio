@@ -18,6 +18,7 @@
             background-color: #f0fdf4;
             color: #15803d;
             font-family: 'Pixelify Sans', monospace;
+            overflow: hidden;
         }
 
         #game-ui {
@@ -34,17 +35,33 @@
             z-index: 10;
             padding-bottom: 20px;
             box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* --- Dynamic Backdrop Glow --- */
+        .ps5-backdrop-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            transition: background 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .bg-slide-4 {
+            background: radial-gradient(circle at 50% 60%, rgba(168, 85, 247, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(15, 5, 20, 0.85) 100%);
         }
 
         .back-btn {
             position: absolute;
-            top: 20px;
-            left: 18px;
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 8px;
+            top: 16px;
+            left: 14px;
+            width: 36px;
+            height: 36px;
+            background: none;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -55,65 +72,63 @@
         }
 
         .back-btn img {
-            width: 28px;
-            height: 28px;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             image-rendering: pixelated;
         }
 
         .back-btn:hover {
-            background: rgba(255, 255, 255, 0.35);
-            border: 2.5px solid rgba(255, 255, 255, 0.7);
             transform: scale(1.05);
         }
 
         .back-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
         }
 
         .title-banner {
-            font-family: 'Pixelify Sans', monospace;
-            font-weight: 700;
-            font-size: 26px;
-            color: #ffffff;
-            text-shadow:
-                2px 2px 0px #16a34a,
-                -2px -2px 0px #16a34a,
-                2px -2px 0px #16a34a,
-                -2px 2px 0px #16a34a,
-                4px 4px 0px rgba(0, 0, 0, 0.4);
-            margin-top: 80px;
-            margin-bottom: 20px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #a5f3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.8));
+            margin-top: 76px;
+            margin-bottom: 15px;
             text-align: center;
             line-height: 1.4;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            z-index: 11;
         }
 
         .panel {
-            background: rgba(255, 255, 255, 0.92);
-            border: 4px solid #22c55e;
+            background: rgba(15, 23, 42, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             width: 88%;
             padding: 22px 20px;
             margin-bottom: 20px;
             box-shadow: 
-                0 8px 20px rgba(21, 128, 61, 0.2),
-                6px 6px 0px #15803d;
+                0 8px 32px 0 rgba(0, 0, 0, 0.4),
+                0 0 15px rgba(168, 85, 247, 0.3);
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            backdrop-filter: blur(10px);
+            z-index: 11;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .panel-title {
             font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
-            color: #15803d;
+            font-size: 8px;
+            color: #ffaa00;
             margin-bottom: 15px;
-            border-bottom: 2px dashed #bbf7d0;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
             padding-bottom: 12px;
             text-align: center;
             line-height: 1.5;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.05);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
 
         /* Daftar Room Scrollable */
@@ -123,7 +138,7 @@
             overflow-y: auto;
             padding-right: 6px;
             scrollbar-width: thin;
-            scrollbar-color: #22c55e #f0fdf4;
+            scrollbar-color: #a855f7 rgba(15, 23, 42, 0.3);
         }
 
         .room-list-container::-webkit-scrollbar {
@@ -131,33 +146,32 @@
         }
 
         .room-list-container::-webkit-scrollbar-track {
-            background: #f0fdf4;
+            background: rgba(15, 23, 42, 0.3);
             border-radius: 4px;
         }
 
         .room-list-container::-webkit-scrollbar-thumb {
-            background-color: #22c55e;
+            background-color: #a855f7;
             border-radius: 4px;
         }
 
         .room-item {
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
             padding: 14px;
             margin-bottom: 12px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 3px solid #86efac;
+            border: 2px solid rgba(255, 255, 255, 0.12);
             transition: all 0.15s ease;
-            box-shadow: 3px 3px 0px rgba(21, 128, 61, 0.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .room-item:hover {
-            background: #f0fdf4;
-            border-color: #22c55e;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
             transform: translateY(-2px);
-            box-shadow: 5px 5px 0px rgba(21, 128, 61, 0.2);
         }
 
         .room-info {
@@ -170,33 +184,34 @@
             font-family: 'Pixelify Sans', monospace;
             font-weight: 700;
             font-size: 16px;
-            color: #15803d;
+            color: #ffffff;
             margin-bottom: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
 
         .room-status {
-            font-size: 12px;
-            color: #16a34a;
+            font-size: 11px;
+            color: #22c55e;
             font-weight: bold;
         }
 
         .room-status.private {
-            color: #dc2626;
+            color: #ef4444;
         }
 
         /* Buttons */
         .pixel-btn {
             background-color: #22c55e;
-            border: 3px solid #15803d;
-            border-radius: 10px;
-            box-shadow: 0px 5px 0px #15803d;
+            border: 3px solid #000000;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.4), 0px 4px 0px #000000;
             color: white;
             font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
-            padding: 16px 10px;
+            font-size: 9px;
+            padding: 14px;
             width: 100%;
             text-align: center;
             cursor: pointer;
@@ -204,79 +219,67 @@
             box-sizing: border-box;
             display: block;
             margin-top: 10px;
-            text-shadow: 1px 1px 0px #15803d;
-            transition: all 0.15s ease;
+            text-shadow: 1.5px 1.5px 0px #000000;
+            transition: all 0.1s;
         }
 
         .pixel-btn:hover {
             background-color: #4ade80;
-            transform: translateY(-2px);
-            box-shadow: 0px 7px 0px #15803d;
         }
 
         .pixel-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0px 0px 0px #15803d;
+            transform: translateY(4px);
+            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
         }
 
         .btn-small {
             background-color: #22c55e;
-            border: 2px solid #15803d;
-            border-radius: 8px;
-            box-shadow: 0px 3px 0px #15803d;
+            border: 2px solid #000000;
+            border-radius: 6px;
+            box-shadow: inset 0 1.5px 0px rgba(255, 255, 255, 0.4), 0px 3px 0px #000000;
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 8px;
             padding: 10px 14px;
             cursor: pointer;
             text-align: center;
-            text-shadow: 1px 1px 0px #15803d;
-            transition: all 0.15s ease;
+            text-shadow: 1px 1px 0px #000000;
+            transition: all 0.1s;
         }
 
         .btn-small:hover {
             background-color: #4ade80;
-            transform: translateY(-1px);
-            box-shadow: 0px 4px 0px #15803d;
         }
 
         .btn-small:active {
             transform: translateY(3px);
-            box-shadow: 0px 0px 0px #15803d;
+            box-shadow: inset 0 1.5px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
         }
 
         .btn-orange {
             background-color: #f59e0b;
-            border-color: #b45309;
-            box-shadow: 0px 3px 0px #b45309;
-            text-shadow: 1px 1px 0px #78350f;
         }
 
         .btn-orange:hover {
             background-color: #fbbf24;
-            box-shadow: 0px 4px 0px #b45309;
         }
 
         .btn-orange:active {
             transform: translateY(3px);
-            box-shadow: 0px 0px 0px #b45309;
+            box-shadow: inset 0 1.5px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
         }
 
         .btn-red {
             background-color: #ef4444;
-            border-color: #991b1b;
-            box-shadow: 0px 5px 0px #991b1b;
-            text-shadow: 1px 1px 0px #7f1d1d;
         }
 
         .btn-red:hover {
             background-color: #f87171;
-            box-shadow: 0px 7px 0px #991b1b;
         }
 
         .btn-red:active {
-            transform: translateY(5px);
-            box-shadow: 0px 0px 0px #991b1b;
+            transform: translateY(4px);
+            box-shadow: inset 0 2px 0px rgba(255, 255, 255, 0.1), 0px 0px 0px #000000;
         }
 
         /* Form Buat Room */
@@ -287,18 +290,19 @@
         .input-label {
             font-family: 'Press Start 2P', monospace;
             font-size: 8px;
-            color: #15803d;
+            color: #ffaa00;
             margin-bottom: 8px;
             display: block;
             letter-spacing: 0.5px;
+            text-shadow: 0 1.5px 2px rgba(0,0,0,0.6);
         }
 
         .pixel-input {
             width: 100%;
-            background: #f0fdf4;
-            border: 3px solid #86efac;
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 8px;
-            color: #15803d;
+            color: #ffffff;
             font-family: 'Pixelify Sans', monospace;
             font-size: 15px;
             font-weight: bold;
@@ -309,13 +313,13 @@
         }
 
         .pixel-input:focus {
-            border-color: #22c55e;
-            background: #ffffff;
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.15);
+            border-color: #a855f7;
+            background: rgba(15, 23, 42, 0.85);
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
         }
 
         .pixel-input::placeholder {
-            color: #86efac;
+            color: rgba(255, 255, 255, 0.3);
             font-weight: normal;
         }
 
@@ -327,7 +331,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(6, 78, 59, 0.85);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(8px);
             z-index: 50;
             align-items: center;
@@ -335,16 +339,16 @@
         }
 
         .modal-content {
-            background: #ffffff;
-            border: 4px solid #22c55e;
+            background: rgba(15, 23, 42, 0.95);
+            border: 3px solid #a855f7;
             padding: 24px 20px;
             width: 85%;
             max-width: 320px;
             border-radius: 20px;
             box-sizing: border-box;
             box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.4),
-                6px 6px 0px #15803d;
+                0 10px 30px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(168, 85, 247, 0.3);
             animation: modalFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
@@ -371,6 +375,10 @@
             </div>
             <div id="game-container">
                 <div id="game-ui">
+                    <div id="ps5-backdrop" class="ps5-backdrop-glow bg-slide-4"></div>
+                    <canvas id="ps5-particles"
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.5;"></canvas>
+
                     <div class="back-btn" onclick="window.location.href='/room'">
                         <img src="/game_pacu/assets/image/ui/back.png" alt="Back">
                     </div>
@@ -397,7 +405,7 @@
                         <div class="panel-title">✦ ROOM TERSEDIA ✦</div>
 
                         <div class="room-list-container scrollable" id="room-list-container">
-                            <div style="text-align: center; color: #16a34a; font-size: 12px; padding: 20px; font-family: 'Press Start 2P', monospace;">Mencari room...</div>
+                            <div style="text-align: center; color: #ffaa00; font-size: 8px; padding: 20px; font-family: 'Press Start 2P', monospace; text-shadow: 0 1.5px 2px rgba(0,0,0,0.6);">MENCARI ROOM...</div>
                         </div>
                     </div>
 
@@ -576,7 +584,7 @@
                 container.innerHTML = '';
                 
                 if (!data.rooms || data.rooms.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; color: #16a34a; font-size: 11px; padding: 20px; font-family: \'Press Start 2P\', monospace;">BELUM ADA ROOM</div>';
+                    container.innerHTML = '<div style="text-align: center; color: #ffaa00; font-size: 8px; padding: 20px; font-family: \'Press Start 2P\', monospace; text-shadow: 0 1.5px 2px rgba(0,0,0,0.6);">BELUM ADA ROOM</div>';
                     return;
                 }
 
@@ -621,6 +629,54 @@
         // Poll rooms every 4 seconds
         setInterval(fetchRooms, 4000);
         document.addEventListener('DOMContentLoaded', fetchRooms);
+
+        // Floating particles background effect
+        (function () {
+            const canvas = document.getElementById('ps5-particles');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = canvas.offsetWidth;
+            let height = canvas.height = canvas.offsetHeight;
+
+            const particles = [];
+            const particleCount = 25;
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height + height,
+                    size: Math.random() * 3 + 1,
+                    speed: Math.random() * 0.4 + 0.15,
+                    opacity: Math.random() * 0.4 + 0.2
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = '#ffffff';
+
+                particles.forEach(p => {
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                    p.y -= p.speed;
+                    if (p.y < -10) {
+                        p.y = height + 10;
+                        p.x = Math.random() * width;
+                    }
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', () => {
+                if (canvas.offsetWidth) {
+                    width = canvas.width = canvas.offsetWidth;
+                    height = canvas.height = canvas.offsetHeight;
+                }
+            });
+
+            animate();
+        })();
     </script>
     <script src="/game_pacu/assets/js/game-layout.js?v=<?= time() ?>"></script>
 </body>

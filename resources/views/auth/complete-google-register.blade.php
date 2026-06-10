@@ -5,48 +5,262 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Franchise Game — Registrasi Jalur</title>
+    <title>Pacu Jalur — Registrasi Jalur</title>
     <link rel="stylesheet" href="{{ asset('game_pacu/assets/css/game-layout.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-    #jalur-name-input {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 0;
-        height: 0;
-        z-index: 20;
-        padding: 0 12px;
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #0f172a;
         font-family: 'Pixelify Sans', monospace;
-        font-size: 15px;
-        font-weight: bold;
-        color: #15803d;
-        background: #f0fdf4;
-        border: 3px solid #22c55e;
+        overflow: hidden;
+    }
+    #game-ui {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: url('{{ asset('game_pacu/assets/image/bg/bgmenu.jpg') }}') no-repeat center center;
+        background-size: cover;
+        z-index: 10;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-bottom: 20px;
+        box-sizing: border-box;
+        -webkit-overflow-scrolling: touch;
+    }
+    /* PS5 Backdrop Glow */
+    .ps5-backdrop {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: radial-gradient(circle at 50% 40%, rgba(59, 130, 246, 0.4) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(5, 10, 20, 0.88) 100%);
+        z-index: 1;
+        pointer-events: none;
+    }
+    #ps5-particles {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.4;
+    }
+    /* Content */
+    .register-content {
+        position: relative;
+        z-index: 11;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 340px;
+        padding: 16px 20px 30px;
+        box-sizing: border-box;
+    }
+    /* Header */
+    .reg-title {
+        font-family: 'Press Start 2P', monospace;
+        font-size: 12px;
+        background: linear-gradient(180deg, #ffffff 0%, #93c5fd 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.5));
+        text-align: center;
+        line-height: 1.5;
+        letter-spacing: 2px;
+        margin-top: 60px;
+        margin-bottom: 6px;
+    }
+    .reg-subtitle {
+        font-family: 'Pixelify Sans', monospace;
+        font-size: 12px;
+        color: rgba(255,255,255,0.55);
+        text-align: center;
+        margin-bottom: 24px;
+    }
+    /* Main Registration Card */
+    .reg-card {
+        width: 100%;
+        background: rgba(15, 23, 42, 0.65);
+        border: 1.5px solid rgba(255,255,255,0.12);
+        border-radius: 20px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.15);
+        padding: 24px 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        animation: cardEntrance 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes cardEntrance {
+        0% { transform: scale(0.85); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .card-section-label {
+        font-family: 'Press Start 2P', monospace;
+        font-size: 8px;
+        color: #38bdf8;
+        text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+        text-align: center;
+    }
+    /* Avatar Selection */
+    .avatar-grid {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .avatar-slot {
+        width: 56px;
+        height: 56px;
         border-radius: 12px;
-        box-shadow: 0 4px 0 0 #15803d;
+        border: 2.5px solid rgba(255,255,255,0.15);
+        background: rgba(15, 23, 42, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-slot img {
+        width: 44px;
+        height: 44px;
+        object-fit: cover;
+        image-rendering: pixelated;
+        pointer-events: none;
+    }
+    .avatar-slot:hover {
+        border-color: rgba(56, 189, 248, 0.5);
+        transform: translateY(-3px) scale(1.06);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+    .avatar-slot.selected {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3), 0 8px 20px rgba(0,0,0,0.4);
+        transform: translateY(-2px);
+        background: rgba(245, 158, 11, 0.1);
+    }
+    .avatar-slot.selected::after {
+        content: '✓';
+        position: absolute;
+        top: 2px; right: 4px;
+        font-size: 10px;
+        color: #f59e0b;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+    }
+    /* Divider */
+    .card-divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+        margin: 4px 0 18px;
+    }
+    /* Name input label */
+    .name-label {
+        font-family: 'Press Start 2P', monospace;
+        font-size: 8px;
+        color: #38bdf8;
+        text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+    /* Custom Input styling */
+    #jalur-name-input-visible {
+        width: 100%;
+        padding: 12px 16px;
+        font-family: 'Pixelify Sans', monospace;
+        font-size: 16px;
+        font-weight: bold;
+        color: #ffffff;
+        background: rgba(255,255,255,0.07);
+        border: 2px solid rgba(255,255,255,0.15);
+        border-radius: 12px;
         outline: none;
         text-align: center;
-        image-rendering: pixelated;
-        image-rendering: crisp-edges;
-        display: block;
-        transform: translate(-50%, -50%) scale(0);
-        pointer-events: auto !important;
-        user-select: text !important;
-        -webkit-user-select: text !important;
-        -moz-user-select: text !important;
-        -ms-user-select: text !important;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+        caret-color: #38bdf8;
     }
-    #jalur-name-input::placeholder {
-        color: #86efac;
+    #jalur-name-input-visible::placeholder {
+        color: rgba(255,255,255,0.25);
         font-style: italic;
     }
-    #jalur-name-input:focus {
-        border-color: #d97706;
-        box-shadow: 0 4px 0 0 #b45309;
-        background: #ffffff;
+    #jalur-name-input-visible:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15), 0 0 12px rgba(56, 189, 248, 0.2);
+        background: rgba(56, 189, 248, 0.05);
     }
-    #game-container canvas {
-        z-index: 1;
+    #jalur-name-input-visible.error {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        animation: shake 0.3s ease;
+    }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        60% { transform: translateX(6px); }
+    }
+    .warning-txt {
+        font-family: 'Pixelify Sans', monospace;
+        font-size: 12px;
+        color: #ef4444;
+        text-align: center;
+        min-height: 20px;
+        margin-top: 8px;
+        transition: all 0.2s ease;
+    }
+    /* Start Button */
+    .start-btn {
+        width: 100%;
+        margin-top: 20px;
+        padding: 14px;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 10px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35), 0 0 0 1px rgba(34, 197, 94, 0.2);
+        transition: all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1);
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+    }
+    .start-btn::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transform: skewX(-20deg);
+        animation: shimmer-btn 2.5s infinite ease-in-out;
+        animation-delay: 1s;
+    }
+    @keyframes shimmer-btn {
+        0% { left: -100%; }
+        100% { left: 200%; }
+    }
+    .start-btn:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45), 0 0 20px rgba(34, 197, 94, 0.3);
+    }
+    .start-btn:active {
+        transform: translateY(1px) scale(0.98);
+        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
     }
     </style>
 </head>
@@ -67,485 +281,186 @@
             <span>&#11044;&#11044;&#11044;</span>
         </div>
         <div id="game-container">
-            <input type="text" id="jalur-name-input" placeholder="Nama Jalurmu..." maxlength="16">
+            <!-- PS5 Styled Registration UI -->
+            <div id="game-ui">
+                <div class="ps5-backdrop"></div>
+                <canvas id="ps5-particles"></canvas>
+
+                <div class="register-content">
+                    <!-- Header -->
+                    <div class="reg-title">✦ DATA DIRIMU ✦</div>
+                    <div class="reg-subtitle">Tentukan identitas dan nama jaluarmu</div>
+
+                    <!-- Registration Card -->
+                    <div class="reg-card">
+
+                        <!-- Avatar Selection -->
+                        <div class="card-section-label">PILIH FOTO PROFIL</div>
+                        <div class="avatar-grid">
+                            <div class="avatar-slot selected" data-avatar="profil" onclick="selectAvatar(this, 'profil')">
+                                <img src="{{ asset('game_pacu/assets/image/ui/profil.gif') }}" alt="Profil 1">
+                            </div>
+                            <div class="avatar-slot" data-avatar="profil2" onclick="selectAvatar(this, 'profil2')">
+                                <img src="{{ asset('game_pacu/assets/image/ui/profil2.gif') }}" alt="Profil 2">
+                            </div>
+                            <div class="avatar-slot" data-avatar="profil3" onclick="selectAvatar(this, 'profil3')">
+                                <img src="{{ asset('game_pacu/assets/image/ui/profil3.gif') }}" alt="Profil 3">
+                            </div>
+                            <div class="avatar-slot" data-avatar="profil4" onclick="selectAvatar(this, 'profil4')">
+                                <img src="{{ asset('game_pacu/assets/image/ui/profil4.gif') }}" alt="Profil 4">
+                            </div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <!-- Name Input -->
+                        <div class="name-label">NAMA JALUAR</div>
+                        <input
+                            type="text"
+                            id="jalur-name-input-visible"
+                            placeholder="Nama Jalurmu..."
+                            maxlength="32"
+                            autocomplete="off"
+                            spellcheck="false"
+                            value="{{ old('nama_jalur') }}"
+                        >
+                        <div class="warning-txt" id="warning-txt">
+                            @error('nama_jalur')
+                                {{ $message }}
+                            @enderror
+                        </div>
+
+                        <!-- Start Button -->
+                        <button class="start-btn" id="start-btn" onclick="handleStart()">▶ MULAI BERMAIN</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js"></script>
-
-<script>
-const GAME_WIDTH  = 360;
-const GAME_HEIGHT = 760;
-
-// =====================================================
-//  HELPER — Shimmer pada PNG icon (BitmapMask)
-// =====================================================
-function addIconShimmer(scene, img, delay) {
-    const w = img.displayWidth;
-    const h = img.displayHeight;
-    const shimW = w * 0.32;
-    const slant = h * 0.65;
-
-    // Create BitmapMask directly from the target image (conforms to png transparency shape)
-    const bitmapMask = img.createBitmapMask();
-
-    const shimGfx = scene.add.graphics();
-    shimGfx.setMask(bitmapMask);
-
-    const animData = { progress: 0 };
-    const tween = scene.tweens.add({
-        targets: animData,
-        progress: 1,
-        duration: 600,
-        ease: 'Quad.easeInOut',
-        delay: delay || 0,
-        repeat: -1,
-        repeatDelay: 2600,
-        onUpdate: () => {
-            if (!img.active) return;
-
-            let wx = img.x;
-            let wy = img.y;
-            let parent = img.parentContainer;
-            while (parent) {
-                wx += parent.x;
-                wy += parent.y;
-                parent = parent.parentContainer;
-            }
-
-            const ix = wx - w / 2;
-            const iy = wy - h / 2;
-
-            const startX = ix - shimW - slant * 2;
-            const endX = ix + w + shimW;
-            const currentX = startX + (endX - startX) * animData.progress;
-
-            shimGfx.clear();
-            shimGfx.fillStyle(0xffffff, 0.55);
-            shimGfx.fillPoints([
-                { x: currentX,                    y: iy     },
-                { x: currentX + shimW,            y: iy     },
-                { x: currentX + shimW + slant*2,  y: iy + h },
-                { x: currentX + slant*2,          y: iy + h },
-            ], true);
-        },
-        onRepeat: () => shimGfx.clear()
-    });
-
-    // Clean up graphics and stop tween when the image is destroyed
-    img.once('destroy', () => {
-        if (tween) tween.stop();
-        if (shimGfx) shimGfx.destroy();
-    });
-}
-
-// =====================================================
-//  REGISTRATION SCENE CLASS
-// =====================================================
-class RegisterScene extends Phaser.Scene {
-    constructor() { super({ key: 'RegisterScene' }); }
-
-    preload() {
-        this.load.image('bgmenu', '{{ asset('game_pacu/assets/image/bg/bgmenu.jpg') }}');
-        this.load.image('profil',  '{{ asset('game_pacu/assets/image/ui/profil.gif') }}');
-        this.load.image('profil2', '{{ asset('game_pacu/assets/image/ui/profil2.gif') }}');
-        this.load.image('profil3', '{{ asset('game_pacu/assets/image/ui/profil3.gif') }}');
-        this.load.image('profil4', '{{ asset('game_pacu/assets/image/ui/profil4.gif') }}');
-    }
-
-    create() {
-        // Play click sound on any interactive Phaser object
-        this.input.on('pointerdown', (pointer, currentlyOver) => {
-            if (currentlyOver.length > 0 && window.playClickSound) {
-                window.playClickSound();
-            }
-        });
-
-        const W  = this.scale.width;
-        const H  = this.scale.height;
-        const cx = W / 2;
-        const cy = H / 2;
-
-        this.cameras.main.fadeIn(500, 240, 253, 244);
-
-        // ---- Background cover ----
-        const bg = this.add.image(cx, cy, 'bgmenu');
-        const scaleX_bg = W / bg.width;
-        const scaleY_bg = H / bg.height;
-        bg.setScale(Math.max(scaleX_bg, scaleY_bg));
-
-        // =============================================
-        //  TITLE BANNER
-        // =============================================
-        const titleText = this.add.text(cx, 85, '✦ DATA DIRIMU ✦', {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '18px',
-            fontStyle: 'bold',
-            color: '#22c55e',
-            stroke: '#ffffff',
-            strokeThickness: 4
-        }).setOrigin(0.5);
-
-        // Subtitle
-        const subtitleText = this.add.text(cx, 115, 'Tentukan identitas dan nama jaluarmu', {
-            fontFamily: '"Pixelify Sans", monospace',
-            fontSize: '12px',
-            fontStyle: 'bold',
-            color: '#15803d'
-        }).setOrigin(0.5);
-
-        // =============================================
-        //  REGISTRATION CARD PANEL
-        // =============================================
-        const cardContainer = this.add.container(cx, 310);
-        const cW = W - 44;
-        const cH = 320;
-
-        const cardBg = this.add.graphics();
-        const radius = 20;
-        const shadowOffset = 5;
-
-        // Shadow
-        cardBg.fillStyle(0x15803d, 0.3);
-        cardBg.fillRoundedRect(-cW/2 + shadowOffset, -cH/2 + shadowOffset, cW, cH, radius);
-        // Main panel
-        cardBg.fillStyle(0xffffff, 1);
-        cardBg.lineStyle(4, 0x22c55e, 1);
-        cardBg.fillRoundedRect(-cW/2, -cH/2, cW, cH, radius);
-        cardBg.strokeRoundedRect(-cW/2, -cH/2, cW, cH, radius);
-
-        cardContainer.add(cardBg);
-
-        // Instruction Labels inside Card
-        const avatarLbl = this.add.text(0, -cH/2 + 25, 'PILIH FOTO PROFIL', {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '9px',
-            color: '#15803d'
-        }).setOrigin(0.5);
-        cardContainer.add(avatarLbl);
-
-        const nameLbl = this.add.text(0, 36, 'NAMA JALUAR', {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '9px',
-            color: '#15803d'
-        }).setOrigin(0.5);
-        cardContainer.add(nameLbl);
-
-        // =============================================
-        //  AVATAR OPTIONS SELECTION (ROUNDED CORNER FRAMES)
-        // =============================================
-        const avatarOptions = [
-            { key: 'profil',  x: -96, displaySize: 42 },
-            { key: 'profil2', x: -32, displaySize: 42 },
-            { key: 'profil3', x: 32, displaySize: 42 },
-            { key: 'profil4', x: 96, displaySize: 42 }
-        ];
-
-        let selectedAvatar = 'profil';
-        const selectionRing = this.add.graphics();
-        cardContainer.add(selectionRing);
-
-        const drawSelectionRing = () => {
-            selectionRing.clear();
-            const option = avatarOptions.find(o => o.key === selectedAvatar);
-            if (option) {
-                // Outer highlight border (slightly larger rounded rectangle)
-                selectionRing.lineStyle(3.5, 0xd97706, 1);
-                selectionRing.strokeRoundedRect(option.x - 32, -82, 64, 64, 8);
-                // Inner highlight border
-                selectionRing.lineStyle(1.5, 0xfef3c7, 1);
-                selectionRing.strokeRoundedRect(option.x - 29, -79, 58, 58, 6);
-            }
-        };
-
-        avatarOptions.forEach((option) => {
-            // Draw background rounded square slot (54x54, radius 6)
-            const slotBg = this.add.graphics();
-            slotBg.fillStyle(0xf0fdf4, 1);
-            slotBg.lineStyle(2.5, 0x86efac, 1);
-            slotBg.fillRoundedRect(option.x - 27, -77, 54, 54, 6);
-            slotBg.strokeRoundedRect(option.x - 27, -77, 54, 54, 6);
-            cardContainer.add(slotBg);
-
-            // Icon Image
-            const img = this.add.image(option.x, -50, option.key)
-                .setDisplaySize(option.displaySize, option.displaySize)
-                .setInteractive({ useHandCursor: true });
-            
-            cardContainer.add(img);
-            addIconShimmer(this, img, Math.random() * 800 + 400);
-
-            // Click event to select avatar
-            img.on('pointerdown', () => {
-                this.tweens.add({
-                    targets: img,
-                    scaleX: 0.8, scaleY: 0.8,
-                    duration: 60, yoyo: true,
-                    onComplete: () => {
-                        selectedAvatar = option.key;
-                        drawSelectionRing();
-                    }
-                });
-            });
-        });
-
-        // Draw selection ring initially
-        drawSelectionRing();
-
-        // =============================================
-        //  PLAY / MULAI BUTTON
-        // =============================================
-        const startBtn = this.add.container(cx, 515);
-        const sW = 160;
-        const sH = 46;
-        startBtn.setSize(sW, sH);
-        startBtn.setInteractive({ useHandCursor: true });
-
-        const startBg = this.add.graphics();
-        function drawStartBtn(fill, border) {
-            startBg.clear();
-            // Shadow
-            startBg.fillStyle(0x15803d, 0.25);
-            startBg.fillRoundedRect(-sW/2 + 4, -sH/2 + 4, sW, sH, 12);
-            // Main button
-            startBg.fillStyle(fill, 1);
-            startBg.lineStyle(3, border, 1);
-            startBg.fillRoundedRect(-sW/2, -sH/2, sW, sH, 12);
-            startBg.strokeRoundedRect(-sW/2, -sH/2, sW, sH, 12);
-        }
-
-        drawStartBtn(0x22c55e, 0x16a34a);
-        startBtn.add(startBg);
-
-        const startTxt = this.add.text(0, 0, 'MULAI', {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '11px',
-            color: '#ffffff',
-            stroke: '#15803d',
-            strokeThickness: 3
-        }).setOrigin(0.5);
-        startBtn.add(startTxt);
-
-        // Add Shimmer to start button
-        const startMask = this.make.graphics({ add: false });
-        startMask.fillStyle(0xffffff);
-        startMask.fillRoundedRect(cx - sW/2, 515 - sH/2, sW, sH, 12);
-
-        const startShim = this.add.graphics();
-        startShim.setMask(startMask.createGeometryMask());
-
-        const startShimW = sW * 0.22;
-        const startSlant = sH * 0.65;
-        const animData = { progress: 0 };
-        this.tweens.add({
-            targets: animData,
-            progress: 1,
-            duration: 650,
-            ease: 'Quad.easeInOut',
-            delay: 1200,
-            repeat: -1,
-            repeatDelay: 2500,
-            onUpdate: () => {
-                const currentBtnX = startBtn.x;
-                const currentBtnY = startBtn.y;
-                const startX = currentBtnX - sW/2 - startShimW - startSlant * 2;
-                const endX = currentBtnX + sW/2 + startShimW;
-                const currentX = startX + (endX - startX) * animData.progress;
-
-                startShim.clear();
-                startShim.fillStyle(0xffffff, 0.45);
-                startShim.fillPoints([
-                    { x: currentX,                    y: currentBtnY - sH/2 },
-                    { x: currentX + startShimW,       y: currentBtnY - sH/2 },
-                    { x: currentX + startShimW + startSlant*2, y: currentBtnY + sH/2 },
-                    { x: currentX + startSlant*2,     y: currentBtnY + sH/2 },
-                ], true);
-            },
-            onRepeat: () => startShim.clear()
-        });
-
-        // Hover & Click events for play button
-        startBtn.on('pointerover', () => {
-            drawStartBtn(0x4ade80, 0x22c55e);
-            this.tweens.add({ targets: startBtn, scaleX: 1.05, scaleY: 1.05, duration: 80 });
-        });
-
-        startBtn.on('pointerout', () => {
-            drawStartBtn(0x22c55e, 0x16a34a);
-            this.tweens.add({ targets: startBtn, scaleX: 1, scaleY: 1, duration: 80 });
-        });
-
-        startBtn.on('pointerdown', () => {
-            startBg.y = 2; startTxt.y = 2;
-        });
-
-        // Warning Text placed inside cardContainer directly below the input slot
-        const warningTxt = this.add.text(0, 112, '', {
-            fontFamily: '"Pixelify Sans", monospace',
-            fontSize: '12px',
-            fontStyle: 'bold',
-            color: '#ef4444',
-            align: 'center'
-        }).setOrigin(0.5);
-        cardContainer.add(warningTxt);
-
-        startBtn.on('pointerup', () => {
-            startBg.y = 0; startTxt.y = 0;
-            
-            const inputEl = document.getElementById('jalur-name-input');
-            const nameValue = inputEl ? inputEl.value.trim() : '';
-
-            if (!nameValue) {
-                // Show warning message
-                warningTxt.setText('⚠️ Silakan masukkan Nama Jalurmu!');
-                this.cameras.main.shake(200, 0.012);
-                if (inputEl) {
-                    inputEl.style.borderColor = '#ef4444';
-                    inputEl.style.boxShadow = '0 4px 0 0 #b91c1c';
-                    inputEl.focus();
-                }
-                return;
-            }
-
-            // Valid - Save and Redirect
-            localStorage.setItem('jalurName', nameValue);
-            localStorage.setItem('selectedAvatar', selectedAvatar);
-            localStorage.setItem('coins', '100000'); // set initial coin balance
-            
-            document.getElementById('form-nama-jalur').value = nameValue;
-            document.getElementById('form-foto-profile').value = selectedAvatar;
-
-            this.tweens.add({
-                targets: startBtn,
-                scaleX: 0.92, scaleY: 0.92,
-                duration: 70, yoyo: true,
-                onComplete: () => {
-                    if (inputEl) inputEl.style.display = 'none';
-                    this.cameras.main.fadeOut(400, 240, 253, 244);
-                    this.cameras.main.once('camerafadeoutcomplete', () => {
-                        document.getElementById('complete-register-form').submit();
-                    });
-                }
-            });
-        });
-
-        // =============================================
-        //  RESPONSIVE DOM OVERLAY POSITIONING (INPUT)
-        // =============================================
-        const positionInput = () => {
-            const input = document.getElementById('jalur-name-input');
-            if (!input) return;
-            const canvas = this.game.canvas;
-            if (!canvas) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = rect.width / this.scale.width;
-            const scaleY = rect.height / this.scale.height;
-
-            // Target frame slot is centered inside cardContainer + yOffset (74)
-            const inputY = cardContainer.y + 74;
-
-            input.style.left = (rect.left + cardContainer.x * scaleX) + 'px';
-            input.style.top = (rect.top + inputY * scaleY) + 'px';
-            input.style.width = (244 * scaleX) + 'px';
-            input.style.height = (40 * scaleY) + 'px';
-            input.style.fontSize = (15 * scaleY) + 'px';
-            
-            // Sync input scale with the card container scale
-            input.style.transform = `translate(-50%, -50%) scale(${cardContainer.scaleX})`;
-        };
-
-        // Card Container intro animation
-        cardContainer.setScale(0);
-        this.tweens.add({
-            targets: cardContainer,
-            scaleX: 1, scaleY: 1,
-            duration: 450,
-            ease: 'Back.easeOut',
-            delay: 150,
-            onUpdate: positionInput,
-            onComplete: positionInput
-        });
-
-        // Resize handler inside scene
-        const resizeAll = () => {
-            const currentW = this.scale.width;
-            const currentH = this.scale.height;
-            const currentCx = currentW / 2;
-            const currentCy = currentH / 2;
-
-            // Background
-            bg.setPosition(currentCx, currentCy);
-            const sX = currentW / bg.width;
-            const sY = currentH / bg.height;
-            bg.setScale(Math.max(sX, sY));
-
-            // Titles
-            titleText.setPosition(currentCx, 85);
-            subtitleText.setPosition(currentCx, 115);
-
-            // Card Panel container
-            const cardY = currentCy - 70;
-            cardContainer.setPosition(currentCx, cardY);
-
-            // Start Button
-            const btnY = cardY + 205;
-            startBtn.setPosition(currentCx, btnY);
-
-            // Start shimmer mask
-            startMask.clear();
-            startMask.fillStyle(0xffffff);
-            startMask.fillRoundedRect(currentCx - sW/2, btnY - sH/2, sW, sH, 12);
-
-            positionInput();
-        };
-
-        this.scale.on('resize', resizeAll);
-        
-        // Initial positioning call
-        this.time.delayedCall(50, () => {
-            resizeAll();
-        });
-
-        // Event listener on input type resets border color
-        const inputEl = document.getElementById('jalur-name-input');
-        if (inputEl) {
-            inputEl.addEventListener('input', () => {
-                inputEl.style.borderColor = '#22c55e';
-                inputEl.style.boxShadow = '0 4px 0 0 #15803d';
-                warningTxt.setText('');
-            });
-        }
-
-        this.events.once('shutdown', () => {
-            this.scale.off('resize', resizeAll);
-            if (inputEl) inputEl.style.display = 'none';
-        });
-    }
-}
-
-// =====================================================
-//  INIT PHASER GAME
-// =====================================================
-const game = new Phaser.Game({
-    type: Phaser.AUTO,
-    width: GAME_WIDTH,
-    height: GAME_HEIGHT,
-    backgroundColor: '#f0fdf4',
-    parent: 'game-container',
-    pixelArt: true,
-    input: {
-        keyboard: false // Nonaktifkan penangkapan input keyboard Phaser agar input field HTML dapat diketik
-    },
-    scene: [ RegisterScene ],
-    scale: {
-        mode: Phaser.Scale.RESIZE,
-        autoCenter: Phaser.Scale.CENTER_BOTH
-    }
-});
-</script>
-
 <script src="{{ asset('game_pacu/assets/js/game-layout.js') }}?v=<?= time() ?>"></script>
+<script>
+    // ---- Floating Particles ----
+    (function () {
+        const canvas = document.getElementById('ps5-particles');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = canvas.offsetWidth;
+        let height = canvas.height = canvas.offsetHeight;
+
+        const particles = [];
+        for (let i = 0; i < 22; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height + height,
+                size: Math.random() * 3 + 1,
+                speed: Math.random() * 0.4 + 0.15,
+                opacity: Math.random() * 0.35 + 0.15
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = '#93c5fd';
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+                p.y -= p.speed;
+                if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', () => {
+            if (canvas.offsetWidth) { width = canvas.width = canvas.offsetWidth; height = canvas.height = canvas.offsetHeight; }
+        });
+        animateParticles();
+    })();
+
+    // ---- Clock ----
+    (function () {
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const el = document.getElementById('clock');
+            if (el) el.textContent = h + ':' + m;
+        }
+        updateClock();
+        setInterval(updateClock, 10000);
+    })();
+
+    // ---- Avatar Selection ----
+    let selectedAvatar = 'profil';
+
+    function selectAvatar(el, avatarKey) {
+        document.querySelectorAll('.avatar-slot').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedAvatar = avatarKey;
+
+        // Bounce animation
+        el.style.transform = 'scale(0.88) translateY(-2px)';
+        setTimeout(() => { el.style.transform = ''; }, 150);
+    }
+
+    // ---- Input error handler ----
+    const nameInput = document.getElementById('jalur-name-input-visible');
+    const warningEl = document.getElementById('warning-txt');
+
+    if (nameInput) {
+        nameInput.addEventListener('input', () => {
+            nameInput.classList.remove('error');
+            warningEl.textContent = '';
+        });
+    }
+
+    // ---- Tandai error dari server jika ada ----
+    (function () {
+        const serverError = warningEl ? warningEl.textContent.trim() : '';
+        if (serverError && nameInput) {
+            nameInput.classList.add('error');
+            nameInput.focus();
+        }
+    })();
+
+    // ---- Submit Handler ----
+    function handleStart() {
+        const nameValue = nameInput ? nameInput.value.trim() : '';
+
+        if (!nameValue) {
+            nameInput.classList.add('error');
+            warningEl.textContent = '⚠️ Silakan masukkan Nama Jalurmu!';
+            nameInput.focus();
+            return;
+        }
+
+
+        // Save to localStorage
+        localStorage.setItem('jalurName', nameValue);
+        localStorage.setItem('selectedAvatar', selectedAvatar);
+        localStorage.setItem('coins', '0');
+
+        // Fill hidden form
+        document.getElementById('form-nama-jalur').value = nameValue;
+        document.getElementById('form-foto-profile').value = selectedAvatar;
+
+        // Submit with fade
+        const btn = document.getElementById('start-btn');
+        btn.disabled = true;
+        btn.textContent = '⏳ MENYIMPAN...';
+
+        setTimeout(() => {
+            document.getElementById('complete-register-form').submit();
+        }, 300);
+    }
+
+    // Allow Enter key to submit
+    if (nameInput) {
+        nameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleStart();
+        });
+    }
+</script>
 </body>
 </html>

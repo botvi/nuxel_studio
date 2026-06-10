@@ -7,267 +7,252 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Nuxel Games — Loading</title>
     <link rel="stylesheet" href="{{ asset('game_pacu/assets/css/game-layout.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         #page-transition-overlay {
             display: none !important;
         }
-        /* Container styling */
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0f1a;
+            overflow: hidden;
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        /* ---- Main Splash Container ---- */
         .splash-container {
             position: relative;
             width: 100%;
             height: 100%;
-            background: #0a0813; /* Classic retro dark space/indigo */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 40px 20px;
+            padding: 50px 24px 32px;
             overflow: hidden;
-            color: #ffffff;
             box-sizing: border-box;
-            font-family: 'Press Start 2P', monospace;
-            image-rendering: pixelated;
         }
 
-        /* CRT Screen Effect */
-        .crt-overlay {
+        /* ---- PS5-style deep background glow ---- */
+        .splash-glow {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 6px 100%;
-            z-index: 50;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                radial-gradient(ellipse at 50% 35%, rgba(34, 197, 94, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 75%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+                linear-gradient(180deg, #060d18 0%, #0a0f1a 100%);
+            z-index: 1;
             pointer-events: none;
-            opacity: 0.9;
         }
 
-        /* Screen Flicker Animation */
-        @keyframes flicker {
-            0% { opacity: 0.98; }
-            50% { opacity: 1; }
-            100% { opacity: 0.99; }
-        }
-
-        .splash-container::after {
-            content: " ";
-            display: block;
+        /* ---- Floating Particles Canvas ---- */
+        #splash-particles {
             position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: rgba(18, 16, 16, 0.07);
-            opacity: 0;
-            z-index: 51;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2;
             pointer-events: none;
-            animation: flicker 0.15s infinite;
         }
 
-        /* Vignette effect */
-        .splash-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, transparent 55%, rgba(0, 0, 0, 0.85) 120%);
+        /* ---- Content layers ---- */
+        .splash-top {
+            position: relative;
             z-index: 10;
-            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* Retro Studio intro text */
         .studio-intro {
-            font-size: 8px;
-            color: #00ffff; /* Arcade neon cyan */
-            text-shadow: 2px 2px 0px #000000;
-            letter-spacing: 2px;
-            animation: pulse 1.5s infinite alternate;
-            margin-top: 30px;
-            text-align: center;
-            z-index: 15;
+            font-size: 7px;
+            color: rgba(56, 189, 248, 0.7);
+            letter-spacing: 3px;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+            animation: fade-pulse 2s ease-in-out infinite alternate;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.6; transform: scale(0.98); }
-            100% { opacity: 1; transform: scale(1.02); }
+        @keyframes fade-pulse {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
-        /* Logo styling */
+        /* ---- Logo area ---- */
+        .splash-middle {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+            gap: 0;
+        }
+
         .logo-wrapper {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: auto 0;
-            z-index: 15;
-            animation: float 3s ease-in-out infinite;
+            animation: logo-float 3.5s ease-in-out infinite;
         }
 
-        .pixel-logo {
-            max-width: 280px;
-            height: auto;
-            image-rendering: pixelated;
-            filter: drop-shadow(0px 8px 0px #000000); /* Solid black shadow */
-            animation: logo-entrance 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes logo-entrance {
-            0% {
-                transform: scale(0) rotate(-10deg);
-                opacity: 0;
-            }
-            70% {
-                transform: scale(1.1) rotate(3deg);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        @keyframes float {
+        @keyframes logo-float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
 
-        /* Shimmer scanline effect on the logo */
-        .logo-glow {
+        .pixel-logo {
+            max-width: 260px;
+            height: auto;
+            image-rendering: pixelated;
+            filter:
+                drop-shadow(0 0 20px rgba(34, 197, 94, 0.4))
+                drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+            animation: logo-entrance 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+
+        @keyframes logo-entrance {
+            0% { transform: scale(0.3) rotate(-8deg); opacity: 0; }
+            70% { transform: scale(1.06) rotate(2deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* Glow ring behind logo */
+        .logo-glow-ring {
             position: absolute;
-            top: -20%;
-            left: -20%;
-            width: 140%;
-            height: 140%;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.15) 0%, transparent 60%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.12) 0%, transparent 65%);
+            animation: glow-pulse 3s ease-in-out infinite alternate;
             pointer-events: none;
             z-index: -1;
-            animation: glow-pulse 3s ease-in-out infinite alternate;
         }
 
         @keyframes glow-pulse {
-            0% { transform: scale(0.9); opacity: 0.5; }
-            100% { transform: scale(1.1); opacity: 1; }
+            0% { transform: scale(0.8); opacity: 0.4; }
+            100% { transform: scale(1.3); opacity: 0.8; }
         }
 
-        /* Loading section styling */
-        .loading-section {
+        /* ---- Loading section ---- */
+        .splash-bottom {
+            position: relative;
+            z-index: 10;
             width: 100%;
             max-width: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 15;
-            margin-bottom: 20px;
+            gap: 0;
         }
 
-        .loading-text {
-            font-size: 8px;
-            color: #ffffff;
-            margin-bottom: 12px;
-            letter-spacing: 1.5px;
-            text-shadow: 2px 2px 0px #000000;
+        .loading-label {
+            font-size: 7px;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .percent-val {
-            color: #ffff00; /* Retro yellow percent value */
-            font-weight: bold;
+            color: #22c55e;
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
         }
 
-        /* Pixel Progress Bar */
-        .pixel-progress-bar {
+        /* ---- Glassmorphism Progress Bar ---- */
+        .progress-track {
             width: 100%;
-            height: 20px;
-            background: #000000; /* Solid black background */
-            border: 4px solid #ffffff; /* Solid white border */
-            border-radius: 0px;
-            padding: 2px;
-            position: relative;
-            box-sizing: border-box;
-            box-shadow: 4px 4px 0px #000000; /* Solid black shadow */
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.1);
         }
 
-        .pixel-progress-fill {
+        .progress-fill {
             width: 0%;
             height: 100%;
-            background: #00ff00; /* Solid neon green fill */
+            background: linear-gradient(90deg, #16a34a 0%, #22c55e 50%, #4ade80 100%);
+            border-radius: 99px;
             transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+            position: relative;
         }
 
-        .retro-status {
+        /* Shimmer on the progress fill */
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -60%;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            animation: progress-shimmer 1.5s infinite linear;
+        }
+
+        @keyframes progress-shimmer {
+            0% { left: -60%; }
+            100% { left: 120%; }
+        }
+
+        .status-text {
             font-size: 7px;
-            color: #00ffff; /* Retro neon cyan */
-            margin-top: 10px;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 0px #000000;
-            animation: blink 1s step-end infinite;
+            color: rgba(56, 189, 248, 0.7);
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+            animation: blink-status 1s step-end infinite;
+            margin-bottom: 20px;
         }
 
-        @keyframes blink {
-            50% { opacity: 0.5; }
+        @keyframes blink-status {
+            50% { opacity: 0.4; }
         }
 
-        /* Splash footer styling */
+        /* ---- Footer ---- */
         .splash-footer {
             font-size: 6px;
-            color: #555566; /* Retro dim gray */
+            color: rgba(255,255,255,0.18);
             letter-spacing: 1px;
             text-align: center;
-            z-index: 15;
+            font-family: 'Pixelify Sans', monospace;
         }
 
-        /* Decorative Stars/Particles */
+        /* ---- Decorative floating stars ---- */
         .pixel-stars {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 2;
+            z-index: 3;
         }
 
         .star {
             position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #ffffff;
-            opacity: 0.6;
-            animation: blink-star 2s infinite ease-in-out;
-        }
-
-        .star::before, .star::after {
-            content: "";
-            position: absolute;
-            background: #ffffff;
-        }
-
-        /* Cross shape for retro stars */
-        .star::before {
-            top: -2px; left: 2px; width: 2px; height: 10px;
-        }
-        .star::after {
-            top: 2px; left: -2px; width: 10px; height: 2px;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: blink-star 2.5s infinite ease-in-out;
         }
 
         @keyframes blink-star {
-            0%, 100% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1); opacity: 0.8; }
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
         }
 
-        /* Position various stars randomly */
-        .s1 { top: 15%; left: 15%; animation-delay: 0.2s; background: #22c55e; }
-        .s1::before, .s1::after { background: #22c55e; }
-
-        .s2 { top: 30%; right: 20%; animation-delay: 0.8s; background: #facc15; }
-        .s2::before, .s2::after { background: #facc15; }
-
-        .s3 { bottom: 35%; left: 25%; animation-delay: 1.4s; background: #38bdf8; }
-        .s3::before, .s3::after { background: #38bdf8; }
-
-        .s4 { bottom: 20%; right: 15%; animation-delay: 0.5s; background: #ec4899; }
-        .s4::before, .s4::after { background: #ec4899; }
-
-        .s5 { top: 50%; left: 80%; animation-delay: 1.1s; background: #a855f7; }
-        .s5::before, .s5::after { background: #a855f7; }
+        .s1 { top: 12%; left: 18%; background: #22c55e; box-shadow: 0 0 6px #22c55e; animation-delay: 0.3s; width: 4px; height: 4px; }
+        .s2 { top: 28%; right: 14%; background: #facc15; box-shadow: 0 0 6px #facc15; animation-delay: 0.9s; }
+        .s3 { bottom: 40%; left: 22%; background: #38bdf8; box-shadow: 0 0 6px #38bdf8; animation-delay: 1.5s; }
+        .s4 { bottom: 22%; right: 18%; background: #ec4899; box-shadow: 0 0 6px #ec4899; animation-delay: 0.6s; width: 4px; height: 4px; }
+        .s5 { top: 55%; left: 78%; background: #a855f7; box-shadow: 0 0 6px #a855f7; animation-delay: 1.2s; }
+        .s6 { top: 70%; left: 10%; background: #f97316; box-shadow: 0 0 6px #f97316; animation-delay: 0.2s; }
+        .s7 { top: 18%; right: 30%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation-delay: 1.8s; width: 2px; height: 2px; }
     </style>
 </head>
 <body>
@@ -278,59 +263,111 @@
             <span id="clock">00:00</span>
             <span>&#11044;&#11044;&#11044;</span>
         </div>
-        
-        <!-- Splash Screen Layout -->
+
         <div class="splash-container">
-            <!-- Scanline/CRT effects -->
-            <div class="crt-overlay"></div>
-            
-            <!-- Floating/Sparking Star Particles (Retro Pixel Art style) -->
+            <!-- Background Glow Layer -->
+            <div class="splash-glow"></div>
+
+            <!-- Particles Canvas -->
+            <canvas id="splash-particles"></canvas>
+
+            <!-- Decorative pixel stars -->
             <div class="pixel-stars">
                 <div class="star s1"></div>
                 <div class="star s2"></div>
                 <div class="star s3"></div>
                 <div class="star s4"></div>
                 <div class="star s5"></div>
+                <div class="star s6"></div>
+                <div class="star s7"></div>
             </div>
 
-            <!-- Content elements -->
-            <div class="splash-content">
-                <!-- Intro Studio Subtitle -->
+            <!-- Top: Studio name -->
+            <div class="splash-top">
                 <div class="studio-intro">NUXEL STUDIO PRESENTS</div>
-                
-                <!-- Pixel Logo -->
+            </div>
+
+            <!-- Middle: Logo -->
+            <div class="splash-middle">
                 <div class="logo-wrapper">
-                    <img src="{{ asset('env/logo_text1.png') }}" alt="Nuxel Games Logo" class="pixel-logo">
-                    <div class="logo-glow"></div>
+                    <div class="logo-glow-ring"></div>
+                    <img src="{{ asset('env/logo_text1.png') }}" alt="Pacu Jalur Logo" class="pixel-logo">
                 </div>
             </div>
 
-            <!-- Loading section -->
-            <div class="loading-section">
-                <div class="loading-text">MEMUAT GAME... <span class="percent-val">0%</span></div>
-                <div class="pixel-progress-bar">
-                    <div class="pixel-progress-fill"></div>
+            <!-- Bottom: Loading bar -->
+            <div class="splash-bottom">
+                <div class="loading-label">MEMUAT GAME... <span class="percent-val" id="percent-val">0%</span></div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-fill"></div>
                 </div>
-                <div class="retro-status">INITIALIZING SYSTEM...</div>
-            </div>
-            
-            <!-- Footer copyrights -->
-            <div class="splash-footer">
-                © 2026 Nuxel Studio. All Rights Reserved.
+                <div class="status-text" id="status-text">INITIALIZING SYSTEM...</div>
+                <div class="splash-footer">© 2026 Nuxel Studio. All Rights Reserved.</div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script src="{{ asset('game_pacu/assets/js/game-layout.js') }}?v=<?= time() ?>"></script>
 <script>
+    // ---- Clock ----
+    (function () {
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const el = document.getElementById('clock');
+            if (el) el.textContent = h + ':' + m;
+        }
+        updateClock();
+        setInterval(updateClock, 10000);
+    })();
+
+    // ---- Floating Particles ----
+    (function () {
+        const canvas = document.getElementById('splash-particles');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = canvas.offsetWidth;
+        let height = canvas.height = canvas.offsetHeight;
+
+        const COLORS = ['#22c55e', '#38bdf8', '#a855f7', '#f59e0b'];
+        const particles = [];
+        for (let i = 0; i < 30; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height + height,
+                size: Math.random() * 2.5 + 0.5,
+                speed: Math.random() * 0.5 + 0.1,
+                opacity: Math.random() * 0.35 + 0.1,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)]
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+                p.y -= p.speed;
+                if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', () => {
+            if (canvas.offsetWidth) { width = canvas.width = canvas.offsetWidth; height = canvas.height = canvas.offsetHeight; }
+        });
+        animateParticles();
+    })();
+
+    // ---- Progress Bar Animation ----
     document.addEventListener('DOMContentLoaded', () => {
-        // Start playing the progress bar animation in sync with JS counter
-        const fill = document.querySelector('.pixel-progress-fill');
-        const percentVal = document.querySelector('.percent-val');
-        const statusText = document.querySelector('.retro-status');
-        
+        const fill = document.getElementById('progress-fill');
+        const percentEl = document.getElementById('percent-val');
+        const statusEl = document.getElementById('status-text');
+
         const statusMessages = [
             "CONNECTING TO SERVER...",
             "LOADING PIXEL ASSETS...",
@@ -339,31 +376,29 @@
             "STARTING ENGINE...",
             "READY!"
         ];
-        
+
         let start = null;
-        const duration = 4700; // 4.7 seconds (leaves 300ms for redirect fade transition)
+        const duration = 4600;
 
         function animate(timestamp) {
             if (!start) start = timestamp;
             const elapsed = timestamp - start;
             const progress = Math.min(elapsed / duration, 1);
-            
-            // Update percentage text
+
             const percentage = Math.floor(progress * 100);
-            percentVal.textContent = percentage + '%';
+            percentEl.textContent = percentage + '%';
             fill.style.width = percentage + '%';
-            
-            // Dynamic retro status messages based on percentage
-            let msgIndex = Math.floor(progress * (statusMessages.length - 1));
-            statusText.textContent = statusMessages[msgIndex];
+
+            const msgIndex = Math.min(Math.floor(progress * (statusMessages.length - 1)), statusMessages.length - 1);
+            statusEl.textContent = statusMessages[msgIndex];
 
             if (progress < 1) {
                 requestAnimationFrame(animate);
             }
         }
-        
+
         requestAnimationFrame(animate);
-        
+
         // Redirect after 5 seconds
         setTimeout(() => {
             if (typeof window.navigateToPage === 'function') {

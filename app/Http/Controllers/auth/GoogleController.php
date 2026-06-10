@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -99,15 +100,21 @@ class GoogleController extends Controller
 
     public function completeRegister(Request $request)
     {
-        $data = $request->validate([
-            'nama_jalur' => 'required|string|max:50|unique:users,nama_jalur',
-            'foto_profile' => 'required|string',
-            'agree-terms' => 'required',
-        ], [
-            'nama_jalur.required' => 'Nama Jalur wajib diisi',
-            'foto_profile.required' => 'Foto Profile wajib diisi',
-            'agree-terms.required' => 'Anda harus menyetujui syarat dan ketentuan',
-        ]);
+        try {
+            $data = $request->validate([
+                'nama_jalur' => 'required|string|max:50|unique:users,nama_jalur',
+                'foto_profile' => 'required|string',
+                'agree-terms' => 'required',
+            ], [
+                'nama_jalur.required' => 'Nama Jalur wajib diisi.',
+                'nama_jalur.unique'   => 'Nama Jalur sudah digunakan, coba nama lain.',
+                'nama_jalur.max'      => 'Nama Jalur maksimal 50 karakter.',
+                'foto_profile.required' => 'Foto Profile wajib diisi.',
+                'agree-terms.required' => 'Anda harus menyetujui syarat dan ketentuan.',
+            ]);
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
 
         $user = $request->user();
 

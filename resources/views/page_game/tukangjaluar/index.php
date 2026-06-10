@@ -111,7 +111,7 @@
                 isPressed = false;
                 drawBody(colors.fill, colors.border);
                 lbl.setColor(colors.textColor);
-                scene.cameras.main.fadeOut(300, 240, 253, 244);
+                scene.cameras.main.fadeOut(300, 15, 23, 42);
                 scene.cameras.main.once('camerafadeoutcomplete', onTap);
             });
 
@@ -358,7 +358,7 @@
                 btnTopupBg.strokeRoundedRect(-50, -15, 100, 30, 8);
                 btnTopup.add(btnTopupBg);
 
-                const btnTopupTxt = scene.add.text(0, 0, 'TOP UP', {
+                const btnTopupTxt = scene.add.text(0, 0, 'SHOP', {
                     fontFamily: '"Press Start 2P", monospace',
                     fontSize: '9px',
                     color: '#ffffff'
@@ -390,9 +390,9 @@
                 btnTopup.on('pointerdown', () => {
                     overlay.destroy();
                     dialog.destroy();
-                    scene.cameras.main.fadeOut(300, 240, 253, 244);
+                    scene.cameras.main.fadeOut(300, 15, 23, 42);
                     scene.cameras.main.once('camerafadeoutcomplete', () => {
-                        window.location.href = '/topup';
+                        window.location.href = '/shop';
                     });
                 });
 
@@ -906,7 +906,7 @@
 
                 this.coinCount = <?= auth()->user()->kuansing_poin ?>;
 
-                this.cameras.main.fadeIn(500, 240, 253, 244);
+                this.cameras.main.fadeIn(500, 15, 23, 42);
 
                 // Load custom colors dari localStorage atau gunakan default
                 this.customColors = {
@@ -926,6 +926,47 @@
                 const scaleX_bg = W / bg.width;
                 const scaleY_bg = H / bg.height;
                 bg.setScale(Math.max(scaleX_bg, scaleY_bg));
+
+                // Create a lighter PS5 deep blue slate radial gradient overlay
+                const glowCanvas = document.createElement('canvas');
+                glowCanvas.width = 360;
+                glowCanvas.height = 760;
+                const glowCtx = glowCanvas.getContext('2d');
+                const gradient = glowCtx.createRadialGradient(180, 228, 0, 180, 228, 360);
+                gradient.addColorStop(0, 'rgba(59, 130, 246, 0.35)');   // Vibrant blue center glow
+                gradient.addColorStop(0.5, 'rgba(30, 41, 59, 0.25)');  // Soft slate-blue transition
+                gradient.addColorStop(1, 'rgba(15, 23, 42, 0.45)');    // Gentle slate-blue vignette (much brighter)
+                glowCtx.fillStyle = gradient;
+                glowCtx.fillRect(0, 0, 360, 760);
+                
+                if (this.textures.exists('bg_glow')) {
+                    this.textures.remove('bg_glow');
+                }
+                this.textures.addCanvas('bg_glow', glowCanvas);
+                const bgGlow = this.add.image(cx, H / 2, 'bg_glow');
+                bgGlow.setDisplaySize(W, H);
+
+                // Create background particle texture
+                if (!this.textures.exists('bg_particle')) {
+                    const pGfxBg = this.make.graphics({ add: false });
+                    pGfxBg.fillStyle(0xffffff, 1);
+                    pGfxBg.fillRect(0, 0, 4, 4);
+                    pGfxBg.generateTexture('bg_particle', 4, 4);
+                    pGfxBg.destroy();
+                }
+
+                // Add floating background particles (upward drift, low opacity) to match main menu
+                const bgParticles = this.add.particles(0, 0, 'bg_particle', {
+                    x: { min: 0, max: W },
+                    y: { min: 0, max: H },
+                    lifespan: { min: 6000, max: 10000 },
+                    speedY: { min: -20, max: -8 },
+                    speedX: { min: -4, max: 4 },
+                    scale: { min: 0.5, max: 1.1 },
+                    alpha: { min: 0.15, max: 0.5 },
+                    frequency: 300,
+                    maxParticles: 25
+                });
 
                 // =====================================================
                 //  KOTAK KUSTOMISASI / PREVIEW JALUAR (ATAS HALAMAN)
@@ -965,16 +1006,16 @@
                 // Container utama untuk Kotak Kustomisasi
                 const boxContainer = this.add.container(boxX, boxY);
 
-                // Grafik Background Kotak Kustomisasi (Desain Premium Pixel/Retro)
+                // Grafik Background Kotak Kustomisasi (PS5 Glass style)
                 const boxBg = this.add.graphics();
 
-                // Bayangan Kotak (Shadow)
-                boxBg.fillStyle(0x15803d, 0.25);
-                boxBg.fillRoundedRect(-boxWidth / 2 + 5, -boxHeight / 2 + 5, boxWidth, boxHeight, 16);
+                // Dark Shadow
+                boxBg.fillStyle(0x000000, 0.45);
+                boxBg.fillRoundedRect(-boxWidth / 2 + 6, -boxHeight / 2 + 6, boxWidth, boxHeight, 16);
 
-                // Kotak Utama
-                boxBg.fillStyle(0xffffff, 0.9);
-                boxBg.lineStyle(4, 0x22c55e, 1);
+                // Card Body (Translucent Dark Slate)
+                boxBg.fillStyle(0x0f172a, 0.75);
+                boxBg.lineStyle(2.5, 0x3b82f6, 0.5); // Soft blue border
                 boxBg.fillRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 16);
                 boxBg.strokeRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 16);
                 boxContainer.add(boxBg);
@@ -983,10 +1024,10 @@
                 const boxTitle = this.add.text(0, -boxHeight / 2 + 20, '✦ JALUAR PREVIEW ✦', {
                     fontFamily: '"Press Start 2P", monospace',
                     fontSize: '10px',
-                    color: '#15803d',
+                    color: '#38bdf8',
                     fontStyle: 'bold',
-                    stroke: '#ffffff',
-                    strokeThickness: 2
+                    stroke: '#0f172a',
+                    strokeThickness: 3
                 }).setOrigin(0.5);
                 boxContainer.add(boxTitle);
 
@@ -1109,13 +1150,13 @@
                 const panelHeight = 185;
                 const panelBg = this.add.graphics();
 
-                // Shadow
-                panelBg.fillStyle(0x15803d, 0.25);
-                panelBg.fillRoundedRect(-panelWidth / 2 + 5, -panelHeight / 2 + 5, panelWidth, panelHeight, 16);
+                // Dark Shadow
+                panelBg.fillStyle(0x000000, 0.45);
+                panelBg.fillRoundedRect(-panelWidth / 2 + 6, -panelHeight / 2 + 6, panelWidth, panelHeight, 16);
 
-                // Background Utama
-                panelBg.fillStyle(0xffffff, 0.95);
-                panelBg.lineStyle(4, 0x22c55e, 1);
+                // Main Panel (Translucent Dark Slate)
+                panelBg.fillStyle(0x0f172a, 0.85);
+                panelBg.lineStyle(2.5, 0x3b82f6, 0.5); // Soft blue border
                 panelBg.fillRoundedRect(-panelWidth / 2, -panelHeight / 2, panelWidth, panelHeight, 16);
                 panelBg.strokeRoundedRect(-panelWidth / 2, -panelHeight / 2, panelWidth, panelHeight, 16);
                 panelContainer.add(panelBg);
@@ -1225,10 +1266,10 @@
                     const labelTxt = this.add.text(0, -panelHeight / 2 + 22, cat.label, {
                         fontFamily: '"Press Start 2P", monospace',
                         fontSize: '10px',
-                        color: '#15803d',
+                        color: '#38bdf8',
                         fontStyle: 'bold',
-                        stroke: '#dcfce7',
-                        strokeThickness: 4
+                        stroke: '#0f172a',
+                        strokeThickness: 3
                     }).setOrigin(0.5);
                     targetContainer.add(labelTxt);
 
@@ -1254,13 +1295,13 @@
                         const drawCircle = (selected) => {
                             circleGfx.clear();
                             if (selected) {
-                                // Ring luar hijau tebal untuk terpilih
-                                circleGfx.lineStyle(3.5, 0x15803d, 1);
+                                // Ring luar biru tebal untuk terpilih
+                                circleGfx.lineStyle(3.5, 0x3b82f6, 1);
                                 circleGfx.fillStyle(colorInt, 1);
                                 circleGfx.fillCircle(0, 0, CC_RADIUS + 3);
                                 circleGfx.strokeCircle(0, 0, CC_RADIUS + 3);
                             } else {
-                                circleGfx.lineStyle(2, 0x22c55e, 0.6);
+                                circleGfx.lineStyle(2, 0xffffff, 0.25);
                                 circleGfx.fillStyle(colorInt, 1);
                                 circleGfx.fillCircle(0, 0, CC_RADIUS);
                                 circleGfx.strokeCircle(0, 0, CC_RADIUS);
@@ -1316,7 +1357,7 @@
                         const descTxt = this.add.text(0, -22, descText, {
                             fontFamily: '"Pixelify Sans", monospace',
                             fontSize: '9.5px',
-                            color: '#16a34a',
+                            color: '#94a3b8',
                             fontStyle: 'bold',
                             align: 'center',
                             lineSpacing: 3
@@ -1335,7 +1376,7 @@
                         const drawUpBg = (fillAlpha) => {
                             upBg.clear();
                             // Shadow
-                            upBg.fillStyle(0x15803d, 0.22);
+                            upBg.fillStyle(0x0f172a, 0.25);
                             upBg.fillRoundedRect(-btnW / 2 + 3, -btnH / 2 + 3, btnW, btnH, 6);
                             // Body
                             upBg.fillStyle(0x22c55e, fillAlpha);
@@ -1380,7 +1421,7 @@
                         const drawTempBg = (fillAlpha) => {
                             tempBg.clear();
                             // Shadow
-                            tempBg.fillStyle(0x1e3a8a, 0.22);
+                            tempBg.fillStyle(0x0f172a, 0.25);
                             tempBg.fillRoundedRect(-btnW / 2 + 3, -btnH / 2 + 3, btnW, btnH, 6);
                             // Body
                             tempBg.fillStyle(0x3b82f6, fillAlpha);
@@ -1425,7 +1466,7 @@
                         const drawClBg = (fillAlpha) => {
                             clBg.clear();
                             // Shadow
-                            clBg.fillStyle(0x7f1d1d, 0.22);
+                            clBg.fillStyle(0x0f172a, 0.25);
                             clBg.fillRoundedRect(-btnW / 2 + 3, -btnH / 2 + 3, btnW, btnH, 6);
                             // Body
                             clBg.fillStyle(0xef4444, fillAlpha);
@@ -1511,14 +1552,14 @@
                         targetContainer.add(lockOverlay);
 
                         const lockBg = this.add.graphics();
-                        
+
                         // Shadow
-                        lockBg.fillStyle(0x15803d, 0.12);
+                        lockBg.fillStyle(0x000000, 0.35);
                         lockBg.fillRoundedRect(-panelWidth / 2 + 13, -15, panelWidth - 26, 36, 10);
-                        
-                        // Frosted Glass panel background (white translucent)
-                        lockBg.fillStyle(0xffffff, 0.85);
-                        lockBg.lineStyle(2.5, 0x22c55e, 0.85); // green-border
+
+                        // Translucent slate panel background
+                        lockBg.fillStyle(0x1e293b, 0.9);
+                        lockBg.lineStyle(2.5, 0x3b82f6, 0.7); // blue-border
                         lockBg.fillRoundedRect(-panelWidth / 2 + 10, -18, panelWidth - 20, 36, 10);
                         lockBg.strokeRoundedRect(-panelWidth / 2 + 10, -18, panelWidth - 20, 36, 10);
                         lockOverlay.add(lockBg);
@@ -1526,9 +1567,9 @@
                         const lockTxt = this.add.text(0, 0, '🔒 BUKA UPLOAD CORAK (200 KP)', {
                             fontFamily: '"Press Start 2P", monospace',
                             fontSize: '7.5px',
-                            color: '#15803d',
+                            color: '#38bdf8',
                             fontStyle: 'bold',
-                            stroke: '#ffffff',
+                            stroke: '#0f172a',
                             strokeThickness: 3
                         }).setOrigin(0.5);
                         lockOverlay.add(lockTxt);
@@ -1566,14 +1607,14 @@
                         targetContainer.add(lockOverlay);
 
                         const lockBg = this.add.graphics();
-                        
+
                         // Shadow
-                        lockBg.fillStyle(0x15803d, 0.12);
+                        lockBg.fillStyle(0x000000, 0.35);
                         lockBg.fillRoundedRect(-panelWidth / 2 + 13, -15, panelWidth - 26, 36, 10);
-                        
-                        // Frosted Glass panel background (white translucent)
-                        lockBg.fillStyle(0xffffff, 0.85);
-                        lockBg.lineStyle(2.5, 0x22c55e, 0.85); // green-border
+
+                        // Translucent slate panel background
+                        lockBg.fillStyle(0x1e293b, 0.9);
+                        lockBg.lineStyle(2.5, 0x3b82f6, 0.7); // blue-border
                         lockBg.fillRoundedRect(-panelWidth / 2 + 10, -18, panelWidth - 20, 36, 10);
                         lockBg.strokeRoundedRect(-panelWidth / 2 + 10, -18, panelWidth - 20, 36, 10);
                         lockOverlay.add(lockBg);
@@ -1581,9 +1622,9 @@
                         const lockTxt = this.add.text(0, 0, '🔒 BUKA LAMBAI-LAMBAI (500 KP)', {
                             fontFamily: '"Press Start 2P", monospace',
                             fontSize: '7.5px',
-                            color: '#15803d',
+                            color: '#38bdf8',
                             fontStyle: 'bold',
-                            stroke: '#ffffff',
+                            stroke: '#0f172a',
                             strokeThickness: 3
                         }).setOrigin(0.5);
                         lockOverlay.add(lockTxt);
@@ -1631,7 +1672,7 @@
                 const updateDots = (activeIdx) => {
                     dotGfxList.forEach((gfx, i) => {
                         gfx.clear();
-                        gfx.fillStyle(0x15803d, i === activeIdx ? 1 : 0.28);
+                        gfx.fillStyle(0x38bdf8, i === activeIdx ? 1 : 0.28);
                         gfx.fillCircle(0, 0, i === activeIdx ? 5 : 3.5);
                     });
                 };
@@ -1933,35 +1974,23 @@
 
 
                 // ---- Tombol Kembali (Top Left) ----
-                const backBtnContainer = this.add.container(38, 34);
-                backBtnContainer.setSize(48, 48);
+                const backBtnContainer = this.add.container(32, 34);
+                backBtnContainer.setSize(36, 36);
                 backBtnContainer.setInteractive({ useHandCursor: true });
 
-                // Background kotak transparan (rounded rectangle)
-                const backBtnBg = this.add.graphics();
-                function drawBackBtnBg(fillAlpha, lineAlpha, lineWidth) {
-                    backBtnBg.clear();
-                    backBtnBg.fillStyle(0xffffff, fillAlpha);
-                    backBtnBg.lineStyle(lineWidth, 0xffffff, lineAlpha);
-                    backBtnBg.fillRoundedRect(-24, -24, 48, 48, 8);
-                    backBtnBg.strokeRoundedRect(-24, -24, 48, 48, 8);
-                }
-                drawBackBtnBg(0.2, 0.4, 2);
-                backBtnContainer.add(backBtnBg);
-
-                // Icon kembali diperbesar di tengah
-                const backIcon = this.add.image(0, 0, 'back').setDisplaySize(32, 32);
+                // Icon kembali (display size 36x36)
+                const backIcon = this.add.image(0, 0, 'back').setDisplaySize(36, 36);
                 backBtnContainer.add(backIcon);
 
                 // Animasi bounce + aksi klik kembali
                 backBtnContainer.on('pointerdown', () => {
                     this.tweens.add({
                         targets: backBtnContainer,
-                        scaleX: 0.8, scaleY: 0.8,
+                        scaleX: 0.9, scaleY: 0.9,
                         duration: 80, ease: 'Power2',
                         yoyo: true,
                         onComplete: () => {
-                            this.cameras.main.fadeOut(300, 240, 253, 244);
+                            this.cameras.main.fadeOut(300, 15, 23, 42);
                             this.cameras.main.once('camerafadeoutcomplete', () => {
                                 window.location.href = '/main-menu';
                             });
@@ -1971,42 +2000,10 @@
 
                 // Hover effect
                 backBtnContainer.on('pointerover', () => {
-                    drawBackBtnBg(0.35, 0.7, 2.5);
                     this.tweens.add({ targets: backBtnContainer, scaleX: 1.05, scaleY: 1.05, duration: 90, ease: 'Power2' });
                 });
                 backBtnContainer.on('pointerout', () => {
-                    drawBackBtnBg(0.2, 0.4, 2);
                     this.tweens.add({ targets: backBtnContainer, scaleX: 1, scaleY: 1, duration: 90, ease: 'Power2' });
-                });
-
-                // Shimmer pada tombol kembali kotak (menggunakan geometry mask rounded rectangle)
-                const backMask = this.make.graphics({ add: false });
-                backMask.fillStyle(0xffffff);
-                backMask.fillRoundedRect(38 - 24, 34 - 24, 48, 48, 8);
-
-                const backShimGfx = this.add.graphics();
-                backShimGfx.setMask(backMask.createGeometryMask());
-
-                const backWsp = { v: 14 - 15 - 15 }; // ix - shimW - slant
-                this.tweens.add({
-                    targets: backWsp,
-                    v: 62 + 15,
-                    duration: 650,
-                    ease: 'Quad.easeInOut',
-                    delay: Math.random() * 500 + 1000,
-                    repeat: -1,
-                    repeatDelay: 2500,
-                    onUpdate: () => {
-                        backShimGfx.clear();
-                        backShimGfx.fillStyle(0xffffff, 0.45);
-                        backShimGfx.fillPoints([
-                            { x: backWsp.v, y: 34 - 24 },
-                            { x: backWsp.v + 15, y: 34 - 24 },
-                            { x: backWsp.v + 15 + 15, y: 34 + 24 },
-                            { x: backWsp.v + 15, y: 34 + 24 },
-                        ], true);
-                    },
-                    onRepeat: () => backShimGfx.clear()
                 });
 
                 // =============================================
@@ -2316,7 +2313,7 @@
                     fontFamily: '"Pixelify Sans", monospace',
                     fontSize: '11px',
                     fontStyle: 'bold',
-                    color: 'rgba(21, 128, 61, 0.45)'
+                    color: 'rgba(255, 255, 255, 0.3)'
                 }).setOrigin(0.5);
             }
         }
@@ -2359,7 +2356,7 @@
                 type: Phaser.AUTO,
                 width: GAME_WIDTH,
                 height: GAME_HEIGHT,
-                backgroundColor: '#f0fdf4',
+                backgroundColor: '#0f172a',
                 parent: 'game-container',
                 pixelArt: true,
                 scene: [CustomizeScene],

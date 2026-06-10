@@ -5,11 +5,11 @@ namespace App\Http\Controllers\pagegame;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class TopupController extends Controller
+class ShopController extends Controller
 {
     public function index()
     {
-        return view('page_game.topup.index');
+        return view('page_game.shop.index');
     }
 
     public function addPoints(Request $request)
