@@ -456,54 +456,26 @@
     })();
 
     // ---- Google Login Handler ----
-    let redirectHandled = false; // Flag to prevent race condition between postMessage and popup closed interval
-
     function handleGoogleLogin(e) {
         e.preventDefault();
-        redirectHandled = false;
-
-        const width = 500, height = 650;
-        const left = (window.screen.width / 2) - (width / 2);
-        const top = (window.screen.height / 2) - (height / 2);
-        const popup = window.open('about:blank', 'GoogleLoginPopup', `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes,scrollbars=yes`);
-
-        if (!popup) {
-            alert('Silakan aktifkan pop-up browser Anda untuk login.');
-            return;
-        }
 
         // Show connecting overlay
         document.getElementById('connecting-overlay').classList.add('show');
 
-        // Redirect popup after slight delay
+        // Redirect langsung ke Google OAuth (lebih reliable di VPS vs popup)
         setTimeout(() => {
-            if (popup) popup.location.href = '{{ route('google.login') }}';
-        }, 1200);
-
-        // Periodically check if popup closed
-        // Only reload if redirect has NOT already been handled via postMessage
-        const checkTimer = setInterval(() => {
-            if (popup && popup.closed) {
-                clearInterval(checkTimer);
-                if (!redirectHandled) {
-                    window.location.reload();
-                }
-            }
-        }, 500);
+            window.location.href = '{{ route('google.login') }}';
+        }, 600);
     }
 
-    // ---- Popup message listener ----
-    window.addEventListener('message', function (event) {
-        if (event.origin !== window.location.origin) return;
-        if (event.data && event.data.type === 'google-login-response') {
-            redirectHandled = true; // Mark as handled so the interval does not override this redirect
-            if (event.data.status === 'success') {
-                window.location.href = event.data.redirect;
-            } else {
-                window.location.reload();
-            }
-        }
-    });
+    // ---- Tampilkan error flash dari session (jika ada) ----
+    (function () {
+        @if(session('error'))
+            setTimeout(() => {
+                alert('{{ addslashes(session('error')) }}');
+            }, 300);
+        @endif
+    })();
 
     // ---- PWA Service Worker & Install Prompt Logic ----
     let deferredPrompt;

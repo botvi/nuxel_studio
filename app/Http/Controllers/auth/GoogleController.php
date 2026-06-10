@@ -40,10 +40,10 @@ class GoogleController extends Controller
                 Auth::login($user);
 
                 // Redirect langsung untuk user yang sudah terdaftar
-                $redirectUrl = ($user->role == 'admin' || $user->role == 'superadmin')
-                    ? route('dashboard-superadmin')
-                    : '/main-menu';
-                return $this->respondWithPopupScript('success', $redirectUrl);
+                if ($user->role == 'admin' || $user->role == 'superadmin') {
+                    return redirect()->route('dashboard-superadmin');
+                }
+                return redirect('/main-menu');
             }
 
             // Jika user belum terdaftar, buat user baru dengan data minimal
@@ -56,16 +56,18 @@ class GoogleController extends Controller
 
             Auth::login($user);
 
+            // Simpan user_id di session agar tidak perlu lewat query string
+            session(['google_new_user_id' => $user->id]);
+
             // Redirect langsung ke halaman lengkapi data untuk user baru
-            return $this->respondWithPopupScript('success', route('google.complete', ['user_id' => $user->id]));
+            return redirect()->route('google.complete');
 
         } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
-            // Handle invalid state exception dengan redirect dan alert
-            Alert::error('Sesi OAuth tidak valid', 'Silakan coba login lagi.');
-            return $this->respondWithPopupScript('error', '/login', 'Sesi OAuth tidak valid. Silakan coba login lagi.');
+            // Handle invalid state exception
+            return redirect('/login')->with('error', 'Sesi OAuth tidak valid. Silakan coba login lagi.');
 
         } catch (\Exception $e) {
-            // Handle SSL certificate errors dan error lainnya dengan redirect dan alert
+            // Handle SSL certificate errors dan error lainnya
             $errorMessage = $e->getMessage();
             $customMessage = 'Terjadi kesalahan saat login dengan Google.';
 
@@ -73,26 +75,25 @@ class GoogleController extends Controller
                 strpos($errorMessage, 'SSL certificate problem') !== false ||
                 strpos($errorMessage, 'cURL error 60') !== false
             ) {
-                $customMessage = 'Masalah SSL Certificate. Terjadi masalah dengan sertifikat SSL. Silakan coba lagi atau hubungi administrator.';
+                $customMessage = 'Masalah SSL Certificate. Silakan coba lagi atau hubungi administrator.';
             } elseif (strpos($errorMessage, 'Client error') !== false) {
-                $customMessage = 'Error OAuth. Terjadi kesalahan pada OAuth. Pastikan konfigurasi Google OAuth sudah benar.';
+                $customMessage = 'Error OAuth. Pastikan konfigurasi Google OAuth sudah benar.';
             } else {
                 $customMessage = 'Terjadi kesalahan saat login dengan Google: ' . $errorMessage;
             }
 
-            Alert::error('Error Google OAuth', $customMessage);
-            return $this->respondWithPopupScript('error', '/login', $customMessage);
+            return redirect('/login')->with('error', $customMessage);
         }
     }
 
     public function showCompleteForm(Request $request)
     {
-        $user_id = $request->query('user_id');
+        // Ambil user_id dari session (lebih aman dari query string)
+        $user_id = session('google_new_user_id') ?? $request->query('user_id');
         $user = User::where('id', $user_id)->first();
 
         if (!$user) {
-            Alert::error('Data Google tidak ditemukan.', 'Silakan login dengan Google terlebih dahulu.');
-            return redirect('/login');
+            return redirect('/login')->with('error', 'Data Google tidak ditemukan. Silakan login dengan Google terlebih dahulu.');
         }
 
         return view('auth.complete-google-register', ['user' => $user]);
