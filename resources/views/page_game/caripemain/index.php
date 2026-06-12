@@ -30,7 +30,7 @@ $user = auth()->user();
             height: 100%;
             display: flex;
             flex-direction: column;
-            background: radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.35) 0%, rgba(30, 41, 59, 0.25) 50%, rgba(15, 23, 42, 0.45) 100%), url('/game_pacu/assets/image/bg/bgmenu.jpg') no-repeat center center;
+            background: #0c111d url('/game_pacu/assets/image/bg/bgmenu.jpg') no-repeat center center;
             background-size: cover;
             z-index: 10;
             box-sizing: border-box;
@@ -40,14 +40,7 @@ $user = auth()->user();
 
         /* Particles animation canvas */
         #ps5-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.4;
+            display: none;
         }
 
         /* Top Navigation Bar */
@@ -110,17 +103,8 @@ $user = auth()->user();
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: linear-gradient(90deg,
-                rgba(255,255,255,0) 0%,
-                rgba(255,255,255,0.6) 50%,
-                rgba(255,255,255,0) 100%);
-            transform: translateX(-150%) skewX(-25deg);
-            animation: coinShimmer 3s infinite ease-in-out;
-            pointer-events: none;
-        }
-        @keyframes coinShimmer {
-            0%   { transform: translateX(-150%) skewX(-25deg); }
-            100% { transform: translateX(150%) skewX(-25deg); }
+            background: none;
+            display: none;
         }
 
         .coin-amount {
@@ -410,8 +394,7 @@ $user = auth()->user();
 
             <div id="game-container">
                 <div id="search-dashboard">
-                    <!-- Particles -->
-                    <canvas id="ps5-particles"></canvas>
+                    <!-- Particles removed for performance -->
 
                     <!-- Top Bar -->
                     <div class="top-bar">
@@ -519,53 +502,7 @@ $user = auth()->user();
             setInterval(updateClock, 10000);
         })();
 
-        // Background floating particles anim
-        (function () {
-            const canvas = document.getElementById('ps5-particles');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let width = canvas.width = canvas.offsetWidth;
-            let height = canvas.height = canvas.offsetHeight;
-
-            const particles = [];
-            const particleCount = 20;
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height + height,
-                    size: Math.random() * 2 + 1,
-                    speed: Math.random() * 0.3 + 0.1,
-                    opacity: Math.random() * 0.4 + 0.2
-                });
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                ctx.fillStyle = '#ef4444';
-
-                particles.forEach(p => {
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y -= p.speed;
-                    if (p.y < -10) {
-                        p.y = height + 10;
-                        p.x = Math.random() * width;
-                    }
-                });
-
-                requestAnimationFrame(animate);
-            }
-
-            window.addEventListener('resize', () => {
-                if (canvas.offsetWidth) {
-                    width = canvas.width = canvas.offsetWidth;
-                    height = canvas.height = canvas.offsetHeight;
-                }
-            });
-
-            animate();
-        })();
+        // Background floating particles anim disabled for performance
     </script>
 </body>
 

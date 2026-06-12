@@ -36,7 +36,7 @@
         position: absolute;
         top: 0; left: 0;
         width: 100%; height: 100%;
-        background: radial-gradient(circle at 50% 60%, rgba(34, 197, 94, 0.45) 0%, rgba(15, 23, 42, 0.35) 50%, rgba(6, 17, 10, 0.88) 100%);
+        background: #0f172a;
         z-index: 1;
         pointer-events: none;
     }
@@ -68,7 +68,6 @@
         background: linear-gradient(180deg, #ffffff 0%, #86efac 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 2px 8px rgba(34, 197, 94, 0.5));
         text-align: center;
         line-height: 1.5;
         letter-spacing: 2px;
@@ -90,7 +89,7 @@
         border-radius: 20px;
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(34, 197, 94, 0.15);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
         padding: 28px 24px;
         box-sizing: border-box;
         display: flex;
@@ -102,7 +101,6 @@
         font-family: 'Press Start 2P', monospace;
         font-size: 9px;
         color: #22c55e;
-        text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
         letter-spacing: 1px;
         margin-bottom: 20px;
         text-align: center;
@@ -128,24 +126,14 @@
     }
     .google-btn:hover {
         transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.4), 0 0 15px rgba(34, 197, 94, 0.3);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     }
     .google-btn:active {
         transform: translateY(1px) scale(0.98);
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     .google-btn-shimmer {
-        position: absolute;
-        top: 0; left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-        transform: skewX(-20deg);
-        animation: shimmer 3s infinite ease-in-out;
-    }
-    @keyframes shimmer {
-        0% { left: -100%; }
-        100% { left: 200%; }
+        display: none;
     }
     .google-logo {
         width: 22px;
@@ -206,7 +194,6 @@
         font-family: 'Press Start 2P', monospace;
         font-size: 9px;
         color: #22c55e;
-        text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
         animation: pulse-text 1.2s ease-in-out infinite;
     }
     @keyframes pulse-text {
@@ -217,25 +204,25 @@
     /* PWA Install Alert Banner */
     .pwa-install-alert {
         position: absolute;
-        bottom: -250px;
+        top: -250px;
         left: 5%;
         width: 90%;
         background: rgba(15, 23, 42, 0.95);
         border: 3px solid #22c55e;
         border-radius: 16px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75), 0 0 20px rgba(34, 197, 94, 0.25);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         padding: 18px 16px;
         box-sizing: border-box;
         z-index: 1050;
-        transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         display: flex;
         flex-direction: column;
         gap: 14px;
     }
     .pwa-install-alert.show {
-        bottom: 20px;
+        top: 20px;
     }
     .pwa-alert-header {
         display: flex;
@@ -259,7 +246,6 @@
         font-family: 'Press Start 2P', monospace;
         font-size: 9px;
         color: #22c55e;
-        text-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
         margin: 0;
     }
     .pwa-alert-desc {
@@ -343,7 +329,7 @@
             <!-- PS5 Styled Login UI -->
             <div id="game-ui">
                 <div class="ps5-backdrop"></div>
-                <canvas id="ps5-particles"></canvas>
+                <canvas id="ps5-particles" style="display: none;"></canvas>
 
                 <div class="login-content">
                     <!-- Game Title -->
@@ -398,49 +384,7 @@
 
 <script src="{{ asset('game_pacu/assets/js/game-layout.js') }}?v=<?= time() ?>"></script>
 <script>
-    // ---- Floating Particles Effect ----
-    (function () {
-        const canvas = document.getElementById('ps5-particles');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let width = canvas.width = canvas.offsetWidth;
-        let height = canvas.height = canvas.offsetHeight;
-
-        const particles = [];
-        for (let i = 0; i < 25; i++) {
-            particles.push({
-                x: Math.random() * width,
-                y: Math.random() * height + height,
-                size: Math.random() * 3 + 1,
-                speed: Math.random() * 0.4 + 0.15,
-                opacity: Math.random() * 0.4 + 0.2
-            });
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#22c55e';
-            particles.forEach(p => {
-                ctx.globalAlpha = p.opacity;
-                ctx.fillRect(p.x, p.y, p.size, p.size);
-                p.y -= p.speed;
-                if (p.y < -10) {
-                    p.y = height + 10;
-                    p.x = Math.random() * width;
-                }
-            });
-            requestAnimationFrame(animateParticles);
-        }
-
-        window.addEventListener('resize', () => {
-            if (canvas.offsetWidth) {
-                width = canvas.width = canvas.offsetWidth;
-                height = canvas.height = canvas.offsetHeight;
-            }
-        });
-
-        animateParticles();
-    })();
+    // ---- Floating Particles Effect disabled for performance ----
 
     // ---- Clock ----
     (function () {

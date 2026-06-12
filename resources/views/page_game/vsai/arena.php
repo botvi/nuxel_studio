@@ -1514,7 +1514,12 @@ if ($winsCount >= 100) {
 
             initWebSocket() {
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = `${protocol}//${window.location.hostname}:8080`;
+                let wsUrl;
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) {
+                    wsUrl = `${protocol}//${window.location.hostname}:8080`;
+                } else {
+                    wsUrl = `${protocol}//${window.location.hostname}/ws`;
+                }
                 this.ws = new WebSocket(wsUrl);
 
                 this.ws.onopen = () => {

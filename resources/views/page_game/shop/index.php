@@ -39,62 +39,8 @@
         //  HELPER — Shimmer pada PNG icon (BitmapMask)
         // =====================================================
         function addIconShimmer(scene, img, delay) {
-            const w = img.displayWidth;
-            const h = img.displayHeight;
-            const shimW = w * 0.32;
-            const slant = h * 0.65;
-
-            // Create BitmapMask directly from the target image (conforms to png transparency shape)
-            const bitmapMask = img.createBitmapMask();
-
-            const shimGfx = scene.add.graphics();
-            shimGfx.setMask(bitmapMask);
-
-            const animData = { progress: 0 };
-            const tween = scene.tweens.add({
-                targets: animData,
-                progress: 1,
-                duration: 600,
-                ease: 'Quad.easeInOut',
-                delay: delay || 0,
-                repeat: -1,
-                repeatDelay: 2600,
-                onUpdate: () => {
-                    if (!img.active) return;
-
-                    let wx = img.x;
-                    let wy = img.y;
-                    let parent = img.parentContainer;
-                    while (parent) {
-                        wx += parent.x;
-                        wy += parent.y;
-                        parent = parent.parentContainer;
-                    }
-
-                    const ix = wx - w / 2;
-                    const iy = wy - h / 2;
-
-                    const startX = ix - shimW - slant * 2;
-                    const endX = ix + w + shimW;
-                    const currentX = startX + (endX - startX) * animData.progress;
-
-                    shimGfx.clear();
-                    shimGfx.fillStyle(0xffffff, 0.55);
-                    shimGfx.fillPoints([
-                        { x: currentX, y: iy },
-                        { x: currentX + shimW, y: iy },
-                        { x: currentX + shimW + slant * 2, y: iy + h },
-                        { x: currentX + slant * 2, y: iy + h },
-                    ], true);
-                },
-                onRepeat: () => shimGfx.clear()
-            });
-
-            // Clean up graphics and stop tween when the image is destroyed
-            img.once('destroy', () => {
-                if (tween) tween.stop();
-                if (shimGfx) shimGfx.destroy();
-            });
+            // Disabled for performance
+            return;
         }
 
         // =====================================================
@@ -110,9 +56,6 @@
 
             function drawCardBody(fill, border) {
                 bg.clear();
-                // Shadow
-                bg.fillStyle(0x15803d, 0.3);
-                bg.fillRoundedRect(-width / 2 + shadowOffset, -height / 2 + shadowOffset, width, height, radius);
                 // Main panel
                 bg.fillStyle(fill, 1);
                 bg.lineStyle(3, border, 1);
@@ -259,9 +202,6 @@
 
             function drawCardBody(fill, border) {
                 bg.clear();
-                // Shadow
-                bg.fillStyle(0x15803d, 0.2);
-                bg.fillRoundedRect(-width / 2 + shadowOffset, -height / 2 + shadowOffset, width, height, radius);
                 // Main panel
                 bg.fillStyle(fill, 1);
                 bg.lineStyle(3, border, 1);
@@ -455,8 +395,6 @@
             const dH = 150;
 
             const dBg = scene.add.graphics();
-            dBg.fillStyle(0x14532d, 0.4); // shadow
-            dBg.fillRoundedRect(-dW / 2 + 5, -dH / 2 + 5, dW, dH, 16);
             dBg.fillStyle(0xffffff, 1); // white card
             dBg.lineStyle(4, 0x22c55e, 1);
             dBg.fillRoundedRect(-dW / 2, -dH / 2, dW, dH, 16);
@@ -572,46 +510,7 @@
                 const scaleY_bg = H / bg.height;
                 bg.setScale(Math.max(scaleX_bg, scaleY_bg));
 
-                // Create a lighter radial gradient overlay (Purple glow to match the Main Menu Shop theme)
-                const glowCanvas = document.createElement('canvas');
-                glowCanvas.width = 360;
-                glowCanvas.height = 760;
-                const glowCtx = glowCanvas.getContext('2d');
-                const gradient = glowCtx.createRadialGradient(180, 456, 0, 180, 456, 360);
-                gradient.addColorStop(0, 'rgba(168, 85, 247, 0.35)');   // Vibrant purple center glow
-                gradient.addColorStop(0.5, 'rgba(30, 41, 59, 0.25)');  // Soft slate transition
-                gradient.addColorStop(1, 'rgba(15, 23, 42, 0.45)');    // Gentle vignette (much brighter)
-                glowCtx.fillStyle = gradient;
-                glowCtx.fillRect(0, 0, 360, 760);
-
-                if (this.textures.exists('bg_glow')) {
-                    this.textures.remove('bg_glow');
-                }
-                this.textures.addCanvas('bg_glow', glowCanvas);
-                const bgGlow = this.add.image(cx, H / 2, 'bg_glow');
-                bgGlow.setDisplaySize(W, H);
-
-                // Create background particle texture
-                if (!this.textures.exists('bg_particle')) {
-                    const pGfxBg = this.make.graphics({ add: false });
-                    pGfxBg.fillStyle(0xffffff, 1);
-                    pGfxBg.fillRect(0, 0, 4, 4);
-                    pGfxBg.generateTexture('bg_particle', 4, 4);
-                    pGfxBg.destroy();
-                }
-
-                // Add floating background particles (upward drift, low opacity) to match main menu
-                const bgParticles = this.add.particles(0, 0, 'bg_particle', {
-                    x: { min: 0, max: W },
-                    y: { min: 0, max: H },
-                    lifespan: { min: 6000, max: 10000 },
-                    speedY: { min: -20, max: -8 },
-                    speedX: { min: -4, max: 4 },
-                    scale: { min: 0.5, max: 1.1 },
-                    alpha: { min: 0.15, max: 0.5 },
-                    frequency: 300,
-                    maxParticles: 25
-                });
+                // Radial gradient backdrop glow and floating particles disabled for performance
 
                 // =============================================
                 //  HEADER BAR & NAV
@@ -1184,25 +1083,15 @@
                 // Tambah shimmer pada koin bounce
                 addIconShimmer(this, bouncingCoin, 600);
 
-                // Particle manager untuk koin terpantul (hanya muncul saat menghantam tanah)
-                const coinParticles = this.add.particles(0, 0, 'koin', {
-                    scale: { start: 0.16, end: 0 },
-                    alpha: { start: 0.8, end: 0 },
-                    speed: { min: 80, max: 160 },
-                    angle: { min: 230, max: 310 }, // Semburan memancar ke atas
-                    gravityY: 550, // Simulasi gravitasi menariknya kembali ke tanah
-                    lifespan: 450,
-                    frequency: -1, // Matikan emisi otomatis
-                    emitting: false,
-                    blendMode: 'NORMAL'
-                });
+                // Particle manager untuk koin terpantul (hanya muncul saat menghantam tanah) - disabled for performance
+                const coinParticles = null;
 
                 // Helper untuk efek hantaman tanah (squash + particle burst)
                 const playImpact = (targetCoin) => {
                     if (!targetCoin.active) return;
 
                     // Ledakan partikel di bawah koin (pada posisi lantai H - 68)
-                    coinParticles.explode(8, targetCoin.x, H - 68);
+                    if (coinParticles) coinParticles.explode(8, targetCoin.x, H - 68);
 
                     // Efek squash & stretch pada koin
                     this.tweens.add({
@@ -1302,7 +1191,7 @@
                                 onComplete: () => {
                                     bouncingCoin.destroy();
                                     bubble.destroy();
-                                    coinParticles.destroy();
+                                    if (coinParticles) coinParticles.destroy();
                                 }
                             });
 

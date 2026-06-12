@@ -64,7 +64,7 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
             height: 100%;
             display: flex;
             flex-direction: column;
-            background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.35) 0%, rgba(30, 41, 59, 0.25) 50%, rgba(15, 23, 42, 0.45) 100%), url('/game_pacu/assets/image/bg/bgmenu.jpg') no-repeat center center;
+            background: #0c111d url('/game_pacu/assets/image/bg/bgmenu.jpg') no-repeat center center;
             background-size: cover;
             z-index: 10;
             box-sizing: border-box;
@@ -74,14 +74,7 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
 
         /* Particles animation canvas */
         #ps5-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.4;
+            display: none;
         }
 
         /* Top Navigation Bar */
@@ -158,13 +151,8 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0.6) 50%,
-                    rgba(255, 255, 255, 0) 100%);
-            transform: translateX(-150%) skewX(-25deg);
-            animation: htmlShimmer 3s infinite ease-in-out;
-            pointer-events: none;
+            background: none;
+            display: none;
         }
 
         .coin-amount {
@@ -289,7 +277,6 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
             object-fit: cover;
         }
 
-        /* Online Status Badge Pulse */
         .status-dot-pulse {
             position: absolute;
             bottom: 3px;
@@ -299,22 +286,7 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
             background-color: #22c55e;
             border-radius: 50%;
             border: 2px solid #0f172a;
-            box-shadow: 0 0 8px #22c55e;
-            animation: statusPulse 1.8s infinite ease-in-out;
-        }
-
-        @keyframes statusPulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-            }
+            box-shadow: none;
         }
 
         /* Identity Details */
@@ -638,8 +610,7 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
 
             <div id="game-container">
                 <div id="profile-dashboard">
-                    <!-- Ascending particles canvas -->
-                    <canvas id="ps5-particles"></canvas>
+                    <!-- Particles canvas removed for performance -->
 
                     <!-- Top bar: Back and Coin display -->
                     <div class="top-bar">
@@ -783,53 +754,7 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
             setInterval(updateClock, 10000);
         })();
 
-        // Background floating particles anim
-        (function () {
-            const canvas = document.getElementById('ps5-particles');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let width = canvas.width = canvas.offsetWidth;
-            let height = canvas.height = canvas.offsetHeight;
-
-            const particles = [];
-            const particleCount = 20;
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height + height,
-                    size: Math.random() * 2 + 1,
-                    speed: Math.random() * 0.3 + 0.1,
-                    opacity: Math.random() * 0.4 + 0.2
-                });
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                ctx.fillStyle = '#ffffff';
-
-                particles.forEach(p => {
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y -= p.speed;
-                    if (p.y < -10) {
-                        p.y = height + 10;
-                        p.x = Math.random() * width;
-                    }
-                });
-
-                requestAnimationFrame(animate);
-            }
-
-            window.addEventListener('resize', () => {
-                if (canvas.offsetWidth) {
-                    width = canvas.width = canvas.offsetWidth;
-                    height = canvas.height = canvas.offsetHeight;
-                }
-            });
-
-            animate();
-        })();
+        // Background floating particles anim disabled for performance
 
         // Boat preview logic directly passed from PHP variables
         const customColors = <?= json_encode($customColors) ?>;
@@ -964,19 +889,9 @@ $lambaiDataUrl = ($modelJalur && ($modelJalur->model_jalur['lambai_unlocked'] ??
                             rowerSprites.push(rowerSprite);
                             rowerSprite.play('rowing_anim');
 
-                            const emitter = scene.add.particles(rowerX + SPLASH_OFFSET_X, rowerY + SPLASH_OFFSET_Y, 'water_particle', {
-                                speed: { min: 40 * scaleMult, max: 110 * scaleMult }, angle: { min: 280, max: 340 },
-                                scale: { start: 2.2 * scaleMult, end: 0 }, lifespan: { min: 300, max: 550 },
-                                gravityY: 350 * scaleMult, quantity: 2, frequency: -1
-                            });
-                            boatGroup.add(emitter);
-                            const splashColorInt = Phaser.Display.Color.HexStringToColor(customColors.splash).color;
-                            emitter.setParticleTint(splashColorInt);
-
+                            // Water particle emitter disabled for performance
                             rowerSprite.on('animationupdate', (anim, frame) => {
-                                if (frame.index === 3 || frame.index === 4) {
-                                    emitter.explode(18);
-                                }
+                                // No particle explosion
                             });
                         });
 

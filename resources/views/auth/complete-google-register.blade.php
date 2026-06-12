@@ -37,7 +37,7 @@
         position: fixed;
         top: 0; left: 0;
         width: 100%; height: 100%;
-        background: radial-gradient(circle at 50% 40%, rgba(59, 130, 246, 0.4) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(5, 10, 20, 0.88) 100%);
+        background: #0f172a;
         z-index: 1;
         pointer-events: none;
     }
@@ -68,7 +68,6 @@
         background: linear-gradient(180deg, #ffffff 0%, #93c5fd 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.5));
         text-align: center;
         line-height: 1.5;
         letter-spacing: 2px;
@@ -90,7 +89,7 @@
         border-radius: 20px;
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.15);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
         padding: 24px 20px;
         box-sizing: border-box;
         display: flex;
@@ -107,7 +106,6 @@
         font-family: 'Press Start 2P', monospace;
         font-size: 8px;
         color: #38bdf8;
-        text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
         letter-spacing: 1px;
         margin-bottom: 16px;
         text-align: center;
@@ -142,11 +140,11 @@
     .avatar-slot:hover {
         border-color: rgba(56, 189, 248, 0.5);
         transform: translateY(-3px) scale(1.06);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 12px rgba(56, 189, 248, 0.2);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
     .avatar-slot.selected {
         border-color: #f59e0b;
-        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3), 0 8px 20px rgba(0,0,0,0.4);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         transform: translateY(-2px);
         background: rgba(245, 158, 11, 0.1);
     }
@@ -171,7 +169,6 @@
         font-family: 'Press Start 2P', monospace;
         font-size: 8px;
         color: #38bdf8;
-        text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
         letter-spacing: 1px;
         margin-bottom: 12px;
         text-align: center;
@@ -199,7 +196,6 @@
     }
     #jalur-name-input-visible:focus {
         border-color: #38bdf8;
-        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15), 0 0 12px rgba(56, 189, 248, 0.2);
         background: rgba(56, 189, 248, 0.05);
     }
     #jalur-name-input-visible.error {
@@ -233,30 +229,15 @@
         border: none;
         border-radius: 12px;
         cursor: pointer;
-        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35), 0 0 0 1px rgba(34, 197, 94, 0.2);
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35);
         transition: all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1);
         letter-spacing: 1px;
         position: relative;
         overflow: hidden;
     }
-    .start-btn::before {
-        content: '';
-        position: absolute;
-        top: 0; left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transform: skewX(-20deg);
-        animation: shimmer-btn 2.5s infinite ease-in-out;
-        animation-delay: 1s;
-    }
-    @keyframes shimmer-btn {
-        0% { left: -100%; }
-        100% { left: 200%; }
-    }
     .start-btn:hover {
         transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45), 0 0 20px rgba(34, 197, 94, 0.3);
+        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45);
     }
     .start-btn:active {
         transform: translateY(1px) scale(0.98);
@@ -284,7 +265,7 @@
             <!-- PS5 Styled Registration UI -->
             <div id="game-ui">
                 <div class="ps5-backdrop"></div>
-                <canvas id="ps5-particles"></canvas>
+                <canvas id="ps5-particles" style="display: none;"></canvas>
 
                 <div class="register-content">
                     <!-- Header -->
@@ -341,42 +322,7 @@
 
 <script src="{{ asset('game_pacu/assets/js/game-layout.js') }}?v=<?= time() ?>"></script>
 <script>
-    // ---- Floating Particles ----
-    (function () {
-        const canvas = document.getElementById('ps5-particles');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let width = canvas.width = canvas.offsetWidth;
-        let height = canvas.height = canvas.offsetHeight;
-
-        const particles = [];
-        for (let i = 0; i < 22; i++) {
-            particles.push({
-                x: Math.random() * width,
-                y: Math.random() * height + height,
-                size: Math.random() * 3 + 1,
-                speed: Math.random() * 0.4 + 0.15,
-                opacity: Math.random() * 0.35 + 0.15
-            });
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => {
-                ctx.globalAlpha = p.opacity;
-                ctx.fillStyle = '#93c5fd';
-                ctx.fillRect(p.x, p.y, p.size, p.size);
-                p.y -= p.speed;
-                if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
-            });
-            requestAnimationFrame(animateParticles);
-        }
-
-        window.addEventListener('resize', () => {
-            if (canvas.offsetWidth) { width = canvas.width = canvas.offsetWidth; height = canvas.height = canvas.offsetHeight; }
-        });
-        animateParticles();
-    })();
+    // ---- Floating Particles disabled for performance ----
 
     // ---- Clock ----
     (function () {

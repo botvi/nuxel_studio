@@ -51,7 +51,7 @@
         }
 
         .bg-slide-1 {
-            background: radial-gradient(circle at 50% 60%, rgba(239, 68, 68, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(20, 5, 5, 0.85) 100%);
+            background: rgba(20, 5, 5, 0.9);
         }
 
         .title-banner {
@@ -79,7 +79,6 @@
             box-shadow:
                 0 12px 40px rgba(0, 0, 0, 0.6),
                 0 0 0 1px rgba(255, 255, 255, 0.04),
-                0 0 20px rgba(239, 68, 68, 0.12),
                 inset 0 1px 0 rgba(255, 255, 255, 0.06);
             box-sizing: border-box;
             display: flex;
@@ -144,7 +143,7 @@
             font-size: 13px;
             color: #fbbf24;
             letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(251,191,36,0.5), 2px 2px 0px #92400e;
+            text-shadow: 2px 2px 0px #92400e;
         }
         .room-code-copy {
             background: rgba(251,191,36,0.15);
@@ -268,7 +267,7 @@
             box-shadow: 0 3px 0 #000000;
         }
 
-        /* Radar Search animation for empty slot */
+        /* Radar Search animation for empty slot - disabled pulse */
         .searching-radar {
             width: 40px;
             height: 40px;
@@ -276,28 +275,7 @@
             border: 3px solid rgba(239, 68, 68, 0.4);
             margin-bottom: 10px;
             position: relative;
-            animation: radarPulse 1.5s infinite ease-in-out;
             background: rgba(239, 68, 68, 0.05);
-        }
-
-        @keyframes radarPulse {
-            0% {
-                transform: scale(0.9);
-                opacity: 0.5;
-                box-shadow: 0 0 0 rgba(239, 68, 68, 0);
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 1;
-                box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
-            }
-
-            100% {
-                transform: scale(0.9);
-                opacity: 0.5;
-                box-shadow: 0 0 0 rgba(239, 68, 68, 0);
-            }
         }
 
         /* Buttons */
@@ -307,8 +285,7 @@
             border-radius: 10px;
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.35),
-                0 5px 0 #14532d,
-                0 6px 14px rgba(34, 197, 94, 0.35);
+                0 5px 0 #14532d;
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 9px;
@@ -328,8 +305,7 @@
             background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.4),
-                0 5px 0 #14532d,
-                0 8px 20px rgba(34, 197, 94, 0.45);
+                0 5px 0 #14532d;
             transform: translateY(-1px);
         }
 
@@ -343,16 +319,14 @@
             border-color: #991b1b;
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 5px 0 #7f1d1d,
-                0 6px 14px rgba(239, 68, 68, 0.35);
+                0 5px 0 #7f1d1d;
         }
 
         .btn-red:hover {
             background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.35),
-                0 5px 0 #7f1d1d,
-                0 8px 20px rgba(239, 68, 68, 0.45);
+                0 5px 0 #7f1d1d;
             transform: translateY(-1px);
         }
 
@@ -399,11 +373,6 @@
             position: absolute; top: 4px; right: 4px;
             width: 8px; height: 8px;
             background: #ef4444; border-radius: 50%; display: none;
-            animation: dotPulse 1s infinite ease-in-out;
-        }
-        @keyframes dotPulse {
-            0%,100% { transform: scale(1); opacity: 1; }
-            50%      { transform: scale(1.4); opacity: 0.7; }
         }
         #chat-sidebar {
             position: absolute;
@@ -433,12 +402,11 @@
         }
         .chat-header-title {
             font-family: 'Press Start 2P', monospace; font-size: 7px;
-            color: #22c55e; text-shadow: 0 0 8px rgba(34,197,94,0.5); letter-spacing: 0.5px;
+            color: #22c55e; letter-spacing: 0.5px;
         }
         .chat-online-badge { display:flex; align-items:center; gap:5px; font-size:10px; color:rgba(255,255,255,0.4); }
         .chat-online-dot {
             width:6px; height:6px; border-radius:50%; background:#22c55e;
-            box-shadow:0 0 5px rgba(34,197,94,0.7); animation: dotPulse 2s infinite;
         }
         .chat-share-btn {
             margin: 8px 12px 0;
@@ -510,16 +478,16 @@
         }
         #chat-input:focus {
             border-color: rgba(34,197,94,0.5); background: rgba(255,255,255,0.08);
-            box-shadow: 0 0 8px rgba(34,197,94,0.15);
+            box-shadow: none;
         }
         #chat-input::placeholder { color: rgba(255,255,255,0.2); }
         #chat-send-btn {
             background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             border: none; border-radius: 8px; padding: 8px 10px;
             font-size: 14px; cursor: pointer; transition: all 0.15s ease;
-            flex-shrink: 0; box-shadow: 0 3px 8px rgba(34,197,94,0.3);
+            flex-shrink: 0;
         }
-        #chat-send-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 12px rgba(34,197,94,0.4); }
+        #chat-send-btn:hover { transform: translateY(-1px); }
         #chat-send-btn:active { transform: translateY(1px); }
         /* ======================================= */
     </style>
@@ -537,7 +505,7 @@
                 <div id="game-ui">
                     <div id="ps5-backdrop" class="ps5-backdrop-glow bg-slide-1"></div>
                     <canvas id="ps5-particles"
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.5;"></canvas>
+                        style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.5;"></canvas>
 
                     <div class="title-banner">✦ ROOM LOBBY ✦</div>
 
@@ -716,7 +684,12 @@
 
         function initWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.hostname}:8080`;
+            let wsUrl;
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) {
+                wsUrl = `${protocol}//${window.location.hostname}:8080`;
+            } else {
+                wsUrl = `${protocol}//${window.location.hostname}/ws`;
+            }
 
             ws = new WebSocket(wsUrl);
 
@@ -906,53 +879,7 @@
             initWebSocket();
         });
 
-        // Floating particles background effect
-        (function () {
-            const canvas = document.getElementById('ps5-particles');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let width = canvas.width = canvas.offsetWidth;
-            let height = canvas.height = canvas.offsetHeight;
-
-            const particles = [];
-            const particleCount = 25;
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height + height,
-                    size: Math.random() * 3 + 1,
-                    speed: Math.random() * 0.4 + 0.15,
-                    opacity: Math.random() * 0.4 + 0.2
-                });
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                ctx.fillStyle = '#ffffff';
-
-                particles.forEach(p => {
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y -= p.speed;
-                    if (p.y < -10) {
-                        p.y = height + 10;
-                        p.x = Math.random() * width;
-                    }
-                });
-
-                requestAnimationFrame(animate);
-            }
-
-            window.addEventListener('resize', () => {
-                if (canvas.offsetWidth) {
-                    width = canvas.width = canvas.offsetWidth;
-                    height = canvas.height = canvas.offsetHeight;
-                }
-            });
-
-            animate();
-        })();
+        // Floating particles background effect disabled for performance
 
         // ============= GLOBAL CHAT =============
         const chatCurrentUserId = <?= auth()->id() ?>;
@@ -966,7 +893,12 @@
 
         function initGlobalChat() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.hostname}:8080`;
+            let wsUrl;
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) {
+                wsUrl = `${protocol}//${window.location.hostname}:8080`;
+            } else {
+                wsUrl = `${protocol}//${window.location.hostname}/ws`;
+            }
             chatWs = new WebSocket(wsUrl);
 
             chatWs.onopen = () => {

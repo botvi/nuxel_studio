@@ -51,7 +51,7 @@
         }
 
         .bg-slide-4 {
-            background: radial-gradient(circle at 50% 60%, rgba(168, 85, 247, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(15, 5, 20, 0.85) 100%);
+            background: rgba(15, 5, 20, 0.9);
         }
 
         .back-btn {
@@ -111,7 +111,6 @@
             box-shadow:
                 0 12px 40px rgba(0, 0, 0, 0.6),
                 0 0 0 1px rgba(255, 255, 255, 0.04),
-                0 0 20px rgba(168, 85, 247, 0.15),
                 inset 0 1px 0 rgba(255, 255, 255, 0.06);
             box-sizing: border-box;
             display: flex;
@@ -192,7 +191,7 @@
             background: rgba(168, 85, 247, 0.08);
             border-color: rgba(168, 85, 247, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.35), 0 0 12px rgba(168, 85, 247, 0.12);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
         }
 
         .room-info {
@@ -230,8 +229,7 @@
             border-radius: 10px;
             box-shadow:
                 inset 0 1px 0 rgba(255, 255, 255, 0.35),
-                0 5px 0 #14532d,
-                0 6px 14px rgba(34, 197, 94, 0.35);
+                0 5px 0 #14532d;
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 9px;
@@ -251,8 +249,7 @@
             background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255, 255, 255, 0.4),
-                0 5px 0 #14532d,
-                0 8px 20px rgba(34, 197, 94, 0.45);
+                0 5px 0 #14532d;
             transform: translateY(-1px);
         }
 
@@ -269,8 +266,7 @@
             border-radius: 8px;
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.35),
-                0 4px 0 #14532d,
-                0 5px 12px rgba(34, 197, 94, 0.3);
+                0 4px 0 #14532d;
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 8px;
@@ -285,8 +281,7 @@
             background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.4),
-                0 4px 0 #14532d,
-                0 6px 16px rgba(34, 197, 94, 0.4);
+                0 4px 0 #14532d;
             transform: translateY(-1px);
         }
 
@@ -302,16 +297,14 @@
             border-color: #92400e;
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 4px 0 #78350f,
-                0 5px 12px rgba(245, 158, 11, 0.3);
+                0 4px 0 #78350f;
         }
 
         .btn-orange:hover {
             background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.35),
-                0 4px 0 #78350f,
-                0 6px 16px rgba(245, 158, 11, 0.4);
+                0 4px 0 #78350f;
             transform: translateY(-1px);
         }
 
@@ -325,16 +318,14 @@
             border-color: #991b1b;
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 4px 0 #7f1d1d,
-                0 5px 12px rgba(239, 68, 68, 0.3);
+                0 4px 0 #7f1d1d;
         }
 
         .btn-red:hover {
             background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.35),
-                0 4px 0 #7f1d1d,
-                0 6px 16px rgba(239, 68, 68, 0.4);
+                0 4px 0 #7f1d1d;
             transform: translateY(-1px);
         }
 
@@ -376,7 +367,7 @@
         .pixel-input:focus {
             border-color: #a855f7;
             background: rgba(15, 23, 42, 0.85);
-            box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+            box-shadow: none;
         }
 
         .pixel-input::placeholder {
@@ -408,8 +399,7 @@
             border-radius: 20px;
             box-sizing: border-box;
             box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.6),
-                0 0 20px rgba(168, 85, 247, 0.3);
+                0 10px 30px rgba(0, 0, 0, 0.6);
             animation: modalFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
@@ -438,7 +428,7 @@
                 <div id="game-ui">
                     <div id="ps5-backdrop" class="ps5-backdrop-glow bg-slide-4"></div>
                     <canvas id="ps5-particles"
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.5;"></canvas>
+                        style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.5;"></canvas>
 
                     <div class="back-btn" onclick="window.location.href='/room'">
                         <img src="/game_pacu/assets/image/ui/back.png" alt="Back">
@@ -737,53 +727,7 @@
         setInterval(fetchRooms, 4000);
         document.addEventListener('DOMContentLoaded', fetchRooms);
 
-        // Floating particles background effect
-        (function () {
-            const canvas = document.getElementById('ps5-particles');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let width = canvas.width = canvas.offsetWidth;
-            let height = canvas.height = canvas.offsetHeight;
-
-            const particles = [];
-            const particleCount = 25;
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height + height,
-                    size: Math.random() * 3 + 1,
-                    speed: Math.random() * 0.4 + 0.15,
-                    opacity: Math.random() * 0.4 + 0.2
-                });
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                ctx.fillStyle = '#ffffff';
-
-                particles.forEach(p => {
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y -= p.speed;
-                    if (p.y < -10) {
-                        p.y = height + 10;
-                        p.x = Math.random() * width;
-                    }
-                });
-
-                requestAnimationFrame(animate);
-            }
-
-            window.addEventListener('resize', () => {
-                if (canvas.offsetWidth) {
-                    width = canvas.width = canvas.offsetWidth;
-                    height = canvas.height = canvas.offsetHeight;
-                }
-            });
-
-            animate();
-        })();
+        // Floating particles background effect disabled for performance
     </script>
     <script src="/game_pacu/assets/js/game-layout.js?v=<?= time() ?>"></script>
 </body>

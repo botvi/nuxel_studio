@@ -50,19 +50,19 @@
         }
 
         .bg-slide-0 {
-            background: radial-gradient(circle at 50% 60%, rgba(34, 197, 94, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(6, 17, 10, 0.85) 100%);
+            background: rgba(6, 17, 10, 0.9);
         }
 
         .bg-slide-1 {
-            background: radial-gradient(circle at 50% 60%, rgba(59, 130, 246, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(5, 10, 20, 0.85) 100%);
+            background: rgba(5, 10, 20, 0.9);
         }
 
         .bg-slide-2 {
-            background: radial-gradient(circle at 50% 60%, rgba(249, 115, 22, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(20, 10, 5, 0.85) 100%);
+            background: rgba(20, 10, 5, 0.9);
         }
 
         .bg-slide-3 {
-            background: radial-gradient(circle at 50% 60%, rgba(168, 85, 247, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(15, 5, 20, 0.85) 100%);
+            background: rgba(15, 5, 20, 0.9);
         }
 
         /* --- PS5 Carousel Slider --- */
@@ -126,7 +126,7 @@
             transform: scale(1.1);
             border-color: #ffffff;
             background: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 15px var(--glow-color);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
         }
 
         .ps5-card.card-green {
@@ -347,7 +347,6 @@
             box-shadow:
                 0 12px 40px rgba(0, 0, 0, 0.6),
                 0 0 0 1px rgba(255, 255, 255, 0.04),
-                0 0 20px rgba(34, 197, 94, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.06);
             display: flex;
             flex-direction: column;
@@ -381,8 +380,7 @@
             border-radius: 10px;
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.35),
-                0 5px 0 #14532d,
-                0 6px 14px rgba(34, 197, 94, 0.35);
+                0 5px 0 #14532d;
             color: white;
             font-family: 'Press Start 2P', monospace;
             font-size: 9px;
@@ -401,8 +399,7 @@
             background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.4),
-                0 5px 0 #14532d,
-                0 8px 20px rgba(34, 197, 94, 0.45);
+                0 5px 0 #14532d;
             transform: translateY(-1px);
         }
 
@@ -416,16 +413,14 @@
             border-color: #1d4ed8;
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 5px 0 #1e3a8a,
-                0 6px 14px rgba(59, 130, 246, 0.35);
+                0 5px 0 #1e3a8a;
         }
 
         .btn-blue:hover {
             background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.35),
-                0 5px 0 #1e3a8a,
-                0 8px 20px rgba(59, 130, 246, 0.45);
+                0 5px 0 #1e3a8a;
             transform: translateY(-1px);
         }
 
@@ -480,9 +475,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow:
-                0px 0px 20px rgba(20, 184, 166, 0.3),
-                inset 0px 0px 15px rgba(20, 184, 166, 0.2);
+            box-shadow: none;
             overflow: hidden;
             z-index: 102;
         }
@@ -553,7 +546,6 @@
             height: 6px;
             background: #4ade80;
             border-radius: 50%;
-            box-shadow: 0 0 8px #4ade80;
             z-index: 3;
             opacity: 0;
         }
@@ -686,7 +678,7 @@
                 <div id="game-ui">
                     <div id="ps5-backdrop" class="ps5-backdrop-glow bg-slide-0"></div>
                     <canvas id="ps5-particles"
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.5;"></canvas>
+                        style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.5;"></canvas>
 
                     <div class="back-btn" onclick="window.location.href='/main-menu'">
                         <img src="/game_pacu/assets/image/ui/back.png" alt="Back">
@@ -998,7 +990,12 @@
 
         function selectSlide(idx, e) {
             if (e) e.stopPropagation();
-            currentSlide = idx;
+            if (idx !== currentSlide) {
+                currentSlide = idx;
+                if (typeof window.playClickSound === 'function') window.playClickSound();
+                updateCarousel();
+                return;
+            }
             if (typeof window.playClickSound === 'function') window.playClickSound();
             updateCarousel();
             activateActiveSlide();
@@ -1081,53 +1078,7 @@
             setTimeout(updateCarousel, 100);
         });
 
-        // Floating particles background effect
-        (function () {
-            const canvas = document.getElementById('ps5-particles');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let width = canvas.width = canvas.offsetWidth;
-            let height = canvas.height = canvas.offsetHeight;
-
-            const particles = [];
-            const particleCount = 25;
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height + height,
-                    size: Math.random() * 3 + 1,
-                    speed: Math.random() * 0.4 + 0.15,
-                    opacity: Math.random() * 0.4 + 0.2
-                });
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                ctx.fillStyle = '#ffffff';
-
-                particles.forEach(p => {
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y -= p.speed;
-                    if (p.y < -10) {
-                        p.y = height + 10;
-                        p.x = Math.random() * width;
-                    }
-                });
-
-                requestAnimationFrame(animate);
-            }
-
-            window.addEventListener('resize', () => {
-                if (canvas.offsetWidth) {
-                    width = canvas.width = canvas.offsetWidth;
-                    height = canvas.height = canvas.offsetHeight;
-                }
-            });
-
-            animate();
-        })();
+        // Floating particles background effect disabled for performance
     </script>
 </body>
 

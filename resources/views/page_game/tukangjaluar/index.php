@@ -86,7 +86,7 @@
                 if (isPressed) return;
                 drawBody(colors.hoverFill, colors.hoverBorder);
                 lbl.setColor(colors.hoverText);
-                lbl.setShadow(0, 0, '#38bdf8', 16, true, true);
+                // Removed heavy blur shadow glow for performance
                 scene.tweens.add({ targets: container, scaleX: 1.05, scaleY: 1.05, duration: 90, ease: 'Power2' });
             });
 
@@ -94,20 +94,17 @@
                 if (isPressed) return;
                 drawBody(colors.fill, colors.border);
                 lbl.setColor(colors.textColor);
-                lbl.setShadow(0, 0, '#000000', 0, false, false);
                 scene.tweens.add({ targets: container, scaleX: 1, scaleY: 1, duration: 90, ease: 'Power2' });
             });
 
             container.on('pointerdown', () => {
                 isPressed = true;
                 bodyGfx.y = shadowOffset; shineGfx.y = shadowOffset; lbl.y = shadowOffset;
-                lbl.setShadow(0, 0, '#38bdf8', 20, true, true);
                 drawBody(colors.hoverFill, colors.hoverBorder);
             });
 
             container.on('pointerup', () => {
                 bodyGfx.y = 0; shineGfx.y = 0; lbl.y = 0;
-                lbl.setShadow(0, 0, '#000000', 0, false, false);
                 isPressed = false;
                 drawBody(colors.fill, colors.border);
                 lbl.setColor(colors.textColor);
@@ -115,7 +112,8 @@
                 scene.cameras.main.once('camerafadeoutcomplete', onTap);
             });
 
-            // ---- Shimmer sweep ----
+            // ---- Shimmer sweep disabled for performance ----
+            /*
             const shimW = bw * 0.18;
             const slant = bh * 0.65;
 
@@ -147,70 +145,16 @@
                 },
                 onRepeat: () => btnShimGfx.clear()
             });
+            */
 
             return container;
         }
 
         // =====================================================
-        //  HELPER — Shimmer pada PNG icon (BitmapMask = ikuti alpha PNG)
+        //  HELPER — Shimmer pada PNG icon (Disabled for performance)
         // =====================================================
         function addIconShimmer(scene, img, delay) {
-            const w = img.displayWidth;
-            const h = img.displayHeight;
-            const shimW = w * 0.32;
-            const slant = h * 0.65;
-
-            // Create BitmapMask directly from the target image (conforms to png transparency shape)
-            const bitmapMask = img.createBitmapMask();
-
-            const shimGfx = scene.add.graphics();
-            shimGfx.setMask(bitmapMask);
-
-            const animData = { progress: 0 };
-            const tween = scene.tweens.add({
-                targets: animData,
-                progress: 1,
-                duration: 600,
-                ease: 'Quad.easeInOut',
-                delay: delay || 0,
-                repeat: -1,
-                repeatDelay: 2600,
-                onUpdate: () => {
-                    if (!img.active) return;
-
-                    let wx = img.x;
-                    let wy = img.y;
-                    let parent = img.parentContainer;
-                    while (parent) {
-                        wx += parent.x;
-                        wy += parent.y;
-                        parent = parent.parentContainer;
-                    }
-
-                    const ix = wx - w / 2;
-                    const iy = wy - h / 2;
-
-                    const startX = ix - shimW - slant * 2;
-                    const endX = ix + w + shimW;
-                    const currentX = startX + (endX - startX) * animData.progress;
-
-                    shimGfx.clear();
-                    shimGfx.fillStyle(0xffffff, 0.55);
-                    shimGfx.fillPoints([
-                        { x: currentX, y: iy },
-                        { x: currentX + shimW, y: iy },
-                        { x: currentX + shimW + slant * 2, y: iy + h },
-                        { x: currentX + slant * 2, y: iy + h },
-                    ], true);
-                },
-                onRepeat: () => shimGfx.clear()
-            });
-
-            // Clean up graphics and stop tween when the image is destroyed
-            img.once('destroy', () => {
-                if (tween) tween.stop();
-                if (shimGfx) shimGfx.destroy();
-            });
+            return; // Immediately return to prevent rendering overhead
         }
 
         // =====================================================
@@ -927,7 +871,8 @@
                 const scaleY_bg = H / bg.height;
                 bg.setScale(Math.max(scaleX_bg, scaleY_bg));
 
-                // Create a lighter PS5 deep blue slate radial gradient overlay
+                // Radial background glow disabled for performance
+                /*
                 const glowCanvas = document.createElement('canvas');
                 glowCanvas.width = 360;
                 glowCanvas.height = 760;
@@ -945,8 +890,10 @@
                 this.textures.addCanvas('bg_glow', glowCanvas);
                 const bgGlow = this.add.image(cx, H / 2, 'bg_glow');
                 bgGlow.setDisplaySize(W, H);
+                */
 
-                // Create background particle texture
+                // Background floating particles disabled for performance
+                /*
                 if (!this.textures.exists('bg_particle')) {
                     const pGfxBg = this.make.graphics({ add: false });
                     pGfxBg.fillStyle(0xffffff, 1);
@@ -955,7 +902,6 @@
                     pGfxBg.destroy();
                 }
 
-                // Add floating background particles (upward drift, low opacity) to match main menu
                 const bgParticles = this.add.particles(0, 0, 'bg_particle', {
                     x: { min: 0, max: W },
                     y: { min: 0, max: H },
@@ -967,6 +913,7 @@
                     frequency: 300,
                     maxParticles: 25
                 });
+                */
 
                 // =====================================================
                 //  KOTAK KUSTOMISASI / PREVIEW JALUAR (ATAS HALAMAN)
@@ -1096,6 +1043,8 @@
                 // --- Loop 2: Tambahkan semua emitter partikel SETELAH semua karakter ---
                 // Karena container Phaser merender objek sesuai urutan add(), emitter yang
                 // ditambahkan belakangan akan selalu tampil di atas karakter.
+                // Disabled water particles for mobile/low-end performance optimization
+                /*
                 emitterList.forEach(({ rowerX, rowerY, rowerSprite }) => {
                     // Buat Particle Emitter di atas setiap karakter
                     const emitter = this.add.particles(rowerX + SPLASH_OFFSET_X, rowerY + SPLASH_OFFSET_Y, 'water_particle', {
@@ -1129,6 +1078,7 @@
                         }
                     });
                 });
+                */
 
                 // Animasi Mengapung (Bobbing) secara halus pada sumbu Y
                 this.tweens.add({
@@ -2038,7 +1988,8 @@
                 // Shimmer koin — ikuti bentuk PNG via BitmapMask
                 addIconShimmer(this, coinImg, 1100);
 
-                // Shimmer teks koin — BitmapMask ikuti bentuk huruf
+                // Shimmer teks koin — disabled for performance
+                /*
                 const txb = this.coinText.getBounds();
                 const tix = txb.left, tiy = txb.top, tw = txb.width, th = txb.height;
                 const tShimGfx = this.add.graphics();
@@ -2061,6 +2012,7 @@
                     },
                     onRepeat: () => tShimGfx.clear()
                 });
+                */
 
                 // =============================================
                 //  TUKANG JALUAR CHARACTER ANIMATION (CENTERED)

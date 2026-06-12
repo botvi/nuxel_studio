@@ -46,7 +46,7 @@
             height: 100%;
             z-index: 1;
             pointer-events: none;
-            background: radial-gradient(circle at 50% 60%, rgba(249, 115, 22, 0.4) 0%, rgba(15, 23, 42, 0.35) 50%, rgba(20, 10, 5, 0.9) 100%);
+            background: rgba(6, 13, 24, 0.9);
         }
 
         .back-btn {
@@ -119,12 +119,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0.3) 50%,
-                    rgba(255, 255, 255, 0) 100%);
-            transform: translateX(-100%);
-            animation: shimmer 3s infinite;
+            background: none;
+            display: none;
         }
 
         #coin-count {

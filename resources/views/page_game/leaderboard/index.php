@@ -30,8 +30,7 @@ $user = auth()->user();
             height: 100%;
             display: flex;
             flex-direction: column;
-            background: radial-gradient(circle at 50% 20%, rgba(234, 179, 8, 0.25) 0%, rgba(30, 41, 59, 0.2) 50%, rgba(15, 23, 42, 0.5) 100%),
-                        url('/game_pacu/assets/image/bg/bgmenu.jpg') no-repeat center center;
+            background: #0c111d url('/game_pacu/assets/image/bg/bgmenu.jpg') no-repeat center center;
             background-size: cover;
             z-index: 10;
             box-sizing: border-box;
@@ -41,12 +40,7 @@ $user = auth()->user();
 
         /* Particles */
         #ps5-particles {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.35;
+            display: none;
         }
 
         /* Top Bar */
@@ -86,17 +80,8 @@ $user = auth()->user();
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: linear-gradient(90deg,
-                rgba(255,255,255,0) 0%,
-                rgba(255,255,255,0.6) 50%,
-                rgba(255,255,255,0) 100%);
-            transform: translateX(-150%) skewX(-25deg);
-            animation: coinShimmer 3s infinite ease-in-out;
-            pointer-events: none;
-        }
-        @keyframes coinShimmer {
-            0%   { transform: translateX(-150%) skewX(-25deg); }
-            100% { transform: translateX(150%) skewX(-25deg); }
+            background: none;
+            display: none;
         }
         .coin-amount {
             font-family: 'Pixelify Sans', monospace;
@@ -359,8 +344,7 @@ $user = auth()->user();
 
             <div id="game-container">
                 <div id="leaderboard-dashboard">
-                    <!-- Particles -->
-                    <canvas id="ps5-particles"></canvas>
+                    <!-- Particles removed for performance -->
 
                     <!-- Top Bar -->
                     <div class="top-bar">
@@ -560,53 +544,7 @@ $user = auth()->user();
             setInterval(updateClock, 10000);
         })();
 
-        // Particles (gold colour)
-        (function () {
-            const canvas = document.getElementById('ps5-particles');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let width = canvas.width = canvas.offsetWidth;
-            let height = canvas.height = canvas.offsetHeight;
-
-            const particles = [];
-            const particleCount = 22;
-            const colors = ['#fbbf24', '#f59e0b', '#fde68a', '#ffffff'];
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height + height,
-                    size: Math.random() * 2.5 + 0.8,
-                    speed: Math.random() * 0.35 + 0.1,
-                    opacity: Math.random() * 0.4 + 0.15,
-                    color: colors[Math.floor(Math.random() * colors.length)]
-                });
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                particles.forEach(p => {
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y -= p.speed;
-                    if (p.y < -10) {
-                        p.y = height + 10;
-                        p.x = Math.random() * width;
-                    }
-                });
-                requestAnimationFrame(animate);
-            }
-
-            window.addEventListener('resize', () => {
-                if (canvas.offsetWidth) {
-                    width = canvas.width = canvas.offsetWidth;
-                    height = canvas.height = canvas.offsetHeight;
-                }
-            });
-
-            animate();
-        })();
+        // Particles (gold colour) disabled for performance
     </script>
 </body>
 

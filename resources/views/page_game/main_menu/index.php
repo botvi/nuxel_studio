@@ -52,27 +52,27 @@
         }
 
         .bg-slide-0 {
-            background: radial-gradient(circle at 50% 60%, rgba(34, 197, 94, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(6, 17, 10, 0.85) 100%);
+            background: rgba(6, 17, 10, 0.9);
         }
 
         .bg-slide-1 {
-            background: radial-gradient(circle at 50% 60%, rgba(168, 85, 247, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(15, 5, 20, 0.85) 100%);
+            background: rgba(15, 5, 20, 0.9);
         }
 
         .bg-slide-2 {
-            background: radial-gradient(circle at 50% 60%, rgba(249, 115, 22, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(20, 10, 5, 0.85) 100%);
+            background: rgba(20, 10, 5, 0.9);
         }
 
         .bg-slide-3 {
-            background: radial-gradient(circle at 50% 60%, rgba(239, 68, 68, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(20, 5, 5, 0.85) 100%);
+            background: rgba(20, 5, 5, 0.9);
         }
 
         .bg-slide-4 {
-            background: radial-gradient(circle at 50% 60%, rgba(234, 179, 8, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(18, 15, 5, 0.85) 100%);
+            background: rgba(18, 15, 5, 0.9);
         }
 
         .bg-slide-5 {
-            background: radial-gradient(circle at 50% 60%, rgba(59, 130, 246, 0.5) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(5, 10, 20, 0.85) 100%);
+            background: rgba(5, 10, 20, 0.9);
         }
 
         /* --- PS5 Top Header Layout (Reverted to Flat Retro Theme) --- */
@@ -177,13 +177,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0.6) 50%,
-                    rgba(255, 255, 255, 0) 100%);
-            transform: translateX(-150%) skewX(-25deg);
-            animation: htmlShimmer 3s infinite ease-in-out;
-            pointer-events: none;
+            background: none;
+            display: none;
         }
 
         #header-coin-count {
@@ -994,7 +989,7 @@
         /* PWA Install Alert Banner */
         .pwa-install-alert {
             position: absolute;
-            bottom: -250px;
+            top: -250px;
             left: 5%;
             width: 90%;
             background: rgba(15, 23, 42, 0.95);
@@ -1006,13 +1001,13 @@
             padding: 18px 16px;
             box-sizing: border-box;
             z-index: 1050;
-            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
         .pwa-install-alert.show {
-            bottom: 20px;
+            top: 20px;
         }
         .pwa-alert-header {
             display: flex;
@@ -1635,7 +1630,12 @@
 
             function selectSlide(idx, e) {
                 if (e) e.stopPropagation();
-                currentSlide = idx;
+                if (idx !== currentSlide) {
+                    currentSlide = idx;
+                    if (typeof window.playClickSound === 'function') window.playClickSound();
+                    updateCarousel();
+                    return;
+                }
                 if (typeof window.playClickSound === 'function') window.playClickSound();
                 updateCarousel();
                 activateActiveSlide();
@@ -1725,7 +1725,12 @@
 
             function initGlobalChat() {
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl    = `${protocol}//${window.location.hostname}:8080`;
+                let wsUrl;
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) {
+                    wsUrl = `${protocol}//${window.location.hostname}:8080`;
+                } else {
+                    wsUrl = `${protocol}//${window.location.hostname}/ws`;
+                }
                 chatWs = new WebSocket(wsUrl);
 
                 chatWs.onopen = () => {
