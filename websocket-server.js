@@ -73,10 +73,10 @@ wss.on('connection', (ws) => {
 
                     // Check if both players are ready
                     const playersArray = Array.from(room.players.keys());
-                    if (playersArray.length === 2 && 
-                        room.readyStates.get(playersArray[0]) === true && 
+                    if (playersArray.length === 2 &&
+                        room.readyStates.get(playersArray[0]) === true &&
                         room.readyStates.get(playersArray[1]) === true) {
-                        
+
                         console.log(`Both players ready in room ${currentRoomId}. Starting game...`);
                         broadcastToRoom(currentRoomId, {
                             type: 'game_start',
@@ -95,10 +95,10 @@ wss.on('connection', (ws) => {
                     console.log(`User (ID: ${userId}) arena ready status set to: true`);
 
                     const playersArray = Array.from(room.players.keys());
-                    if (playersArray.length === 2 && 
-                        room.arenaReadyStates.get(playersArray[0]) === true && 
+                    if (playersArray.length === 2 &&
+                        room.arenaReadyStates.get(playersArray[0]) === true &&
                         room.arenaReadyStates.get(playersArray[1]) === true) {
-                        
+
                         console.log(`Both players arena-ready in room ${currentRoomId}. Broadcasting countdown start...`);
                         broadcastToRoom(currentRoomId, {
                             type: 'start_countdown',
