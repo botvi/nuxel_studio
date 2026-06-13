@@ -124,7 +124,11 @@
     ----------------------------------------------- */
     // Helper global untuk navigasi via script JS
     window.navigateToPage = function (url) {
-        window.location.href = url;
+        if (typeof Livewire !== 'undefined' && typeof Livewire.navigate === 'function') {
+            Livewire.navigate(url);
+        } else {
+            window.location.href = url;
+        }
     };
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -145,6 +149,23 @@
             frame.appendChild(overlay);
 
             // Trigger reflow & fade out overlay setelah delay singkat (150ms) agar smooth
+            setTimeout(function () {
+                overlay.classList.add('fade-out');
+            }, 150);
+        }
+    });
+
+    // SPA Transitions using Livewire 3 events
+    document.addEventListener('livewire:navigating', function () {
+        const overlay = document.getElementById('page-transition-overlay');
+        if (overlay) {
+            overlay.classList.remove('fade-out');
+        }
+    });
+
+    document.addEventListener('livewire:navigated', function () {
+        const overlay = document.getElementById('page-transition-overlay');
+        if (overlay) {
             setTimeout(function () {
                 overlay.classList.add('fade-out');
             }, 150);

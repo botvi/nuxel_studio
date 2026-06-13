@@ -311,7 +311,16 @@ window.initJalurPreview = function (containerId, nameElId) {
         return;
     }
 
-    const game = new Phaser.Game({
+    if (window.activePreviewGame) {
+        try {
+            window.activePreviewGame.destroy(true);
+        } catch (e) {
+            console.error('Error destroying activePreviewGame:', e);
+        }
+        window.activePreviewGame = null;
+    }
+
+    window.activePreviewGame = new Phaser.Game({
         type: Phaser.AUTO,
         width: 250,
         height: 85,
