@@ -9,6 +9,12 @@
     <title>@yield('title', 'Nuxel Games')</title>
     <link rel="stylesheet" href="/game_pacu/assets/css/game-layout.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
+    {{-- Preload Phaser.js lokal agar browser mulai download di background --}}
+    <link rel="preload" href="/game_pacu/assets/js/phaser.min.js" as="script" crossorigin="anonymous">
+    {{-- Preload asset arena yang sering dipakai --}}
+    <link rel="preload" href="/game_pacu/assets/image/bg/bgmenu.jpg" as="image">
+    <link rel="preload" href="/game_pacu/assets/image/ui/koin.png" as="image">
+    <link rel="preload" href="/game_pacu/assets/image/ui/back.png" as="image">
     @livewireStyles
     @stack('styles')
 </head>

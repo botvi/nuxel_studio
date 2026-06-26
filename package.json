@@ -7,8 +7,11 @@
         "websocket": "node websocket-server.js"
     },
     "devDependencies": {
+        "@ffmpeg/ffmpeg": "^0.12.15",
+        "@ffmpeg/util": "^0.12.2",
         "axios": "^1.6.4",
         "laravel-vite-plugin": "^1.0.0",
+        "sharp": "^0.34.5",
         "vite": "^5.0.0",
         "ws": "^8.16.0"
     }

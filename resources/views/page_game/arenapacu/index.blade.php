@@ -211,9 +211,89 @@
         100% { content: '...'; }
     }
 </style>
+<style>
+    /* ── ARENA LOADING SCREEN ── */
+    #arena-loading-screen {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(160deg, #0a1628 0%, #0d2b1a 60%, #071a10 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family: 'Press Start 2P', monospace;
+        gap: 24px;
+        transition: opacity 0.5s ease;
+    }
+    #arena-loading-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .arena-loading-title {
+        font-size: 12px;
+        color: #4ade80;
+        text-shadow: 0 0 20px rgba(74,222,128,0.8), 0 0 40px rgba(74,222,128,0.4);
+        letter-spacing: 3px;
+        animation: titleGlow 1.5s ease-in-out infinite alternate;
+        text-align: center;
+    }
+    @keyframes titleGlow {
+        from { text-shadow: 0 0 10px rgba(74,222,128,0.5); }
+        to   { text-shadow: 0 0 30px rgba(74,222,128,1), 0 0 60px rgba(74,222,128,0.6); }
+    }
+    .arena-loading-boat {
+        font-size: 36px;
+        animation: boatRace 0.8s steps(2) infinite;
+    }
+    @keyframes boatRace {
+        0%   { transform: translateX(-4px) rotate(-2deg); }
+        50%  { transform: translateX(4px) rotate(2deg); }
+        100% { transform: translateX(-4px) rotate(-2deg); }
+    }
+    .arena-loading-bar-wrap {
+        width: 240px;
+        background: rgba(255,255,255,0.07);
+        border: 2px solid rgba(74,222,128,0.3);
+        border-radius: 999px;
+        height: 16px;
+        overflow: hidden;
+        box-shadow: 0 0 12px rgba(74,222,128,0.2);
+    }
+    #arena-loading-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #22c55e, #4ade80, #86efac);
+        border-radius: 999px;
+        transition: width 0.25s ease;
+        box-shadow: 0 0 10px rgba(74,222,128,0.6);
+    }
+    #arena-loading-text {
+        font-size: 7px;
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 1px;
+        min-height: 16px;
+        text-align: center;
+    }
+    #arena-loading-pct {
+        font-size: 10px;
+        color: #4ade80;
+        text-shadow: 0 0 8px rgba(74,222,128,0.6);
+    }
+</style>
 @endpush
 
 @section('content')
+{{-- ── ARENA LOADING SCREEN (tampil sebelum Phaser siap) ── --}}
+<div id="arena-loading-screen">
+    <div class="arena-loading-title">✦ ARENA PACU ✦</div>
+    <div class="arena-loading-boat">🚣</div>
+    <div class="arena-loading-bar-wrap">
+        <div id="arena-loading-bar"></div>
+    </div>
+    <div id="arena-loading-pct">0%</div>
+    <div id="arena-loading-text">Memuat arena...</div>
+</div>
 @php
 $winsCount = auth()->user()->wins()->count();
 $statusText = 'ANAK BARU';
@@ -289,7 +369,7 @@ if ($winsCount >= 100) {
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js"></script>
+<script src="/game_pacu/assets/js/phaser.min.js"></script>
 <script>
 {
     const GAME_WIDTH = 360;
@@ -590,36 +670,76 @@ if ($winsCount >= 100) {
     }
 
     // =====================================================
+    //  LOADING SCENE — preload semua assets dengan progress bar
+    // =====================================================
+    class LoadingScene extends Phaser.Scene {
+        constructor() { super({ key: 'LoadingScene' }); }
+
+        preload() {
+            // Update HTML loading bar dari Phaser load events
+            const bar  = document.getElementById('arena-loading-bar');
+            const pct  = document.getElementById('arena-loading-pct');
+            const txt  = document.getElementById('arena-loading-text');
+
+            this.load.on('progress', (value) => {
+                const p = Math.round(value * 100);
+                if (bar) bar.style.width = p + '%';
+                if (pct) pct.textContent = p + '%';
+            });
+
+            this.load.on('fileprogress', (file) => {
+                if (txt) txt.textContent = 'Memuat: ' + file.key + '...';
+            });
+
+            this.load.on('complete', () => {
+                if (bar) bar.style.width = '100%';
+                if (pct) pct.textContent = '100%';
+                if (txt) txt.textContent = 'Siap bertanding! 🏁';
+            });
+
+            // Load semua assets arena
+            this.load.image('bgmenu',     '/game_pacu/assets/image/bg/bgmenu.jpg');
+            this.load.image('back',       '/game_pacu/assets/image/ui/back.png');
+            this.load.image('koin',       '/game_pacu/assets/image/ui/koin.png');
+            this.load.image('jalur_boat', '/game_pacu/assets/image/jalur/jalur.png');
+
+            for (let i = 1; i <= 5; i++) {
+                this.load.image(`char${i}`, `/game_pacu/assets/image/char/${i}.png`);
+            }
+            for (let i = 1; i <= 6; i++) {
+                this.load.image(`pancang${i}`, `/game_pacu/assets/image/pancang/${i}.png`);
+            }
+            for (let i = 1; i <= 8; i++) {
+                this.load.image(`promosi${i}`, `/game_pacu/assets/image/promosi/spanduk_${i}.png`);
+            }
+            for (let i = 1; i <= 5; i++) {
+                this.load.image(`whiteflag${i}`, `/game_pacu/assets/image/ui/whiteflag/${i}.png`);
+            }
+
+            this.load.audio('sound_321',      '/game_pacu/assets/sound/321.ogg');
+            this.load.audio('sound_suporter', '/game_pacu/assets/sound/suporter.ogg');
+            this.load.audio('sound_pluit',    '/game_pacu/assets/sound/pluit.ogg');
+        }
+
+        create() {
+            // Fade out loading screen, kemudian start ArenaScene
+            const screen = document.getElementById('arena-loading-screen');
+            if (screen) screen.classList.add('hidden');
+            setTimeout(() => {
+                if (screen) screen.remove();
+                this.scene.start('ArenaScene');
+            }, 520);
+        }
+    }
+
+    // =====================================================
     //  ARENA SCENE
     // =====================================================
     class ArenaScene extends Phaser.Scene {
         constructor() { super({ key: 'ArenaScene' }); }
 
         preload() {
-            this.load.image('bgmenu', '/game_pacu/assets/image/bg/bgmenu.jpg');
-            this.load.image('back', '/game_pacu/assets/image/ui/back.png');
-            this.load.image('koin', '/game_pacu/assets/image/ui/koin.png');
-            this.load.image('jalur_boat', '/game_pacu/assets/image/jalur/jalur.png');
-
-            for (let i = 1; i <= 5; i++) {
-                this.load.image(`char${i}`, `/game_pacu/assets/image/char/${i}.png`);
-            }
-
-            for (let i = 1; i <= 6; i++) {
-                this.load.image(`pancang${i}`, `/game_pacu/assets/image/pancang/${i}.png`);
-            }
-
-            for (let i = 1; i <= 8; i++) {
-                this.load.image(`promosi${i}`, `/game_pacu/assets/image/promosi/spanduk_${i}.png`);
-            }
-
-            for (let i = 1; i <= 5; i++) {
-                this.load.image(`whiteflag${i}`, `/game_pacu/assets/image/ui/whiteflag/${i}.png`);
-            }
-
-            this.load.audio('sound_321', '/game_pacu/assets/sound/321.ogg');
-            this.load.audio('sound_suporter', '/game_pacu/assets/sound/suporter.ogg');
-            this.load.audio('sound_pluit', '/game_pacu/assets/sound/pluit.ogg');
+            // Kosong — semua sudah di-load oleh LoadingScene
         }
 
         applyRecolor(isPlayer, customColors) {
@@ -2435,7 +2555,7 @@ if ($winsCount >= 100) {
         backgroundColor: '#f0fdf4',
         parent: 'game-container',
         pixelArt: true,
-        scene: [ArenaScene],
+        scene: [LoadingScene, ArenaScene],
         scale: {
             mode: Phaser.Scale.RESIZE,
             autoCenter: Phaser.Scale.CENTER_BOTH

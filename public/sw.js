@@ -1,13 +1,23 @@
-const CACHE_NAME = 'pacu-jalur-v1';
+const CACHE_NAME = 'pacu-jalur-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/login',
   '/game_pacu/assets/css/game-layout.css',
   '/game_pacu/assets/js/game-layout.js',
+  '/game_pacu/assets/js/phaser.min.js',
   '/game_pacu/assets/image/ui/google.png',
   '/game_pacu/assets/image/ui/pwa-icon-192.png',
-  '/game_pacu/assets/image/ui/pwa-icon-512.png'
+  '/game_pacu/assets/image/ui/pwa-icon-512.png',
+  '/game_pacu/assets/image/ui/koin.png',
+  '/game_pacu/assets/image/ui/piala.png',
+  '/game_pacu/assets/image/ui/back.png',
+  '/game_pacu/assets/image/ui/sound_on.png',
+  '/game_pacu/assets/image/ui/sound_off.png',
+  '/game_pacu/assets/image/bg/bgmenu.jpg',
+  '/game_pacu/assets/fonts/BlockBlueprint.ttf',
+  '/game_pacu/assets/sound/klik_btn.ogg',
 ];
+
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
