@@ -32,6 +32,11 @@ class GoogleController extends Controller
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if ($user) {
+                if ($user->is_blocked) {
+                    Alert::error('Login Gagal', 'Akun Anda telah dinonaktifkan (blocked) oleh admin.');
+                    return $this->respondWithPopupScript('error', '/login', 'Akun Anda telah dinonaktifkan (blocked) oleh admin.');
+                }
+
                 // Update google_id jika belum ada
                 if (!$user->google_id) {
                     $user->update(['google_id' => $googleUser->getId()]);
@@ -140,6 +145,10 @@ class GoogleController extends Controller
 
         // Kalau user sudah pernah complete register sebelumnya, langsung login saja
         if ($user->nama_jalur && $user->foto_profile) {
+            if ($user->is_blocked) {
+                Alert::error('Gagal', 'Akun Anda telah dinonaktifkan.');
+                return redirect('/login');
+            }
             Auth::login($user);
             return redirect('/main-menu');
         }

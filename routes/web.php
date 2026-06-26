@@ -54,11 +54,31 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/auth/google/complete', [GoogleController::class, 'showCompleteForm'])->name('google.complete');
 Route::post('/auth/google/complete-register', [GoogleController::class, 'completeRegister'])->name('google.complete.register');
 
-Route::group(['middleware' => ['role:admin']], function () {
+Route::group(['middleware' => ['auth', 'role:admin', 'check.blocked']], function () {
     Route::get('/dashboard-superadmin', [DashboardSuperAdminController::class, 'index'])->name('dashboard-superadmin');
+    
+    // User management
+    Route::get('/dashboard-superadmin/users', [DashboardSuperAdminController::class, 'users'])->name('superadmin.users');
+    Route::post('/dashboard-superadmin/users/{id}/toggle-block', [DashboardSuperAdminController::class, 'toggleBlock'])->name('superadmin.users.toggle-block');
+    
+    // Settings management (API Key & Merchant ID)
+    Route::get('/dashboard-superadmin/settings', [DashboardSuperAdminController::class, 'settings'])->name('superadmin.settings');
+    Route::post('/dashboard-superadmin/settings/save', [DashboardSuperAdminController::class, 'saveSettings'])->name('superadmin.settings.save');
+    
+    // Coin packages CRUD
+    Route::get('/dashboard-superadmin/coin-packages', [DashboardSuperAdminController::class, 'packages'])->name('superadmin.packages');
+    Route::post('/dashboard-superadmin/coin-packages/store', [DashboardSuperAdminController::class, 'storePackage'])->name('superadmin.packages.store');
+    Route::post('/dashboard-superadmin/coin-packages/{id}/update', [DashboardSuperAdminController::class, 'updatePackage'])->name('superadmin.packages.update');
+    Route::post('/dashboard-superadmin/coin-packages/{id}/delete', [DashboardSuperAdminController::class, 'deletePackage'])->name('superadmin.packages.delete');
+    
+    // Transactions history
+    Route::get('/dashboard-superadmin/transactions', [DashboardSuperAdminController::class, 'transactions'])->name('superadmin.transactions');
 });
 
-Route::middleware(['auth'])->group(function () {
+// Webhook KlikQRIS (no CSRF, public)
+Route::post('/webhook/klikqris', [\App\Http\Controllers\pagegame\TopupController::class, 'webhook'])->name('klikqris.webhook');
+
+Route::middleware(['auth', 'check.blocked'])->group(function () {
     Route::get('/main-menu', [MainMenuController::class, 'index'])->name('main-menu');
     Route::get('/arena-pacu', [ArenaPacuController::class, 'index'])->name('arena-pacu');
     Route::post('/arena-pacu/add-coins', [ArenaPacuController::class, 'addCoins'])->name('arena-pacu.add-coins');
@@ -89,4 +109,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/vsai/add-coins', [VsAiController::class, 'addCoins'])->name('vsai.add-coins');
     // Leaderboard
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
+
+    // Topup & QRIS Snap
+    Route::post('/topup/create', [\App\Http\Controllers\pagegame\TopupController::class, 'createTransaction'])->name('topup.create');
+    Route::get('/topup/status/{order_id}', [\App\Http\Controllers\pagegame\TopupController::class, 'checkStatus'])->name('topup.status');
 });

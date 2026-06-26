@@ -1,23 +1,11 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Pacu Jalur — Masuk Akun</title>
-    <link rel="stylesheet" href="{{ asset('game_pacu/assets/css/game-layout.css') }}">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/game_pacu/assets/image/ui/pwa-icon-192.png">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #0f172a;
-        font-family: 'Pixelify Sans', monospace;
-        overflow: hidden;
-    }
+@extends('layouts.game')
+
+@section('title', 'Pacu Jalur — Masuk Akun')
+
+@push('styles')
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/game_pacu/assets/image/ui/pwa-icon-192.png">
+<style>
     #game-ui {
         position: absolute;
         top: 0; left: 0;
@@ -132,9 +120,7 @@
         transform: translateY(1px) scale(0.98);
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
-    .google-btn-shimmer {
-        display: none;
-    }
+    .google-btn-shimmer { display: none; }
     .google-logo {
         width: 22px;
         height: 22px;
@@ -200,7 +186,7 @@
         0%, 100% { opacity: 1; }
         50% { opacity: 0.5; }
     }
-    
+
     /* PWA Install Alert Banner */
     .pwa-install-alert {
         position: absolute;
@@ -221,9 +207,7 @@
         flex-direction: column;
         gap: 14px;
     }
-    .pwa-install-alert.show {
-        top: 20px;
-    }
+    .pwa-install-alert.show { top: 20px; }
     .pwa-alert-header {
         display: flex;
         align-items: center;
@@ -277,25 +261,15 @@
         color: white;
         text-shadow: 1.5px 1.5px 0px #000000;
     }
-    .pwa-btn-install:hover {
-        background-color: #4ade80;
-    }
-    .pwa-btn-install:active {
-        transform: translateY(4px);
-        box-shadow: 0px 0px 0px #000000;
-    }
+    .pwa-btn-install:hover { background-color: #4ade80; }
+    .pwa-btn-install:active { transform: translateY(4px); box-shadow: 0px 0px 0px #000000; }
     .pwa-btn-cancel {
         background-color: #475569;
         color: #cbd5e1;
         text-shadow: 1px 1px 0px #000000;
     }
-    .pwa-btn-cancel:hover {
-        background-color: #64748b;
-    }
-    .pwa-btn-cancel:active {
-        transform: translateY(4px);
-        box-shadow: 0px 0px 0px #000000;
-    }
+    .pwa-btn-cancel:hover { background-color: #64748b; }
+    .pwa-btn-cancel:active { transform: translateY(4px); box-shadow: 0px 0px 0px #000000; }
     .pwa-ios-instructions {
         font-family: 'Pixelify Sans', monospace;
         font-size: 11px;
@@ -315,98 +289,74 @@
         display: inline-block;
         flex-shrink: 0;
     }
-    </style>
-</head>
-<body>
+</style>
+@endpush
 
-<div id="desktop-wrapper">
-    <div id="mobile-frame">
-        <div id="status-bar">
-            <span id="clock">00:00</span>
-            <span>&#11044;&#11044;&#11044;</span>
+@section('content')
+<!-- PS5 Styled Login UI -->
+<div id="game-ui">
+    <div class="ps5-backdrop"></div>
+    <canvas id="ps5-particles" style="display: none;"></canvas>
+
+    <div class="login-content">
+        <!-- Game Title -->
+        <div class="game-title">PACU JALUR</div>
+        <div class="game-subtitle">Arena Balapan Perahu Nusantara</div>
+
+        <!-- Login Card -->
+        <div class="login-card">
+            <div class="card-header">✦ MASUK GAME ✦</div>
+
+            <!-- Google Sign In Button -->
+            <a id="google-login-btn" href="#" class="google-btn" onclick="handleGoogleLogin(event)">
+                <div class="google-btn-shimmer"></div>
+                <img src="{{ asset('game_pacu/assets/image/ui/google.png') }}" alt="Google" class="google-logo">
+                <span class="google-btn-text">MASUK DENGAN GOOGLE</span>
+            </a>
+
+            <div class="card-divider"></div>
+            <div class="card-footer">Hubungkan akun Google<br>untuk mulai bermain</div>
         </div>
-        <div id="game-container">
-            <!-- PS5 Styled Login UI -->
-            <div id="game-ui">
-                <div class="ps5-backdrop"></div>
-                <canvas id="ps5-particles" style="display: none;"></canvas>
+    </div>
 
-                <div class="login-content">
-                    <!-- Game Title -->
-                    <div class="game-title">PACU JALUR</div>
-                    <div class="game-subtitle">Arena Balapan Perahu Nusantara</div>
+    <!-- Connecting overlay -->
+    <div class="connecting-overlay" id="connecting-overlay">
+        <div class="spinner"></div>
+        <div class="connecting-text">MENGHUBUNGKAN...</div>
+    </div>
 
-                    <!-- Login Card -->
-                    <div class="login-card">
-                        <div class="card-header">✦ MASUK GAME ✦</div>
-
-                        <!-- Google Sign In Button -->
-                        <a id="google-login-btn" href="#" class="google-btn" onclick="handleGoogleLogin(event)">
-                            <div class="google-btn-shimmer"></div>
-                            <img src="{{ asset('game_pacu/assets/image/ui/google.png') }}" alt="Google" class="google-logo">
-                            <span class="google-btn-text">MASUK DENGAN GOOGLE</span>
-                        </a>
-
-                        <div class="card-divider"></div>
-                        <div class="card-footer">Hubungkan akun Google<br>untuk mulai bermain</div>
-                    </div>
-                </div>
-
-                <!-- Connecting overlay -->
-                <div class="connecting-overlay" id="connecting-overlay">
-                    <div class="spinner"></div>
-                    <div class="connecting-text">MENGHUBUNGKAN...</div>
-                </div>
-
-                <!-- PWA Install Alert Dialog -->
-                <div id="pwa-install-alert" class="pwa-install-alert">
-                    <div class="pwa-alert-header">
-                        <img src="/game_pacu/assets/image/ui/pwa-icon-192.png" alt="Icon Game" class="pwa-alert-icon">
-                        <div class="pwa-alert-title-group">
-                            <h4 class="pwa-alert-title">✦ PASANG GAME ✦</h4>
-                            <p class="pwa-alert-desc">Pasang game Pacu Jalur di Home Screen kamu untuk bermain lebih lancar, cepat, dan layar penuh!</p>
-                        </div>
-                    </div>
-                    <!-- iOS specific message (hidden by default) -->
-                    <div id="pwa-ios-guide" class="pwa-ios-instructions" style="display: none;">
-                        <span class="pwa-ios-icon">📤</span>
-                        <span>Ketuk tombol <strong>Bagikan (Share)</strong> di Safari lalu pilih <strong>'Tambahkan ke Layar Utama (Add to Home Screen)'</strong>.</span>
-                    </div>
-                    <div class="pwa-alert-buttons">
-                        <button id="pwa-btn-cancel" class="pwa-btn pwa-btn-cancel">BATAL</button>
-                        <button id="pwa-btn-install" class="pwa-btn pwa-btn-install">PASANG</button>
-                    </div>
-                </div>
+    <!-- PWA Install Alert Dialog -->
+    <div id="pwa-install-alert" class="pwa-install-alert">
+        <div class="pwa-alert-header">
+            <img src="/game_pacu/assets/image/ui/pwa-icon-192.png" alt="Icon Game" class="pwa-alert-icon">
+            <div class="pwa-alert-title-group">
+                <h4 class="pwa-alert-title">✦ PASANG GAME ✦</h4>
+                <p class="pwa-alert-desc">Pasang game Pacu Jalur di Home Screen kamu untuk bermain lebih lancar, cepat, dan layar penuh!</p>
             </div>
+        </div>
+        <!-- iOS specific message (hidden by default) -->
+        <div id="pwa-ios-guide" class="pwa-ios-instructions" style="display: none;">
+            <span class="pwa-ios-icon">📤</span>
+            <span>Ketuk tombol <strong>Bagikan (Share)</strong> di Safari lalu pilih <strong>'Tambahkan ke Layar Utama (Add to Home Screen)'</strong>.</span>
+        </div>
+        <div class="pwa-alert-buttons">
+            <button id="pwa-btn-cancel" class="pwa-btn pwa-btn-cancel">BATAL</button>
+            <button id="pwa-btn-install" class="pwa-btn pwa-btn-install">PASANG</button>
         </div>
     </div>
 </div>
+@endsection
 
-<script src="{{ asset('game_pacu/assets/js/game-layout.js') }}?v=<?= time() ?>"></script>
+@push('scripts')
 <script>
-    // ---- Floating Particles Effect disabled for performance ----
-
-    // ---- Clock ----
-    (function () {
-        function updateClock() {
-            const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const el = document.getElementById('clock');
-            if (el) el.textContent = h + ':' + m;
-        }
-        updateClock();
-        setInterval(updateClock, 10000);
-    })();
-
     // ---- Google Login Handler ----
     function handleGoogleLogin(e) {
         e.preventDefault();
 
-        const width = 500, height = 650;
-        const left = (window.screen.width / 2) - (width / 2);
-        const top = (window.screen.height / 2) - (height / 2);
-        const popup = window.open('about:blank', 'GoogleLoginPopup', `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes,scrollbars=yes`);
+        var width = 500, height = 650;
+        var left = (window.screen.width / 2) - (width / 2);
+        var top = (window.screen.height / 2) - (height / 2);
+        var popup = window.open('about:blank', 'GoogleLoginPopup', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',status=no,resizable=yes,scrollbars=yes');
 
         if (!popup) {
             alert('Silakan aktifkan pop-up browser Anda untuk login.');
@@ -414,25 +364,24 @@
         }
 
         // Show connecting overlay
-        document.getElementById('connecting-overlay').classList.add('show');
+        var overlay = document.getElementById('connecting-overlay');
+        if (overlay) overlay.classList.add('show');
 
         // Redirect popup after slight delay
-        setTimeout(() => {
+        setTimeout(function () {
             if (popup) popup.location.href = '{{ route('google.login') }}';
         }, 1200);
 
-        // Periodically check if popup closed (fallback jika postMessage tidak terkirim)
-        const checkTimer = setInterval(() => {
+        // Periodically check if popup closed
+        var checkTimer = setInterval(function () {
             if (popup && popup.closed) {
                 clearInterval(checkTimer);
-                // Hanya reload jika belum ada redirect dari postMessage
                 if (!window._googleLoginRedirecting) {
                     window.location.reload();
                 }
             }
         }, 500);
 
-        // Simpan reference timer agar bisa dihentikan dari listener
         window._googleLoginCheckTimer = checkTimer;
     }
 
@@ -440,7 +389,6 @@
     window.addEventListener('message', function (event) {
         if (event.origin !== window.location.origin) return;
         if (event.data && event.data.type === 'google-login-response') {
-            // Hentikan checkTimer agar tidak terjadi reload() yang membatalkan redirect
             if (window._googleLoginCheckTimer) {
                 clearInterval(window._googleLoginCheckTimer);
                 window._googleLoginCheckTimer = null;
@@ -448,8 +396,14 @@
 
             if (event.data.status === 'success') {
                 window._googleLoginRedirecting = true;
-                document.getElementById('connecting-overlay').classList.add('show');
-                window.location.href = event.data.redirect;
+                var overlay = document.getElementById('connecting-overlay');
+                if (overlay) overlay.classList.add('show');
+                // Gunakan Livewire.navigate agar SPA (tidak reload penuh)
+                if (typeof Livewire !== 'undefined' && typeof Livewire.navigate === 'function') {
+                    Livewire.navigate(event.data.redirect);
+                } else {
+                    window.location.href = event.data.redirect;
+                }
             } else {
                 window._googleLoginRedirecting = false;
                 window.location.reload();
@@ -458,86 +412,70 @@
     });
 
     // ---- PWA Service Worker & Install Prompt Logic ----
-    let deferredPrompt;
-    const pwaAlert = document.getElementById('pwa-install-alert');
-    const btnInstall = document.getElementById('pwa-btn-install');
-    const btnCancel = document.getElementById('pwa-btn-cancel');
-    const iosGuide = document.getElementById('pwa-ios-guide');
+    (function () {
+        var deferredPrompt;
+        var pwaAlert = document.getElementById('pwa-install-alert');
+        var btnInstall = document.getElementById('pwa-btn-install');
+        var btnCancel = document.getElementById('pwa-btn-cancel');
+        var iosGuide = document.getElementById('pwa-ios-guide');
 
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
-                .catch(err => console.error('[PWA] Service Worker registration failed:', err));
+        if (!pwaAlert || !btnInstall || !btnCancel) return;
+
+        // Register Service Worker (hanya sekali per sesi)
+        if ('serviceWorker' in navigator && !window._swRegistered) {
+            window._swRegistered = true;
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function (reg) { console.log('[PWA] SW registered:', reg.scope); })
+                    .catch(function (err) { console.error('[PWA] SW failed:', err); });
+            });
+        }
+
+        function isInstalled() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        }
+
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
+        function showPwaNotification() {
+            var dismissedTime = localStorage.getItem('pwa-prompt-dismissed');
+            var now = Date.now();
+            if (dismissedTime && (now - parseInt(dismissedTime)) < (24 * 60 * 60 * 1000)) return;
+            if (isInstalled()) return;
+            setTimeout(function () { pwaAlert.classList.add('show'); }, 1500);
+        }
+
+        window.addEventListener('beforeinstallprompt', function (e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            showPwaNotification();
         });
-    }
 
-    // Helper to check if already in standalone/installed mode
-    function isInstalled() {
-        return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    }
+        btnInstall.addEventListener('click', async function () {
+            pwaAlert.classList.remove('show');
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                var result = await deferredPrompt.userChoice;
+                console.log('[PWA] User choice:', result.outcome);
+                deferredPrompt = null;
+            } else if (isIOS()) {
+                pwaAlert.classList.add('show');
+                if (iosGuide) iosGuide.style.display = 'flex';
+                btnInstall.style.display = 'none';
+                btnCancel.textContent = 'OKE';
+            }
+        });
 
-    // Detect if platform is iOS
-    function isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    }
+        btnCancel.addEventListener('click', function () {
+            pwaAlert.classList.remove('show');
+            localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
+        });
 
-    // Show PWA install notification banner
-    function showPwaNotification() {
-        const dismissedTime = localStorage.getItem('pwa-prompt-dismissed');
-        const now = Date.now();
-        
-        // Don't show if dismissed in the last 24 hours
-        if (dismissedTime && (now - parseInt(dismissedTime)) < (24 * 60 * 60 * 1000)) {
-            return;
-        }
-
-        if (isInstalled()) {
-            return;
-        }
-
-        setTimeout(() => {
-            pwaAlert.classList.add('show');
-        }, 1500);
-    }
-
-    // Capture beforeinstallprompt event for Android / Desktop
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        showPwaNotification();
-    });
-
-    // Handle Install Button Click
-    btnInstall.addEventListener('click', async () => {
-        pwaAlert.classList.remove('show');
-
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`[PWA] User response to installation: ${outcome}`);
-            deferredPrompt = null;
-        } else if (isIOS()) {
-            pwaAlert.classList.add('show');
-            iosGuide.style.display = 'flex';
-            btnInstall.style.display = 'none';
-            btnCancel.textContent = 'OKE';
-        }
-    });
-
-    // Handle Cancel Button Click
-    btnCancel.addEventListener('click', () => {
-        pwaAlert.classList.remove('show');
-        localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
-    });
-
-    // Handle iOS specific check on page load since beforeinstallprompt does not fire on iOS
-    window.addEventListener('DOMContentLoaded', () => {
         if (isIOS() && !isInstalled()) {
             showPwaNotification();
         }
-    });
+    })();
 </script>
-</body>
-</html>
+@endpush

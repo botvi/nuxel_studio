@@ -1,21 +1,9 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Pacu Jalur — Registrasi Jalur</title>
-    <link rel="stylesheet" href="{{ asset('game_pacu/assets/css/game-layout.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #0f172a;
-        font-family: 'Pixelify Sans', monospace;
-        overflow: hidden;
-    }
+@extends('layouts.game')
+
+@section('title', 'Pacu Jalur — Registrasi Jalur')
+
+@push('styles')
+<style>
     #game-ui {
         position: absolute;
         top: 0; left: 0;
@@ -243,10 +231,10 @@
         transform: translateY(1px) scale(0.98);
         box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
     }
-    </style>
-</head>
-<body>
+</style>
+@endpush
 
+@section('content')
 <form id="complete-register-form" action="{{ route('google.complete.register') }}" method="POST" style="display: none;">
     @csrf
     <input type="hidden" name="user_id" value="{{ $user->id ?? '' }}">
@@ -255,132 +243,115 @@
     <input type="hidden" name="agree-terms" value="1">
 </form>
 
-<div id="desktop-wrapper">
-    <div id="mobile-frame">
-        <div id="status-bar">
-            <span id="clock">00:00</span>
-            <span>&#11044;&#11044;&#11044;</span>
-        </div>
-        <div id="game-container">
-            <!-- PS5 Styled Registration UI -->
-            <div id="game-ui">
-                <div class="ps5-backdrop"></div>
-                <canvas id="ps5-particles" style="display: none;"></canvas>
+<!-- PS5 Styled Registration UI -->
+<div id="game-ui">
+    <div class="ps5-backdrop"></div>
+    <canvas id="ps5-particles" style="display: none;"></canvas>
 
-                <div class="register-content">
-                    <!-- Header -->
-                    <div class="reg-title">✦ DATA DIRIMU ✦</div>
-                    <div class="reg-subtitle">Tentukan identitas dan nama jaluarmu</div>
+    <div class="register-content">
+        <!-- Header -->
+        <div class="reg-title">✦ DATA DIRIMU ✦</div>
+        <div class="reg-subtitle">Tentukan identitas dan nama jaluarmu</div>
 
-                    <!-- Registration Card -->
-                    <div class="reg-card">
+        <!-- Registration Card -->
+        <div class="reg-card">
 
-                        <!-- Avatar Selection -->
-                        <div class="card-section-label">PILIH FOTO PROFIL</div>
-                        <div class="avatar-grid">
-                            <div class="avatar-slot selected" data-avatar="profil" onclick="selectAvatar(this, 'profil')">
-                                <img src="{{ asset('game_pacu/assets/image/ui/profil.gif') }}" alt="Profil 1">
-                            </div>
-                            <div class="avatar-slot" data-avatar="profil2" onclick="selectAvatar(this, 'profil2')">
-                                <img src="{{ asset('game_pacu/assets/image/ui/profil2.gif') }}" alt="Profil 2">
-                            </div>
-                            <div class="avatar-slot" data-avatar="profil3" onclick="selectAvatar(this, 'profil3')">
-                                <img src="{{ asset('game_pacu/assets/image/ui/profil3.gif') }}" alt="Profil 3">
-                            </div>
-                            <div class="avatar-slot" data-avatar="profil4" onclick="selectAvatar(this, 'profil4')">
-                                <img src="{{ asset('game_pacu/assets/image/ui/profil4.gif') }}" alt="Profil 4">
-                            </div>
-                        </div>
-
-                        <div class="card-divider"></div>
-
-                        <!-- Name Input -->
-                        <div class="name-label">NAMA JALUAR</div>
-                        <input
-                            type="text"
-                            id="jalur-name-input-visible"
-                            placeholder="Nama Jalurmu..."
-                            maxlength="32"
-                            autocomplete="off"
-                            spellcheck="false"
-                            value="{{ old('nama_jalur') }}"
-                        >
-                        <div class="warning-txt" id="warning-txt">
-                            @error('nama_jalur')
-                                {{ $message }}
-                            @enderror
-                        </div>
-
-                        <!-- Start Button -->
-                        <button class="start-btn" id="start-btn" onclick="handleStart()">▶ MULAI BERMAIN</button>
-                    </div>
+            <!-- Avatar Selection -->
+            <div class="card-section-label">PILIH FOTO PROFIL</div>
+            <div class="avatar-grid">
+                <div class="avatar-slot selected" data-avatar="profil" onclick="selectAvatar(this, 'profil')">
+                    <img src="{{ asset('game_pacu/assets/image/ui/profil.gif') }}" alt="Profil 1">
+                </div>
+                <div class="avatar-slot" data-avatar="profil2" onclick="selectAvatar(this, 'profil2')">
+                    <img src="{{ asset('game_pacu/assets/image/ui/profil2.gif') }}" alt="Profil 2">
+                </div>
+                <div class="avatar-slot" data-avatar="profil3" onclick="selectAvatar(this, 'profil3')">
+                    <img src="{{ asset('game_pacu/assets/image/ui/profil3.gif') }}" alt="Profil 3">
+                </div>
+                <div class="avatar-slot" data-avatar="profil4" onclick="selectAvatar(this, 'profil4')">
+                    <img src="{{ asset('game_pacu/assets/image/ui/profil4.gif') }}" alt="Profil 4">
                 </div>
             </div>
+
+            <div class="card-divider"></div>
+
+            <!-- Name Input -->
+            <div class="name-label">NAMA JALUAR</div>
+            <input
+                type="text"
+                id="jalur-name-input-visible"
+                placeholder="Nama Jalurmu..."
+                maxlength="32"
+                autocomplete="off"
+                spellcheck="false"
+                value="{{ old('nama_jalur') }}"
+            >
+            <div class="warning-txt" id="warning-txt">
+                @error('nama_jalur')
+                    {{ $message }}
+                @enderror
+            </div>
+
+            <!-- Start Button -->
+            <button class="start-btn" id="start-btn" onclick="handleStart()">▶ MULAI BERMAIN</button>
         </div>
     </div>
 </div>
+@endsection
 
-<script src="{{ asset('game_pacu/assets/js/game-layout.js') }}?v=<?= time() ?>"></script>
+@push('scripts')
 <script>
-    // ---- Floating Particles disabled for performance ----
-
-    // ---- Clock ----
-    (function () {
-        function updateClock() {
-            const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const el = document.getElementById('clock');
-            if (el) el.textContent = h + ':' + m;
-        }
-        updateClock();
-        setInterval(updateClock, 10000);
-    })();
-
     // ---- Avatar Selection ----
-    let selectedAvatar = 'profil';
+    var selectedAvatar = 'profil';
 
     function selectAvatar(el, avatarKey) {
-        document.querySelectorAll('.avatar-slot').forEach(s => s.classList.remove('selected'));
+        document.querySelectorAll('.avatar-slot').forEach(function (s) { s.classList.remove('selected'); });
         el.classList.add('selected');
         selectedAvatar = avatarKey;
 
-        // Bounce animation
         el.style.transform = 'scale(0.88) translateY(-2px)';
-        setTimeout(() => { el.style.transform = ''; }, 150);
+        setTimeout(function () { el.style.transform = ''; }, 150);
     }
 
     // ---- Input error handler ----
-    const nameInput = document.getElementById('jalur-name-input-visible');
-    const warningEl = document.getElementById('warning-txt');
-
-    if (nameInput) {
-        nameInput.addEventListener('input', () => {
-            nameInput.classList.remove('error');
-            warningEl.textContent = '';
-        });
-    }
-
-    // ---- Tandai error dari server jika ada ----
     (function () {
-        const serverError = warningEl ? warningEl.textContent.trim() : '';
-        if (serverError && nameInput) {
+        var nameInput = document.getElementById('jalur-name-input-visible');
+        var warningEl = document.getElementById('warning-txt');
+
+        if (!nameInput) return;
+
+        nameInput.addEventListener('input', function () {
+            nameInput.classList.remove('error');
+            if (warningEl) warningEl.textContent = '';
+        });
+
+        // Tandai error dari server jika ada
+        var serverError = warningEl ? warningEl.textContent.trim() : '';
+        if (serverError) {
             nameInput.classList.add('error');
             nameInput.focus();
         }
+
+        // Enter key submit
+        nameInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') handleStart();
+        });
     })();
 
     // ---- Submit Handler ----
     function handleStart() {
-        const nameValue = nameInput ? nameInput.value.trim() : '';
+        var nameInput = document.getElementById('jalur-name-input-visible');
+        var warningEl = document.getElementById('warning-txt');
+        var nameValue = nameInput ? nameInput.value.trim() : '';
 
         if (!nameValue) {
-            nameInput.classList.add('error');
-            warningEl.textContent = '⚠️ Silakan masukkan Nama Jalurmu!';
-            nameInput.focus();
+            if (nameInput) {
+                nameInput.classList.add('error');
+                nameInput.focus();
+            }
+            if (warningEl) warningEl.textContent = '⚠️ Silakan masukkan Nama Jalurmu!';
             return;
         }
-
 
         // Save to localStorage
         localStorage.setItem('jalurName', nameValue);
@@ -391,22 +362,16 @@
         document.getElementById('form-nama-jalur').value = nameValue;
         document.getElementById('form-foto-profile').value = selectedAvatar;
 
-        // Submit with fade
-        const btn = document.getElementById('start-btn');
-        btn.disabled = true;
-        btn.textContent = '⏳ MENYIMPAN...';
+        // Submit with feedback
+        var btn = document.getElementById('start-btn');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = '⏳ MENYIMPAN...';
+        }
 
-        setTimeout(() => {
+        setTimeout(function () {
             document.getElementById('complete-register-form').submit();
         }, 300);
     }
-
-    // Allow Enter key to submit
-    if (nameInput) {
-        nameInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleStart();
-        });
-    }
 </script>
-</body>
-</html>
+@endpush

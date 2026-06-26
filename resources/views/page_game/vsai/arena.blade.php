@@ -2444,11 +2444,8 @@ if ($winsCount >= 100) {
         updateSoundIcon();
     }
 
-    function toggleBGMSetting() {
-        const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
-        localStorage.setItem('bgm_muted', bgmMuted ? 'false' : 'true');
-        syncAudioModalButtons();
-    }
+    // toggleBGMSetting sudah didefinisikan global di game-layout.js
+    // (langsung apply ke window.globalBGM secara real-time)
 
     function toggleSFXSetting() {
         const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
@@ -2465,8 +2462,17 @@ if ($winsCount >= 100) {
     // Attach functions to window for onclick handlers
     window.openAudioSettings = openAudioSettings;
     window.closeAudioSettings = closeAudioSettings;
-    window.toggleBGMSetting = toggleBGMSetting;
-    window.toggleSFXSetting = toggleSFXSetting;
+    // toggleBGMSetting: pakai global dari game-layout.js (sudah benar)
+    // toggleSFXSetting: override global karena perlu handle Phaser VsAI SFX juga
+    window.toggleSFXSetting = function () {
+        const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
+        const nextMuted = !sfxMuted;
+        localStorage.setItem('sfx_muted', nextMuted ? 'true' : 'false');
+        if (window.activeVsaiArenaGame && window.activeVsaiArenaGame.sound) {
+            window.activeVsaiArenaGame.sound.mute = nextMuted;
+        }
+        syncAudioModalButtons();
+    };
 
     // =====================================================
     //  INIT PHASER

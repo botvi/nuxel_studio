@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Nuxel Games')</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/game_pacu/assets/image/ui/pwa-icon-192.png">
     <link rel="stylesheet" href="/game_pacu/assets/css/game-layout.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
     {{-- Preload Phaser.js lokal agar browser mulai download di background --}}
@@ -43,29 +45,12 @@
     </div>
 
     @livewireScripts
-    <script src="/game_pacu/assets/js/game-layout.js?v={{ time() }}"></script>
+    <script src="/game_pacu/assets/js/game-layout.js?v=2.1"></script>
     <script>
-        // Digital Clock
-        (function () {
-            function updateClock() {
-                const now = new Date();
-                const h = String(now.getHours()).padStart(2, '0');
-                const m = String(now.getMinutes()).padStart(2, '0');
-                const el = document.getElementById('clock');
-                if (el) el.textContent = h + ':' + m;
-            }
-            updateClock();
-            setInterval(updateClock, 15000);
-        })();
-
         // Fade out transition overlay on first load
-        document.addEventListener('DOMContentLoaded', () => {
-            const overlay = document.getElementById('page-transition-overlay');
-            if (overlay) {
-                setTimeout(() => {
-                    overlay.classList.add('fade-out');
-                }, 150);
-            }
+        document.addEventListener('DOMContentLoaded', function () {
+            var overlay = document.getElementById('page-transition-overlay');
+            if (overlay) setTimeout(function () { overlay.classList.add('fade-out'); }, 150);
         });
     </script>
     @stack('scripts')

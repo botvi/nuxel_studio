@@ -1350,17 +1350,8 @@
         if (window.updateSoundIcon) window.updateSoundIcon();
     };
 
-    window.toggleBGMSetting = function() {
-        const bgmMuted = localStorage.getItem('bgm_muted') === 'true';
-        localStorage.setItem('bgm_muted', bgmMuted ? 'false' : 'true');
-        syncAudioModalButtons();
-    };
-
-    window.toggleSFXSetting = function() {
-        const sfxMuted = localStorage.getItem('sfx_muted') === 'true';
-        localStorage.setItem('sfx_muted', sfxMuted ? 'false' : 'true');
-        syncAudioModalButtons();
-    };
+    // toggleBGMSetting & toggleSFXSetting sudah didefinisikan global
+    // di game-layout.js dan langsung apply ke window.globalBGM
 
     window.cariLawan = function() {
         document.getElementById('loading-overlay').style.display = 'flex';

@@ -137,66 +137,165 @@
  }
  });
  (function () {
- const bgmSrc = '/game_pacu/assets/sound/bgm.ogg';
- let bgm = null;
- function initBGM() {
- if (window.globalBGM) return;
- bgm = new Audio(bgmSrc);
- bgm.loop = true;
- bgm.preload = 'none';
+  var bgmSrc = '/game_pacu/assets/sound/bgm.ogg';
 
- window.globalBGM = bgm;
- const isMuted = localStorage.getItem('bgm_muted') === 'true';
- if (isMuted) {
- bgm.volume = 0;
- bgm.muted = true;
- } else {
- bgm.volume = 0.5;
- bgm.muted = false;
- }
- const startPlay = function () {
- const isMuted = localStorage.getItem('bgm_muted') === 'true';
- if (isMuted) {
- bgm.volume = 0;
- bgm.muted = true;
- } else {
- bgm.volume = 0.5;
- bgm.muted = false;
- }
- bgm.play().catch(function (err) {
- console.log('Autoplay blocked, waiting for interaction:', err);
- });
- };
- startPlay();
- const playOnInteraction = function () {
- startPlay();
- document.removeEventListener('pointerdown', playOnInteraction);
- document.removeEventListener('keydown', playOnInteraction);
- };
- document.addEventListener('pointerdown', playOnInteraction);
- document.addEventListener('keydown', playOnInteraction);
- }
- setInterval(function () {
- if (bgm) {
- const isMuted = localStorage.getItem('bgm_muted') === 'true';
- if (isMuted) {
- bgm.volume = 0;
- bgm.muted = true;
- } else {
- bgm.volume = 0.5;
- bgm.muted = false;
- if (bgm.paused) {
- bgm.play().catch(function (err) {
- console.log('Play failed on sync:', err);
- });
- }
- }
- }
- }, 300);
- if (document.readyState === 'loading') {
- document.addEventListener('DOMContentLoaded', initBGM);
- } else {
- initBGM();
- }
+  function applyMuteState(audio) {
+   var isMuted = localStorage.getItem('bgm_muted') === 'true';
+   if (isMuted) {
+    audio.volume = 0;
+    audio.muted = true;
+   } else {
+    audio.volume = 0.5;
+    audio.muted = false;
+   }
+  }
+
+  function tryPlay(audio) {
+   applyMuteState(audio);
+   if (!audio.muted) {
+    audio.play().catch(function (err) {
+     console.log('[BGM] Autoplay blocked:', err);
+    });
+   }
+  }
+
+  function initBGM() {
+   // Jika globalBGM masih ada & src-nya benar, tidak perlu buat baru
+   if (window.globalBGM && window.globalBGM.src && window.globalBGM.src.includes('bgm')) {
+    applyMuteState(window.globalBGM);
+    // Jika sedang pause & tidak muted, lanjutkan (jangan restart)
+    if (window.globalBGM.paused && !window.globalBGM.muted) {
+     window.globalBGM.play().catch(function (err) {
+      console.log('[BGM] Resume failed:', err);
+     });
+    }
+    return;
+   }
+
+   // Buat instance baru hanya jika belum ada
+   var bgm = new Audio(bgmSrc);
+   bgm.loop = true;
+   bgm.preload = 'auto';
+   window.globalBGM = bgm;
+
+   // Tandai bahwa BGM sudah diinisialisasi di sesi ini
+   sessionStorage.setItem('bgm_initialized', '1');
+
+   tryPlay(bgm);
+
+   // Fallback: mulai setelah interaksi pertama (autoplay policy mobile)
+   var playOnInteraction = function () {
+    if (window.globalBGM && window.globalBGM.paused) {
+     tryPlay(window.globalBGM);
+    }
+    document.removeEventListener('pointerdown', playOnInteraction);
+    document.removeEventListener('touchstart', playOnInteraction);
+    document.removeEventListener('keydown', playOnInteraction);
+   };
+   document.addEventListener('pointerdown', playOnInteraction, { once: true });
+   document.addEventListener('touchstart', playOnInteraction, { once: true, passive: true });
+   document.addEventListener('keydown', playOnInteraction, { once: true });
+  }
+
+  // Handle visibility change: pause saat app di background, resume saat kembali
+  document.addEventListener('visibilitychange', function () {
+   if (!window.globalBGM) return;
+   if (document.hidden) {
+    // App masuk background (Android home button, dll)
+    window.globalBGM.pause();
+   } else {
+    // App kembali ke foreground, resume (bukan restart)
+    var isMuted = localStorage.getItem('bgm_muted') === 'true';
+    if (!isMuted && window.globalBGM.paused) {
+     window.globalBGM.play().catch(function (err) {
+      console.log('[BGM] Visibility resume failed:', err);
+     });
+    }
+   }
+  });
+
+  // Handle Livewire SPA navigation - pastikan BGM tidak diulang
+  document.addEventListener('livewire:navigated', function () {
+   if (window.globalBGM) {
+    applyMuteState(window.globalBGM);
+    // Jika pause karena navigasi, lanjutkan saja (jangan restart)
+    var isMuted = localStorage.getItem('bgm_muted') === 'true';
+    if (!isMuted && window.globalBGM.paused) {
+     window.globalBGM.play().catch(function (err) {
+      console.log('[BGM] Post-navigate resume:', err);
+     });
+    }
+   }
+  });
+
+  if (document.readyState === 'loading') {
+   document.addEventListener('DOMContentLoaded', initBGM);
+  } else {
+   initBGM();
+  }
+
+  // =====================================================
+  // GLOBAL BGM CONTROL FUNCTIONS (dipakai semua halaman)
+  // =====================================================
+
+  /**
+   * Terapkan state mute ke globalBGM secara langsung dari localStorage.
+   * Bisa dipanggil kapanpun untuk sync audio ke setting terbaru.
+   */
+  window.applyBGMMute = function () {
+   if (!window.globalBGM) return;
+   var isMuted = localStorage.getItem('bgm_muted') === 'true';
+   if (isMuted) {
+    window.globalBGM.volume = 0;
+    window.globalBGM.muted = true;
+    if (!window.globalBGM.paused) {
+     window.globalBGM.pause();
+    }
+   } else {
+    window.globalBGM.volume = 0.5;
+    window.globalBGM.muted = false;
+    if (window.globalBGM.paused) {
+     window.globalBGM.play().catch(function (err) {
+      console.log('[BGM] applyBGMMute play failed:', err);
+     });
+    }
+   }
+  };
+
+  /**
+   * Toggle BGM on/off — simpan ke localStorage & langsung terapkan ke audio.
+   * Menggantikan implementasi per-halaman yang tidak langsung apply.
+   */
+  window.toggleBGMSetting = function () {
+   var bgmMuted = localStorage.getItem('bgm_muted') === 'true';
+   localStorage.setItem('bgm_muted', bgmMuted ? 'false' : 'true');
+   // Langsung terapkan ke globalBGM tanpa menunggu event apapun
+   window.applyBGMMute();
+   // Sync tombol UI jika tersedia
+   if (typeof window.syncAudioModalButtons === 'function') {
+    window.syncAudioModalButtons();
+   }
+  };
+
+  /**
+   * Toggle SFX on/off — simpan ke localStorage.
+   * Menggantikan implementasi per-halaman.
+   */
+  window.toggleSFXSetting = function () {
+   var sfxMuted = localStorage.getItem('sfx_muted') === 'true';
+   localStorage.setItem('sfx_muted', sfxMuted ? 'false' : 'true');
+   // Sync tombol UI jika tersedia
+   if (typeof window.syncAudioModalButtons === 'function') {
+    window.syncAudioModalButtons();
+   }
+  };
+
+  /**
+   * Fallback updateSoundIcon — akan di-override oleh halaman yang perlu.
+   */
+  if (!window.updateSoundIcon) {
+   window.updateSoundIcon = function () {};
+  }
+
  })();
 })();

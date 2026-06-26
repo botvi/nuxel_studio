@@ -28,6 +28,16 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
+            
+            if ($user->is_blocked) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors([
+                    'email' => 'Akun Anda telah dinonaktifkan (blocked) oleh admin.',
+                ])->onlyInput('email');
+            }
+
             if ($user->role == 'admin' || $user->role == 'superadmin') {
                 return redirect()->route('dashboard-superadmin');
             } else {

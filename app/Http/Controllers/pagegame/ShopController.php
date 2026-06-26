@@ -5,11 +5,14 @@ namespace App\Http\Controllers\pagegame;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\CoinPackage;
+
 class ShopController extends Controller
 {
     public function index()
     {
-        return view('page_game.shop.index');
+        $packages = CoinPackage::orderBy('coin_amount', 'asc')->get();
+        return view('page_game.shop.index', compact('packages'));
     }
 
     public function addPoints(Request $request)

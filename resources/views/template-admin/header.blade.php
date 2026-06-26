@@ -119,7 +119,7 @@
                         aria-expanded="false">
                         <img src="{{ asset('admin') }}/assets/images/user/avatar-2.jpg" alt="user-image"
                             class="user-avtar">
-                        <span>{{ Auth::user()->nama }}</span>
+                        <span>{{ Auth::user()->nama_jalur ?? Auth::user()->email ?? 'Admin' }}</span>
                     </a>
                     <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
                         <div class="dropdown-header">
@@ -129,7 +129,7 @@
                                         alt="user-image" class="user-avtar wid-35">
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">{{ Auth::user()->nama }}</h6>
+                                    <h6 class="mb-1">{{ Auth::user()->nama_jalur ?? Auth::user()->email ?? 'Admin' }}</h6>
                                     <span>{{ Auth::user()->role }}</span>
                                 </div>
                               

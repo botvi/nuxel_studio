@@ -17,6 +17,18 @@
 @endsection
 
 @push('scripts')
+<script>
+    window.coinPackages = [
+        @foreach($packages as $pkg)
+        {
+            id: {{ $pkg->id }},
+            coin_amount: {{ $pkg->coin_amount }},
+            price_string: 'Rp {{ number_format($pkg->price, 0, ",", ".") }}',
+            price_val: {{ $pkg->price }}
+        },
+        @endforeach
+    ];
+</script>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js"></script>
 <script>
 {
@@ -680,121 +692,206 @@
             const startY = 320;
             const rowGap = 180;
 
-            const handlePurchase = (kpAmount, priceString, priceVal, cardSource) => {
+            const triggerCoinParticles = (kpAmount, nextCoins, cardSource) => {
+                const startX = cardSource.x;
+                const startY = cardSource.y;
+
+                for (let i = 0; i < 12; i++) {
+                    this.time.delayedCall(i * 60, () => {
+                        const particle = this.add.image(startX, startY, 'koin')
+                            .setDisplaySize(20, 20)
+                            .setDepth(10);
+
+                        const randX = startX + Phaser.Math.Between(-30, 30);
+                        const randY = startY + Phaser.Math.Between(-30, 30);
+
+                        this.tweens.add({
+                            targets: particle,
+                            x: randX,
+                            y: randY,
+                            duration: 180,
+                            ease: 'Quad.easeOut',
+                            onComplete: () => {
+                                this.tweens.add({
+                                    targets: particle,
+                                    x: COIN_ICON_X,
+                                    y: BAR_Y,
+                                    duration: 550,
+                                    ease: 'Cubic.easeIn',
+                                    onComplete: () => {
+                                        particle.destroy();
+
+                                        const displayedCoins = parseInt(coinText.text);
+                                        const difference = nextCoins - displayedCoins;
+                                        coinText.setText(String(displayedCoins + Math.ceil(difference * 0.22)));
+
+                                        this.tweens.add({
+                                            targets: [coinImgGlobal, coinText],
+                                            scaleX: 1.25, scaleY: 1.25,
+                                            duration: 70, yoyo: true,
+                                            onComplete: () => {
+                                                if (i === 11) {
+                                                    coinText.setText(String(nextCoins));
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    });
+                }
+
+                const successLabel = this.add.text(cx, H - 100, 'TOPUP BERHASIL! + ' + kpAmount + ' KP', {
+                    fontFamily: '"Press Start 2P", monospace',
+                    fontSize: '9px',
+                    color: '#ffffff',
+                    stroke: '#16a34a',
+                    strokeThickness: 4,
+                    align: 'center'
+                }).setOrigin(0.5).setDepth(20).setScale(0);
+
+                this.tweens.add({
+                    targets: successLabel,
+                    scaleX: 1, scaleY: 1,
+                    y: `-=40`,
+                    duration: 350,
+                    ease: 'Back.easeOut',
+                    onComplete: () => {
+                        this.time.delayedCall(1500, () => {
+                            this.tweens.add({
+                                targets: successLabel,
+                                alpha: 0,
+                                duration: 400,
+                                onComplete: () => successLabel.destroy()
+                            });
+                        });
+                    }
+                });
+            };
+
+            const startPollingStatus = (orderId, kpAmount, cardSource) => {
+                let pollInterval = setInterval(() => {
+                    fetch(`/topup/status/${orderId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.status === 'SUCCESS') {
+                                clearInterval(pollInterval);
+                                
+                                const nextCoins = data.coins;
+                                this.coinCount = nextCoins;
+                                localStorage.setItem('coins', String(nextCoins));
+
+                                if (this.customizationData) {
+                                    this.customizationData.coins = nextCoins;
+                                }
+
+                                triggerCoinParticles(kpAmount, nextCoins, cardSource);
+                            } else if (data.status === 'EXPIRED') {
+                                clearInterval(pollInterval);
+                                alert('Waktu pembayaran QRIS telah habis (Expired).');
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Polling status error:', err);
+                    });
+                }, 3000);
+
+                this.events.once('shutdown', () => {
+                    clearInterval(pollInterval);
+                });
+                this.events.once('destroy', () => {
+                    clearInterval(pollInterval);
+                });
+            };
+
+            const handlePurchase = (packageId, kpAmount, priceString, priceVal, cardSource) => {
                 showConfirmModal(this, `Apakah Anda ingin membeli +${kpAmount} KP seharga ${priceString}?`, () => {
                     this.cameras.main.flash(400, 34, 197, 94, 0.18);
 
-                    fetch('/shop/add-points', {
+                    const loadingLabel = this.add.text(cx, H / 2, 'Menghubungkan KlikQRIS...', {
+                        fontFamily: '"Pixelify Sans", monospace',
+                        fontSize: '12px',
+                        fontStyle: 'bold',
+                        color: '#ffffff',
+                        backgroundColor: '#16a34a',
+                        padding: { x: 10, y: 10 }
+                    }).setOrigin(0.5).setDepth(30);
+
+                    fetch('/topup/create', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({ points: kpAmount })
+                        body: JSON.stringify({ package_id: packageId })
                     })
                     .then(res => res.json())
                     .then(data => {
+                        loadingLabel.destroy();
                         if (data.success) {
-                            const nextCoins = data.kuansing_poin;
-                            this.coinCount = nextCoins;
-                            localStorage.setItem('coins', String(nextCoins));
-
-                            if (this.customizationData) {
-                                this.customizationData.coins = nextCoins;
+                            let payBtn = document.getElementById('btnPay');
+                            if (!payBtn) {
+                                payBtn = document.createElement('button');
+                                payBtn.id = 'btnPay';
+                                payBtn.style.display = 'none';
+                                document.body.appendChild(payBtn);
                             }
+                            payBtn.setAttribute('data-signature', data.signature);
 
-                            const startX = cardSource.x;
-                            const startY = cardSource.y;
-
-                            for (let i = 0; i < 12; i++) {
-                                this.time.delayedCall(i * 60, () => {
-                                    const particle = this.add.image(startX, startY, 'koin')
-                                        .setDisplaySize(20, 20)
-                                        .setDepth(10);
-
-                                    const randX = startX + Phaser.Math.Between(-30, 30);
-                                    const randY = startY + Phaser.Math.Between(-30, 30);
-
-                                    this.tweens.add({
-                                        targets: particle,
-                                        x: randX,
-                                        y: randY,
-                                        duration: 180,
-                                        ease: 'Quad.easeOut',
-                                        onComplete: () => {
-                                            this.tweens.add({
-                                                targets: particle,
-                                                x: COIN_ICON_X,
-                                                y: BAR_Y,
-                                                duration: 550,
-                                                ease: 'Cubic.easeIn',
-                                                onComplete: () => {
-                                                    particle.destroy();
-
-                                                    const displayedCoins = parseInt(coinText.text);
-                                                    const difference = nextCoins - displayedCoins;
-                                                    coinText.setText(String(displayedCoins + Math.ceil(difference * 0.22)));
-
-                                                    this.tweens.add({
-                                                        targets: [coinImgGlobal, coinText],
-                                                        scaleX: 1.25, scaleY: 1.25,
-                                                        duration: 70, yoyo: true,
-                                                        onComplete: () => {
-                                                            if (i === 11) {
-                                                                coinText.setText(String(nextCoins));
-                                                            }
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        }
-                                    });
-                                });
+                            let snapScript = document.getElementById('klikqris-snap-script');
+                            if (snapScript) {
+                                snapScript.remove();
                             }
+                            
+                            snapScript = document.createElement('script');
+                            snapScript.id = 'klikqris-snap-script';
+                            snapScript.src = "https://klikqris.com/js/payment-snap.js?t=" + new Date().getTime();
+                            document.body.appendChild(snapScript);
 
-                            const successLabel = this.add.text(cx, H - 100, 'TOPUP BERHASIL! + ' + kpAmount + ' KP', {
-                                fontFamily: '"Press Start 2P", monospace',
-                                fontSize: '9px',
-                                color: '#ffffff',
-                                stroke: '#16a34a',
-                                strokeThickness: 4,
-                                align: 'center'
-                            }).setOrigin(0.5).setDepth(20).setScale(0);
+                            snapScript.onload = () => {
+                                setTimeout(() => {
+                                    payBtn.click();
+                                }, 300);
+                            };
 
-                            this.tweens.add({
-                                targets: successLabel,
-                                scaleX: 1, scaleY: 1,
-                                y: `-=40`,
-                                duration: 350,
-                                ease: 'Back.easeOut',
-                                onComplete: () => {
-                                    this.time.delayedCall(1500, () => {
-                                        this.tweens.add({
-                                            targets: successLabel,
-                                            alpha: 0,
-                                            duration: 400,
-                                            onComplete: () => successLabel.destroy()
-                                        });
-                                    });
-                                }
-                            });
+                            startPollingStatus(data.order_id, kpAmount, cardSource);
                         } else {
-                            alert('Topup gagal.');
+                            alert(data.message || 'Gagal memulai transaksi topup.');
                         }
                     })
                     .catch(err => {
-                        console.error('Error topup:', err);
-                        alert('Gagal memproses topup.');
+                        loadingLabel.destroy();
+                        console.error('Error topup init:', err);
+                        alert('Gagal menghubungi gateway pembayaran.');
                     });
                 });
             };
 
-            const coinCard1 = makeTopupCard(this, cx - 80, startY, cardWidth, cardHeight, 50, 'Rp 5.000', 5000, handlePurchase);
-            const coinCard2 = makeTopupCard(this, cx + 80, startY, cardWidth, cardHeight, 100, 'Rp 10.000', 10000, handlePurchase);
-            const coinCard3 = makeTopupCard(this, cx - 80, startY + rowGap, cardWidth, cardHeight, 200, 'Rp 20.000', 20000, handlePurchase);
-            const coinCard4 = makeTopupCard(this, cx + 80, startY + rowGap, cardWidth, cardHeight, 500, 'Rp 50.000', 50000, handlePurchase);
+            const activePackages = window.coinPackages || [];
+            activePackages.forEach((pkg, index) => {
+                const col = index % 2;
+                const row = Math.floor(index / 2);
+                const cardX = cx + (col === 0 ? -80 : 80);
+                const cardY = startY + (row * rowGap);
 
-            this.coinSlideContainer.add([coinCard1, coinCard2, coinCard3, coinCard4]);
+                const card = makeTopupCard(
+                    this, 
+                    cardX, 
+                    cardY, 
+                    cardWidth, 
+                    cardHeight, 
+                    pkg.coin_amount, 
+                    pkg.price_string, 
+                    pkg.price_val, 
+                    (kpAmount, priceString, priceVal, cardSource) => {
+                        handlePurchase(pkg.id, kpAmount, priceString, priceVal, cardSource);
+                    }
+                );
+                this.coinSlideContainer.add(card);
+            });
 
             // =============================================
             //  ITEM SHOP (SLIDE 2)
